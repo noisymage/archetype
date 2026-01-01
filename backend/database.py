@@ -36,6 +36,13 @@ class CaptionModelType(enum.Enum):
     DENSE = "Dense"
 
 
+class Gender(enum.Enum):
+    """Character gender for SMPL-X model selection."""
+    MALE = "male"
+    FEMALE = "female"
+    NEUTRAL = "neutral"
+
+
 class Project(Base):
     """Project container for organizing characters and datasets."""
     __tablename__ = "projects"
@@ -54,6 +61,7 @@ class Character(Base):
     id = Column(Integer, primary_key=True, index=True)
     project_id = Column(Integer, ForeignKey("projects.id"), nullable=False)
     name = Column(String(255), nullable=False)
+    gender = Column(Enum(Gender), default=Gender.NEUTRAL)
 
     project = relationship("Project", back_populates="characters")
     reference_images = relationship("ReferenceImage", back_populates="character", cascade="all, delete-orphan")
