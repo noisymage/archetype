@@ -16,6 +16,22 @@ echo ""
 echo "📦 Setting up Python backend..."
 cd "$BACKEND_DIR"
 
+# Apply submodules patches if they exist and haven't been applied
+if [ -d "smplest_x_lib" ] && [ -f "patches/smplest_x_fixes.patch" ]; then
+    echo "   🩹 Checking specific SMPLest-X patches..."
+    cd smplest_x_lib
+    # Check if the specific patch changes are already applied
+    # We check if the patch would apply cleanly (reversed or not)
+    if git apply --check "../patches/smplest_x_fixes.patch" 2>/dev/null; then
+        echo "   Applying fix patch..."
+        git apply "../patches/smplest_x_fixes.patch"
+        echo "   ✅ Patch applied successfully."
+    else
+        echo "   ℹ️ Patch seems already applied or conflicts (skipping)."
+    fi
+    cd ..
+fi
+
 # Create venv if it doesn't exist
 if [ ! -d ".venv" ]; then
     echo "   Creating Python virtual environment..."
