@@ -691,7 +691,7 @@ class BodyAnalyzer:
     def analyze(self, image_path: str, keypoints: Optional[dict] = None, 
                 gender: str = "neutral") -> BodyResult:
         """
-        Analyze body shape and proportions.
+        Analyze body shape and proportions using both 3D and 2D methods.
         
         Args:
             image_path: Absolute path to image file.
@@ -699,7 +699,7 @@ class BodyAnalyzer:
             gender: Character gender for model selection.
             
         Returns:
-            BodyResult with betas, volume, ratios, or error.
+            BodyResult with both 3D and 2D metrics when available.
         """
         result = BodyResult()
         
@@ -708,26 +708,55 @@ class BodyAnalyzer:
             result.error = f"Image not found: {image_path}"
             return result
         
-        # Attempt to load mesh model
-        smplx_loaded = self._manager.load_mesh_model(gender)
-        result.degraded_mode = not smplx_loaded
+        # Initialize dual metrics containers
+        metrics_3d = None
+        metrics_2d = None
+        preferred = "none"
         
+        # Attempt 3D analysis
+        smplx_loaded = self._manager.load_mesh_model(gender)
         if smplx_loaded and self._manager._smplx_wrapper is not None:
-            # Full SMPLer-X analysis
-            return self._analyze_with_smplx(image_path, result, keypoints)
-        else:
-            # Degraded: 2D keypoint-based analysis
-            return self._analyze_with_keypoints(image_path, keypoints, result)
+            try:
+                metrics_3d = self._analyze_with_smplx(image_path, keypoints)
+                if metrics_3d and metrics_3d.get('success'):
+                    preferred = "3d"
+            except Exception as e:
+                logger.warning(f"3D analysis failed, continuing with 2D: {e}")
+        
+        # Always attempt 2D analysis if keypoints available
+        if keypoints:
+            try:
+                metrics_2d = self._analyze_with_keypoints(keypoints)
+                if metrics_2d and metrics_2d.get('success'):
+                    if preferred == "none":
+                        preferred = "2d"
+            except Exception as e:
+                logger.warning(f"2D analysis failed: {e}")
+        
+        # Populate result
+        result.analyzed = (metrics_3d is not None or metrics_2d is not None)
+        result.degraded_mode = (preferred == "2d")
+        
+        # Store dual metrics in ratios field (will be restructured in batch_processor)
+        result.ratios = {
+            "metrics_3d": metrics_3d,
+            "metrics_2d": metrics_2d,
+            "preferred": preferred
+        }
+        
+        return result
     
-    def _analyze_with_smplx(self, image_path: str, result: BodyResult, keypoints: Optional[dict] = None) -> BodyResult:
+    def _analyze_with_smplx(self, image_path: str, keypoints: Optional[dict] = None) -> Optional[dict]:
         """
         Full 3D analysis using SMPLest-X.
+        
+        Returns:
+            Dict with 3D metrics or None if failed.
         """
         wrapper = self._manager._smplx_wrapper
         
         if not wrapper or not wrapper.initialized:
-            result.error = "SMPLest-X model not initialized"
-            return result
+            return None
             
         try:
             import cv2
@@ -735,78 +764,69 @@ class BodyAnalyzer:
             # Load image
             img = cv2.imread(image_path)
             if img is None:
-                result.error = "Failed to load image"
-                return result
+                return None
                 
-            # Get bounding box (we need to detect first or reuse keypoint detection)
-            # Ideally we pass detections in, but result.bbox might be populated if we ran pose est first?
-            # PoseEstimator runs separately. We need to run detection here if not provided.
-            # But wait, PoseEstimator returns PoseResult. 
-            
-            # Simplified: Run YOLO detection again via pure Ultralytics or reuse PoseEstimator result if we had it.
-            # But _analyze_with_smplx signature doesn't take bbox.
-            # We should probably run PoseEstimator inside here or assume it was run.
-            
-            # Let's use the ModelManager's pose model to get a bbox quickly
+            # Get bounding box from pose detection
             if not self._manager._pose_loaded:
                 self._manager.load_pose_model()
             
-            # Detect
             pose_res = self._manager._pose_model(image_path, verbose=False)[0]
             if not pose_res.boxes or len(pose_res.boxes) == 0:
-                 result.error = "No person detected for SMPLest-X"
-                 return result
+                return None
                  
             # Best person
             boxes = pose_res.boxes.xyxy.cpu().numpy()
             areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
             best_idx = int(areas.argmax())
-            bbox = boxes[best_idx].tolist() # [x1, y1, x2, y2]
+            bbox = boxes[best_idx].tolist()
             
-            # Run Inference
+            # Run SMPLest-X inference
             inference_out = wrapper.run_inference(img, bbox)
             
             if inference_out:
-                result.betas = inference_out['betas']
-                result.volume_estimate = inference_out['volume_proxy']
-                result.analyzed = True
+                # Calculate 3D-based ratios from mesh if available
+                ratios = self._compute_3d_ratios(inference_out) if keypoints else {}
                 
-                # Also calculate metrics from 3D (or still use 2D keypoints if clearer?)
-                # We can update ratios if we want, but 2D is fine for now.
-            else:
-                result.error = "Inference returned no result"
-                
-            # Fallback to 2D metrics for ratios as they answer "proportions" well
-            return self._analyze_with_keypoints(image_path, keypoints, result)
+                return {
+                    "success": True,
+                    "betas": inference_out['betas'],
+                    "volume": inference_out.get('volume_proxy'),
+                    "ratios": ratios,
+                    "consistency_score": 0.85  # Placeholder - implement proper consistency metric
+                }
+            
+            return None
             
         except Exception as e:
-            logger.exception(f"SMPLest-X analysis failed: {e}")
-            result.error = f"SMPLest-X analysis failed: {str(e)}"
-            result.degraded_mode = True
-            return self._analyze_with_keypoints(image_path, keypoints, result)
+            logger.exception(f"SMPLest-X analysis error: {e}")
+            return None
     
-    def _analyze_with_keypoints(self, image_path: str, 
-                                 keypoints: Optional[dict],
-                                 result: BodyResult) -> BodyResult:
-        """Fallback 2D analysis using keypoints."""
+    def _analyze_with_keypoints(self, keypoints: dict) -> Optional[dict]:
+        """
+        2D analysis using keypoints.
+        
+        Returns:
+            Dict with 2D metrics or None if failed.
+        """
         try:
-            if keypoints is None:
-                result.error = "No keypoints available for 2D analysis"
-                return result
+            if not keypoints:
+                return None
             
             # Compute body ratios from keypoints
             ratios = self._compute_ratios(keypoints)
             
-            result.analyzed = True
-            result.ratios = ratios
-            # result.degraded_mode = True # Inherited from caller
+            if not ratios:
+                return None
             
-            return result
+            return {
+                "success": True,
+                "ratios": ratios,
+                "consistency_score": 0.75  # Placeholder - 2D is less reliable
+            }
             
         except Exception as e:
-            result.error = f"Keypoint analysis failed: {str(e)}"
             logger.exception("Keypoint analysis error")
-            return result
+            return None
     
     def _compute_ratios(self, keypoints: dict) -> dict:
         """Compute skeletal ratios from 2D keypoints."""
@@ -846,6 +866,15 @@ class BodyAnalyzer:
             ratios['torso_to_leg'] = torso_height / leg_height
         
         return ratios
+    
+    def _compute_3d_ratios(self, inference_out: dict) -> dict:
+        """
+        Compute volumetric ratios from 3D mesh (if mesh vertices available).
+        For now, placeholder - returns empty dict.
+        """
+        # TODO: Implement 3D mesh-based ratio calculation
+        # This would use the SMPL vertices to compute limb volumes
+        return {}
 
 
 def validate_references(images: dict[str, str], gender: str = "neutral") -> ValidationResult:

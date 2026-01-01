@@ -125,6 +125,8 @@ class ImageMetrics(Base):
     body_consistency_score = Column(Float)
     limb_ratios_json = Column(Text)  # JSON string of limb ratio data
     shot_type = Column(String(50))  # e.g., "close-up", "medium", "full-body"
+    keypoints_json = Column(Text)  # JSON string of YOLO keypoints for overlay
+    face_bbox_json = Column(Text)  # JSON string of face bounding box [x1, y1, x2, y2]
 
     image = relationship("DatasetImage", back_populates="metrics")
 

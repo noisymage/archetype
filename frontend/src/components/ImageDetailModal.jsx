@@ -10,6 +10,7 @@ import { getFullImageUrl } from '../lib/api';
 export function ImageDetailModal({ image, metrics, onClose }) {
     const [showSkeleton, setShowSkeleton] = useState(false);
     const [showFaceBbox, setShowFaceBbox] = useState(false);
+    const [ratiosView, setRatiosView] = useState('preferred'); // 'preferred', '3d', or '2d'
     const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
     const canvasRef = useRef(null);
     const imgRef = useRef(null);
@@ -115,14 +116,38 @@ export function ImageDetailModal({ image, metrics, onClose }) {
         return 'text-red-400';
     };
 
-    // Determine ratios and method from nested or flat structure
-    let displayedRatios = metrics?.limb_ratios || {};
-    let analysisMethod = null;
+    // Parse dual metrics structure
+    const limbRatiosData = image.limb_ratios || {};
+    const metrics3d = limbRatiosData.metrics_3d || null;
+    const metrics2d = limbRatiosData.metrics_2d || null;
+    const preferred = limbRatiosData.preferred || 'none';
 
-    if (displayedRatios.ratios) {
-        // New structure: { ratios: {...}, degraded_mode: bool }
-        analysisMethod = displayedRatios.degraded_mode ? '2D Keypoints (YOLO)' : '3D Mesh (SMPLer-X)';
-        displayedRatios = displayedRatios.ratios;
+    // Backward compatibility: old single-metric format
+    let displayedRatios = {};
+    let analysisMethod = 'Unknown';
+
+    if (metrics3d || metrics2d) {
+        // New dual-metrics structure
+        if (ratiosView === '3d' && metrics3d) {
+            displayedRatios = metrics3d.ratios || {};
+            analysisMethod = '3D Mesh (SMPLer-X)';
+        } else if (ratiosView === '2d' && metrics2d) {
+            displayedRatios = metrics2d.ratios || {};
+            analysisMethod = '2D Keypoints (YOLO)';
+        } else if (ratiosView === 'preferred') {
+            // Use preferred method
+            if (preferred === '3d' && metrics3d) {
+                displayedRatios = metrics3d.ratios || {};
+                analysisMethod = '3D Mesh (SMPLer-X)';
+            } else if (preferred === '2d' && metrics2d) {
+                displayedRatios = metrics2d.ratios || {};
+                analysisMethod = '2D Keypoints (YOLO)';
+            }
+        }
+    } else if (limbRatiosData.ratios) {
+        // Old structure: { ratios: {...}, degraded_mode: bool }
+        analysisMethod = limbRatiosData.degraded_mode ? '2D Keypoints (YOLO)' : '3D Mesh (SMPLer-X)';
+        displayedRatios = limbRatiosData.ratios;
     }
 
     return (
@@ -253,19 +278,37 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                             </div>
                         </div>
 
-                        {/* Body Consistency */}
-                        {image.body_consistency !== null && image.body_consistency !== undefined && (
+                        {/* Body Consistency (3D) */}
+                        {metrics3d && (
                             <div className="mb-4">
                                 <div className="flex items-center justify-between mb-1">
-                                    <span className="text-xs text-zinc-400">Body Consistency</span>
+                                    <span className="text-xs text-zinc-400">Body Consistency (3D)</span>
                                     <span className="text-sm font-mono text-cyan-400">
-                                        {(image.body_consistency * 100).toFixed(1)}%
+                                        {(metrics3d.consistency_score * 100).toFixed(1)}%
                                     </span>
                                 </div>
                                 <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
                                     <div
                                         className="h-full bg-cyan-500 rounded-full transition-all"
-                                        style={{ width: `${image.body_consistency * 100}%` }}
+                                        style={{ width: `${metrics3d.consistency_score * 100}%` }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Body Consistency (2D) */}
+                        {metrics2d && (
+                            <div className="mb-4">
+                                <div className="flex items-center justify-between mb-1">
+                                    <span className="text-xs text-zinc-400">Body Consistency (2D)</span>
+                                    <span className="text-sm font-mono text-fuchsia-400">
+                                        {(metrics2d.consistency_score * 100).toFixed(1)}%
+                                    </span>
+                                </div>
+                                <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div
+                                        className="h-full bg-fuchsia-500 rounded-full transition-all"
+                                        style={{ width: `${metrics2d.consistency_score * 100}%` }}
                                     />
                                 </div>
                             </div>
@@ -275,7 +318,37 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                     {/* Limb Ratios (if available) */}
                     {displayedRatios && Object.keys(displayedRatios).length > 0 && (
                         <div className="border-t border-white/10 pt-6 mt-6">
-                            <h4 className="text-sm font-medium text-zinc-300 mb-4">Limb Ratios</h4>
+                            <div className="flex items-center justify-between mb-4">
+                                <h4 className="text-sm font-medium text-zinc-300">Limb Ratios</h4>
+
+                                {/* View Toggle (only show if both metrics exist) */}
+                                {metrics3d && metrics2d && (
+                                    <div className="flex gap-1 bg-zinc-900 rounded-md p-1">
+                                        <button
+                                            onClick={() => setRatiosView('3d')}
+                                            className={cn(
+                                                "px-2 py-1 text-xs rounded transition-colors",
+                                                ratiosView === '3d' || (ratiosView === 'preferred' && preferred === '3d')
+                                                    ? "bg-cyan-500/20 text-cyan-400"
+                                                    : "text-zinc-500 hover:text-zinc-300"
+                                            )}
+                                        >
+                                            3D
+                                        </button>
+                                        <button
+                                            onClick={() => setRatiosView('2d')}
+                                            className={cn(
+                                                "px-2 py-1 text-xs rounded transition-colors",
+                                                ratiosView === '2d' || (ratiosView === 'preferred' && preferred === '2d')
+                                                    ? "bg-fuchsia-500/20 text-fuchsia-400"
+                                                    : "text-zinc-500 hover:text-zinc-300"
+                                            )}
+                                        >
+                                            2D
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                             <div className="space-y-2">
                                 {Object.entries(displayedRatios).map(([key, value]) => (
                                     <div key={key} className="flex items-center justify-between">

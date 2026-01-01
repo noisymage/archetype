@@ -144,6 +144,8 @@ class DatasetImageResponse(BaseModel):
     body_consistency: Optional[float] = None
     shot_type: Optional[str] = None
     limb_ratios: Optional[dict] = None
+    keypoints: Optional[dict] = None
+    face_bbox: Optional[list] = None
 
     class Config:
         from_attributes = True
@@ -630,7 +632,9 @@ async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
             face_similarity=metrics.face_similarity_score if metrics else None,
             body_consistency=metrics.body_consistency_score if metrics else None,
             shot_type=metrics.shot_type if metrics else None,
-            limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None
+            limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None,
+            keypoints=json.loads(metrics.keypoints_json) if metrics and metrics.keypoints_json else None,
+            face_bbox=json.loads(metrics.face_bbox_json) if metrics and metrics.face_bbox_json else None
         ))
     
     return result

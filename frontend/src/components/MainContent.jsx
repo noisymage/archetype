@@ -223,10 +223,10 @@ export function MainContent() {
                 <ImageDetailModal
                     image={selectedImage}
                     metrics={{
-                        face_bbox: null, // Would come from API
-                        keypoints: null, // Would come from API
+                        face_bbox: selectedImage.face_bbox,
+                        keypoints: selectedImage.keypoints,
                         shot_type: selectedImage.shot_type,
-                        limb_ratios: selectedImage.limb_ratios // Passed from API
+                        limb_ratios: selectedImage.limb_ratios
                     }}
                     onClose={() => setSelectedImage(null)}
                 />

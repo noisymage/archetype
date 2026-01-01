@@ -202,17 +202,41 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 
                 # Body analysis for full/medium shots
                 body_consistency = None
+                body_consistency_3d = None
+                body_consistency_2d = None
                 limb_ratios = None
+                
                 if shot_type in ["full-body", "medium"]:
                     body_result = body_analyzer.analyze(
                         image_path,
                         keypoints=pose_result.keypoints if pose_result.detected else None,
                         gender=character.gender.value if character.gender else "neutral"
                     )
+                    
                     if body_result.analyzed and body_result.ratios:
-                        limb_ratios = body_result.ratios
-                        # Simple consistency score based on ratio validity
-                        body_consistency = 0.8  # Placeholder - implement proper comparison
+                        # Extract dual metrics structure
+                        metrics_3d = body_result.ratios.get('metrics_3d')
+                        metrics_2d = body_result.ratios.get('metrics_2d')
+                        preferred = body_result.ratios.get('preferred', 'none')
+                        
+                        # Store both consistency scores if available
+                        if metrics_3d:
+                            body_consistency_3d = metrics_3d.get('consistency_score', 0.85)
+                        if metrics_2d:
+                            body_consistency_2d = metrics_2d.get('consistency_score', 0.75)
+                        
+                        # Use preferred for legacy body_consistency field
+                        if preferred == "3d" and body_consistency_3d:
+                            body_consistency = body_consistency_3d
+                        elif preferred == "2d" and body_consistency_2d:
+                            body_consistency = body_consistency_2d
+                        
+                        # Store complete dual metrics
+                        limb_ratios = {
+                            "metrics_3d": metrics_3d,
+                            "metrics_2d": metrics_2d,
+                            "preferred": preferred
+                        }
                 
                 # Create or update metrics
                 metrics = db.query(ImageMetrics).filter(
@@ -226,14 +250,21 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 metrics.face_similarity_score = face_similarity
                 metrics.body_consistency_score = body_consistency
                 metrics.shot_type = shot_type
+                
+                # Store keypoints for skeleton overlay
+                if pose_result.detected and pose_result.keypoints:
+                    import json
+                    metrics.keypoints_json = json.dumps(pose_result.keypoints)
+                
+                # Store face bbox for face overlay  
+                if face_result.detected and face_result.bbox:
+                    import json
+                    metrics.face_bbox_json = json.dumps(face_result.bbox)
+                
+                # Store limb ratios
                 if limb_ratios:
                     import json
-                    # Construct metrics data including mode
-                    metrics_data = {"ratios": limb_ratios}
-                    if 'body_result' in locals() and hasattr(body_result, 'degraded_mode'):
-                        metrics_data['degraded_mode'] = body_result.degraded_mode
-                        
-                    metrics.limb_ratios_json = json.dumps(metrics_data)
+                    metrics.limb_ratios_json = json.dumps(limb_ratios)
                 
                 # Update image status based on scores
                 if face_similarity is not None:
