@@ -20,6 +20,9 @@ from database import (
     init_db, get_db, Project, Character, ReferenceImage, DatasetImage, 
     ImageMetrics, ProcessingJob, JobStatus, ImageStatus, LoraPresetType, Gender
 )
+from fastapi import UploadFile, File
+import shutil
+import tempfile
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -77,6 +80,14 @@ class SingleImageResponse(BaseModel):
     body_detected: bool = False
     keypoints: Optional[dict] = None
     shot_type: str = "unknown"
+    error: Optional[str] = None
+
+
+class DetailedAnalysisResponse(BaseModel):
+    """Full analysis response for the tool."""
+    face: Optional[dict] = None
+    pose: Optional[dict] = None
+    body: Optional[dict] = None
     error: Optional[str] = None
 
 
@@ -342,6 +353,116 @@ async def analyze_image(request: SingleImageRequest):
         raise
     except Exception as e:
         logger.exception("Image analysis failed")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+def _run_detailed_analysis(image_path: str) -> DetailedAnalysisResponse:
+    """Shared logic for detailed analysis."""
+    from vision_engine import ModelManager, FaceAnalyzer, PoseEstimator, BodyAnalyzer
+    
+    manager = ModelManager()
+    
+    # Face
+    face_analyzer = FaceAnalyzer(manager)
+    face_result = face_analyzer.analyze(image_path)
+    
+    # Pose
+    pose_estimator = PoseEstimator(manager)
+    pose_result = pose_estimator.estimate(image_path)
+    
+    # Body (needs keypoints from pose if available)
+    body_analyzer = BodyAnalyzer(manager)
+    keypoints = pose_result.keypoints if pose_result.detected else None
+    body_result = body_analyzer.analyze(image_path, keypoints=keypoints)
+    
+    # Construct response
+    resp = DetailedAnalysisResponse()
+    
+    if face_result.detected:
+        resp.face = {
+            "bbox": face_result.bbox,
+            "confidence": face_result.confidence,
+            "landmarks": face_result.landmarks.tolist() if face_result.landmarks is not None else None,
+            "embedding": face_result.embedding.tolist() if face_result.embedding is not None else None,
+            "pose": face_result.pose
+        }
+    elif face_result.error:
+        resp.face = {"error": face_result.error}
+        
+    if pose_result.detected:
+        resp.pose = {
+            "keypoints": pose_result.keypoints,
+            "bbox": pose_result.bbox,
+            "confidence": pose_result.confidence
+        }
+    elif pose_result.error:
+            resp.pose = {"error": pose_result.error}
+            
+    if body_result.analyzed:
+            resp.body = {
+                "degraded_mode": body_result.degraded_mode,
+                "betas": body_result.betas.tolist() if body_result.betas is not None else None,
+                "volume_estimate": body_result.volume_estimate,
+                "ratios": body_result.ratios
+            }
+    elif body_result.error:
+            resp.body = {"error": body_result.error}
+            
+    return resp
+
+
+@app.post("/api/tools/analyze_detailed", response_model=DetailedAnalysisResponse)
+async def analyze_detailed(request: SingleImageRequest):
+    """
+    Detailed analysis for comparison tool (path based).
+    """
+    try:
+        # Validate path
+        is_valid, error = validate_image_path(request.image_path)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=error)
+            
+        return _run_detailed_analysis(request.image_path)
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Detailed analysis failed")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.post("/api/tools/analyze_upload", response_model=DetailedAnalysisResponse)
+async def analyze_upload(file: UploadFile = File(...)):
+    """
+    Detailed analysis for comparison tool (upload based).
+    """
+    try:
+        # Create temp file
+        suffix = Path(file.filename).suffix
+        if suffix not in SUPPORTED_IMAGE_FORMATS:
+             # Try to guess or just allow? Better to be strict or default to .jpg
+             if not suffix: suffix = ".jpg"
+        
+        with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+            shutil.copyfileobj(file.file, tmp)
+            tmp_path = tmp.name
+        
+        try:
+            return _run_detailed_analysis(tmp_path)
+        finally:
+            # Cleanup temp file? 
+            # If we want to show the image in frontend, we might need to serve it.
+            # But frontend has the file already (HTML5 File object).
+            # So we can just return metrics.
+            # We can delete the temp file.
+            if os.path.exists(tmp_path):
+                os.unlink(tmp_path)
+
+    except Exception as e:
+        logger.exception("Upload analysis failed")
         raise HTTPException(status_code=500, detail=str(e))
 
 

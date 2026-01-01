@@ -1,14 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 import { ProjectProvider, useProject } from './context/ProjectContext';
 import { Sidebar } from './components/Sidebar';
 import { MainContent } from './components/MainContent';
 import { DetailsPanel } from './components/DetailsPanel';
 import { StatusIndicator } from './components/StatusIndicator';
+import { CompareTool } from './components/CompareTool';
 import './App.css';
 
 function AppContent() {
   const { selectedCharacter } = useProject();
+  const [currentView, setCurrentView] = useState('dashboard');
 
   return (
     <div className="h-screen flex flex-col overflow-hidden bg-black text-white font-sans selection:bg-cyan-500/30">
@@ -31,13 +33,17 @@ function AppContent() {
       {/* Main Layout */}
       <div className="flex-1 flex overflow-hidden relative">
         {/* Left Sidebar */}
-        <Sidebar />
+        <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
         {/* Main Content Area */}
-        <MainContent />
+        {currentView === 'tool-compare' ? (
+          <CompareTool />
+        ) : (
+          <MainContent />
+        )}
 
-        {/* Right Details Panel - hidden when no character selected */}
-        {selectedCharacter && (
+        {/* Right Details Panel - hidden when no character selected or not in dashboard */}
+        {selectedCharacter && currentView === 'dashboard' && (
           <DetailsPanel />
         )}
       </div>

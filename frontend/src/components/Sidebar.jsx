@@ -8,7 +8,7 @@ import { CreateProjectWizard } from './CreateProjectWizard';
 /**
  * Left sidebar for project/character navigation
  */
-export function Sidebar() {
+export function Sidebar({ currentView, onViewChange }) {
     const {
         projects,
         selectedCharacter,
@@ -107,9 +107,9 @@ export function Sidebar() {
                         <div className="space-y-1">
                             {projects.map((project) => (
                                 <div key={project.id}>
-                                    <button
+                                    <div
                                         onClick={() => toggleProject(project.id)}
-                                        className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/5 transition-colors group text-zinc-300 hover:text-white"
+                                        className="w-full flex items-center gap-2 px-2 py-2 rounded-lg hover:bg-white/5 transition-colors group text-zinc-300 hover:text-white cursor-pointer select-none"
                                     >
                                         <ChevronRight
                                             className={cn(
@@ -143,7 +143,7 @@ export function Sidebar() {
                                                 <Trash2 className="w-3 h-3 text-red-400" />
                                             )}
                                         </button>
-                                    </button>
+                                    </div>
 
                                     {expandedProjects.includes(project.id) && (
                                         <div className="ml-2 pl-3 border-l border-white/5 mt-1 space-y-0.5">
@@ -152,10 +152,13 @@ export function Sidebar() {
                                                 return (
                                                     <button
                                                         key={character.id}
-                                                        onClick={() => selectCharacter(character)}
+                                                        onClick={() => {
+                                                            selectCharacter(character);
+                                                            onViewChange?.('dashboard');
+                                                        }}
                                                         className={cn(
                                                             'w-full flex items-center gap-2 px-3 py-2 rounded-md transition-all relative group/item',
-                                                            isSelected
+                                                            isSelected && currentView === 'dashboard'
                                                                 ? 'bg-cyan-500/10 text-cyan-400'
                                                                 : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
                                                         )}
@@ -195,6 +198,27 @@ export function Sidebar() {
                             ))}
                         </div>
                     )}
+                </div>
+
+                {/* Tools Section */}
+                <div className="px-3 pb-3">
+                    <div className="flex items-center justify-between px-2 mb-2 mt-4">
+                        <span className="text-xs font-mono font-medium text-zinc-500 uppercase tracking-wider">
+                            Tools
+                        </span>
+                    </div>
+                    <button
+                        onClick={() => onViewChange?.('tool-compare')}
+                        className={cn(
+                            'w-full flex items-center gap-2 px-3 py-2 rounded-md transition-all group',
+                            currentView === 'tool-compare'
+                                ? 'bg-cyan-500/10 text-cyan-400'
+                                : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/5'
+                        )}
+                    >
+                        <User className="w-4 h-4" />
+                        <span className="text-sm font-medium">Compare Images</span>
+                    </button>
                 </div>
 
                 {/* Footer */}
