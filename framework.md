@@ -8,14 +8,14 @@ A local web application to validate and curate datasets for LoRA training. It en
 
 * **Architecture:** Local Web Server (Backend) \+ Browser Interface (Frontend).  
 * **Frontend:** React (Vite) \+ Tailwind CSS \+ ShadcnUI.  
-* **Backend:** Python (FastAPI).  
+* **Backend:** Python (FastAPI) with venv for isolation.  
 * **Communication:** HTTP/REST.  
   * *Development:* Vite Proxy forwards requests to FastAPI.  
   * *Production:* FastAPI serves the React static build.  
 * **Database:** SQLite (local file, accessed via Python via SQLAlchemy).  
 * **AI/ML:**  
   * *Face:* InsightFace.  
-  * *Pose/Shape:* MMPose (RTMPose) \+ SMPL-X (or Anny).  
+  * *Pose/Shape:* MMPose (RTMPose) \+ SMPL-X.  
   * *LLM:* Ollama (API compatible) \+ Google Gemini API.
 
 ## **3\. Core Constraints & Requirements**
