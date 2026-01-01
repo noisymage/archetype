@@ -5,6 +5,7 @@ import os
 import logging
 import asyncio
 import uuid
+import json
 from pathlib import Path
 from typing import Optional, List
 
@@ -81,23 +82,6 @@ class SingleImageResponse(BaseModel):
 
 # --- Project/Character CRUD Models ---
 
-class ProjectCreate(BaseModel):
-    """Request to create a project."""
-    name: str = Field(..., min_length=1, max_length=255)
-    lora_preset_type: str = Field(default="SDXL")
-
-
-class ProjectResponse(BaseModel):
-    """Project data response."""
-    id: int
-    name: str
-    lora_preset_type: str
-    character_count: int = 0
-
-    class Config:
-        from_attributes = True
-
-
 class CharacterCreate(BaseModel):
     """Request to create a character."""
     name: str = Field(..., min_length=1, max_length=255)
@@ -109,9 +93,34 @@ class CharacterResponse(BaseModel):
     id: int
     project_id: int
     name: str
-    gender: str
+    gender: Gender
     reference_count: int = 0
     image_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+# ... Project models ... (assumed unchanged from previous valid state or I'll just touch CharacterResponse)
+
+# ...
+
+
+
+
+class ProjectCreate(BaseModel):
+    """Request to create a project."""
+    name: str = Field(..., min_length=1, max_length=255)
+    lora_preset_type: str = Field(default="SDXL")
+
+
+class ProjectResponse(BaseModel):
+    """Project data response."""
+    id: int
+    name: str
+    lora_preset_type: LoraPresetType
+    character_count: int = 0
+    characters: list[CharacterResponse]
 
     class Config:
         from_attributes = True
@@ -134,6 +143,7 @@ class DatasetImageResponse(BaseModel):
     face_similarity: Optional[float] = None
     body_consistency: Optional[float] = None
     shot_type: Optional[str] = None
+    limb_ratios: Optional[dict] = None
 
     class Config:
         from_attributes = True
@@ -156,6 +166,7 @@ class FolderScanResponse(BaseModel):
 class BatchProcessRequest(BaseModel):
     """Request to start batch processing."""
     character_id: int
+    reprocess_all: bool = False
 
 
 class BatchProcessResponse(BaseModel):
@@ -368,15 +379,7 @@ async def serve_image(path: str = Query(..., description="Absolute path to image
 async def list_projects(db: Session = Depends(get_db)):
     """List all projects."""
     projects = db.query(Project).all()
-    return [
-        ProjectResponse(
-            id=p.id,
-            name=p.name,
-            lora_preset_type=p.lora_preset_type.value if p.lora_preset_type else "SDXL",
-            character_count=len(p.characters)
-        )
-        for p in projects
-    ]
+    return projects
 
 
 @app.post("/api/projects", response_model=ProjectResponse)
@@ -626,7 +629,8 @@ async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
             status=img.status.value if img.status else "pending",
             face_similarity=metrics.face_similarity_score if metrics else None,
             body_consistency=metrics.body_consistency_score if metrics else None,
-            shot_type=metrics.shot_type if metrics else None
+            shot_type=metrics.shot_type if metrics else None,
+            limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None
         ))
     
     return result
@@ -689,14 +693,17 @@ async def start_batch_process(
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
     
-    # Count pending images
-    pending_count = db.query(DatasetImage).filter(
-        DatasetImage.character_id == request.character_id,
-        DatasetImage.status == ImageStatus.PENDING
-    ).count()
+    # Count images to process
+    query = db.query(DatasetImage).filter(DatasetImage.character_id == request.character_id)
+    
+    if not request.reprocess_all:
+        query = query.filter(DatasetImage.status == ImageStatus.PENDING)
+        
+    pending_count = query.count()
     
     if pending_count == 0:
-        raise HTTPException(status_code=400, detail="No pending images to process")
+        msg = "No images found" if request.reprocess_all else "No pending images to process"
+        raise HTTPException(status_code=400, detail=msg)
     
     # Create job
     job_id = str(uuid.uuid4())
@@ -710,7 +717,7 @@ async def start_batch_process(
     db.commit()
     
     # Start background processing
-    background_tasks.add_task(process_batch, request.character_id, job_id)
+    background_tasks.add_task(process_batch, request.character_id, job_id, request.reprocess_all)
     
     return BatchProcessResponse(
         job_id=job_id,

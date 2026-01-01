@@ -175,9 +175,9 @@ export function ProjectProvider({ children }) {
 
     // === Batch Processing ===
 
-    const startProcessing = useCallback(async (characterId) => {
+    const startProcessing = useCallback(async (characterId, reprocessAll = false) => {
         try {
-            const job = await api.startBatchProcess(characterId);
+            const job = await api.startBatchProcess(characterId, reprocessAll);
 
             setActiveJob({
                 ...job,

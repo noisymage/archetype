@@ -99,9 +99,9 @@ def compute_similarity(embedding1: np.ndarray, embedding2: np.ndarray) -> float:
     return float(np.dot(embedding1, embedding2) / (norm1 * norm2))
 
 
-async def process_batch(character_id: int, job_id: str):
+async def process_batch(character_id: int, job_id: str, reprocess_all: bool = False):
     """
-    Process all pending images for a character.
+    Process images for a character.
     
     This runs in a background task and updates the job progress.
     Uses serial processing (one at a time) to manage VRAM.
@@ -125,11 +125,12 @@ async def process_batch(character_id: int, job_id: str):
         job.status = JobStatus.PROCESSING
         db.commit()
         
-        # Get pending images
-        pending_images = db.query(DatasetImage).filter(
-            DatasetImage.character_id == character_id,
-            DatasetImage.status == ImageStatus.PENDING
-        ).all()
+        # Get images to process
+        query = db.query(DatasetImage).filter(DatasetImage.character_id == character_id)
+        if not reprocess_all:
+            query = query.filter(DatasetImage.status == ImageStatus.PENDING)
+            
+        pending_images = query.all()
         
         job.total_images = len(pending_images)
         db.commit()
@@ -227,7 +228,12 @@ async def process_batch(character_id: int, job_id: str):
                 metrics.shot_type = shot_type
                 if limb_ratios:
                     import json
-                    metrics.limb_ratios_json = json.dumps(limb_ratios)
+                    # Construct metrics data including mode
+                    metrics_data = {"ratios": limb_ratios}
+                    if 'body_result' in locals() and hasattr(body_result, 'degraded_mode'):
+                        metrics_data['degraded_mode'] = body_result.degraded_mode
+                        
+                    metrics.limb_ratios_json = json.dumps(metrics_data)
                 
                 # Update image status based on scores
                 if face_similarity is not None:

@@ -22,6 +22,7 @@ export function MainContent() {
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [reprocessMode, setReprocessMode] = useState(false);
 
     // Filter images by status
     const filteredImages = statusFilter === 'all'
@@ -40,7 +41,7 @@ export function MainContent() {
     const handleStartProcessing = async () => {
         if (selectedCharacter) {
             try {
-                await startProcessing(selectedCharacter.id);
+                await startProcessing(selectedCharacter.id, reprocessMode);
             } catch (error) {
                 // Error already shown via toast
             }
@@ -70,8 +71,26 @@ export function MainContent() {
 
                     {selectedCharacter && (
                         <div className="flex items-center gap-3">
+                            {/* Reprocess Toggle */}
+                            {datasetImages.length > 0 && !activeJob && (
+                                <label className="flex items-center gap-2 cursor-pointer mr-2 select-none group">
+                                    <div className="relative flex items-center">
+                                        <input
+                                            type="checkbox"
+                                            checked={reprocessMode}
+                                            onChange={(e) => setReprocessMode(e.target.checked)}
+                                            className="peer appearance-none w-4 h-4 rounded border border-zinc-700 bg-zinc-900 checked:bg-cyan-500 checked:border-cyan-500 transition-colors focus:ring-2 focus:ring-cyan-500/20 focus:outline-none"
+                                        />
+                                        <svg className="absolute w-2.5 h-2.5 text-black pointer-events-none opacity-0 peer-checked:opacity-100 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transition-opacity" viewBox="0 0 12 12" fill="none">
+                                            <path d="M10 3L4.5 8.5L2 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                    <span className="text-xs text-zinc-500 group-hover:text-zinc-300 transition-colors">Reprocess All</span>
+                                </label>
+                            )}
+
                             {/* Process Button */}
-                            {statusCounts.pending > 0 && !activeJob && (
+                            {(statusCounts.pending > 0 || reprocessMode) && !activeJob && (
                                 <Button
                                     variant="primary"
                                     size="sm"
@@ -79,7 +98,7 @@ export function MainContent() {
                                     onClick={handleStartProcessing}
                                 >
                                     <Play className="w-3.5 h-3.5" />
-                                    Process ({statusCounts.pending})
+                                    Process ({reprocessMode ? datasetImages.length : statusCounts.pending})
                                 </Button>
                             )}
 
@@ -207,7 +226,7 @@ export function MainContent() {
                         face_bbox: null, // Would come from API
                         keypoints: null, // Would come from API
                         shot_type: selectedImage.shot_type,
-                        limb_ratios: null // Would parse from JSON
+                        limb_ratios: selectedImage.limb_ratios // Passed from API
                     }}
                     onClose={() => setSelectedImage(null)}
                 />

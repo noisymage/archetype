@@ -1,0 +1,359 @@
+INFO:     Will watch for changes in these directories: ['/Users/johan/Development/archetype/backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7020] using WatchFiles
+Process SpawnProcess-1:
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.13/3.13.6/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/process.py", line 313, in _bootstrap
+    self.run()
+    ~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.6/Frameworks/Python.framework/Versions/3.13/lib/python3.13/multiprocessing/process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    ~~~~~~^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+  File "/opt/homebrew/Cellar/python@3.13/3.13.6/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 195, in run
+    return runner.run(main)
+           ~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.13/3.13.6/Frameworks/Python.framework/Versions/3.13/lib/python3.13/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 71, in serve
+    await self._serve(sockets)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/server.py", line 78, in _serve
+    config.load()
+    ~~~~~~~~~~~^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/config.py", line 439, in load
+    self.loaded_app = import_from_string(self.app)
+                      ~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/importer.py", line 19, in import_from_string
+    module = importlib.import_module(module_str)
+  File "/opt/homebrew/Cellar/python@3.13/3.13.6/Frameworks/Python.framework/Versions/3.13/lib/python3.13/importlib/__init__.py", line 88, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1387, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 1026, in exec_module
+  File "<frozen importlib._bootstrap>", line 488, in _call_with_frames_removed
+  File "/Users/johan/Development/archetype/backend/main.py", line 107, in <module>
+    @app.get("/api/projects", response_model=List[ProjectResponse])
+     ^^^
+NameError: name 'app' is not defined
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Started server process [7244]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61101 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61142 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61155 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61210 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61222 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61223 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61225 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61223 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61227 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61222 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61222 - "OPTIONS /api/projects/1/characters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61223 - "OPTIONS /api/characters/1/images HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61222 - "GET /api/projects/1/characters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61223 - "GET /api/characters/1/images HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/main.py", line 631, in list_dataset_images
+    limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None
+                ^^^^
+NameError: name 'json' is not defined. Did you forget to import 'json'?
+INFO:     127.0.0.1:61249 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61251 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61249 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61255 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61253 - "GET /api/projects/1/characters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61295 - "GET /api/characters/1/images HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/main.py", line 631, in list_dataset_images
+    limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None
+                ^^^^
+NameError: name 'json' is not defined. Did you forget to import 'json'?
+INFO:     127.0.0.1:61312 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61359 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61395 - "GET /api/characters/1/images HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 85, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 355, in app
+    raw_response = await run_endpoint_function(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 243, in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/main.py", line 631, in list_dataset_images
+    limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None
+                ^^^^
+NameError: name 'json' is not defined. Did you forget to import 'json'?
+INFO:     127.0.0.1:61417 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61501 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7244]
+INFO:     Started server process [7742]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61607 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61651 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61670 - "GET /api/characters/1/images HTTP/1.1" 400 Bad Request
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7742]
+INFO:     Started server process [7969]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61703 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61717 - "GET /api/characters/1/images HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61751 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61762 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61764 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61766 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61768 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61766 - "GET /api/projects/1/characters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61762 - "GET /api/characters/1/images HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61779 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FGemini_Generated_Image_7s2ix97s2ix97s2i.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61780 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2F20251207_235600_03.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61781 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2F20251208_004016_24.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61782 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2F20251208_004016_68.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61783 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2F20251208_063253_13.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61784 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FGemini_Generated_Image_dinjh8dinjh8dinj.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61783 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_3e3e37c0.png&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61781 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FGemini_Generated_Image_uiim5muiim5muiim.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61784 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_6d85a270.png&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61779 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FGemini_Generated_Image_gy4gdwgy4gdwgy4g.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61782 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_49f9c34e.png&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61780 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_4d20af27.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61782 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_a0fbb44e.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61780 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_aecc1436.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61784 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_b6f72643.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61779 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_e1eb1808.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61783 - "GET /api/image/thumbnail?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2FHanna_d0a01321.jpg&size=256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61783 - "GET /api/image/serve?path=%2FVolumes%2FWD_BLACK%2Ftemp%2Ftmp%2Fcurator%2Fhanna%2Fgenerated%2F20251207_235600_03.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61831 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61881 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [7969]
+INFO:     Started server process [8251]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:61954 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'batch_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [8251]
+INFO:     Started server process [8273]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:62012 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62047 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62045 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62049 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62045 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62058 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62060 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62130 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62168 - "POST /api/process/batch HTTP/1.1" 200 OK
+INFO:vision_engine:Vision Engine initialized on mps
+INFO:vision_engine:InsightFace model loaded successfully
+/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/insightface/utils/face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+INFO:vision_engine:YOLO-Pose model loaded successfully
+Applied providers: ['CoreMLExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CoreMLExecutionProvider': {}}
+find model: /Users/johan/Development/archetype/backend/models/insightface/models/buffalo_l/1k3d68.onnx landmark_3d_68 ['None', 3, 192, 192] 0.0 1.0
+Applied providers: ['CoreMLExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CoreMLExecutionProvider': {}}
+find model: /Users/johan/Development/archetype/backend/models/insightface/models/buffalo_l/2d106det.onnx landmark_2d_106 ['None', 3, 192, 192] 0.0 1.0
+Applied providers: ['CoreMLExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CoreMLExecutionProvider': {}}
+find model: /Users/johan/Development/archetype/backend/models/insightface/models/buffalo_l/det_10g.onnx detection [1, 3, '?', '?'] 127.5 128.0
+Applied providers: ['CoreMLExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CoreMLExecutionProvider': {}}
+find model: /Users/johan/Development/archetype/backend/models/insightface/models/buffalo_l/genderage.onnx genderage ['None', 3, 96, 96] 0.0 1.0
+Applied providers: ['CoreMLExecutionProvider', 'CPUExecutionProvider'], with options: {'CPUExecutionProvider': {}, 'CoreMLExecutionProvider': {}}
+find model: /Users/johan/Development/archetype/backend/models/insightface/models/buffalo_l/w600k_r50.onnx recognition ['None', 3, 112, 112] 127.5 127.5
+set det-size: (640, 640)
+INFO:     127.0.0.1:62195 - "GET /api/health HTTP/1.1" 200 OK
+/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/insightface/utils/face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
+INFO:vision_engine:Loading SMPLest-X model (this may take a moment)...
+INFO:vision_engine:SMPLest-X model loaded successfully
+/Users/johan/Development/archetype/backend/smplest_x_lib/utils/transforms.py:234: UserWarning: Using torch.cross without specifying the dim arg is deprecated.
+Please either pass the dim explicitly or simply use torch.linalg.cross.
+The default value of dim will change to agree with that of linalg.cross in a future release. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/native/Cross.cpp:67.)
+  b3 = torch.cross(b1, b2)
+/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/torch/nn/functional.py:5294: UserWarning: MPS: The constant padding of more than 3 dimensions is not currently supported natively. It uses View Ops default implementation to run. This may have performance implications. (Triggered internally at /Users/runner/work/pytorch/pytorch/pytorch/aten/src/ATen/native/mps/operations/Pad.mm:468.)
+  return torch._C._nn.pad(input, pad, mode, value)
+WARNING: SMPLX_to_J14.pkl not found, setting to None
+WARNING: MANO_SMPLX_vertex_ids.pkl not found, setting to None
+WARNING: SMPL-X__FLAME_vertex_ids.npy not found, setting to None
+Total #parameters: 687223152 (0.69B)
+INFO:     127.0.0.1:62243 - "GET /api/health HTTP/1.1" 200 OK

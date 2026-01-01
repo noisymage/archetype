@@ -78,6 +78,14 @@ class Character(Base):
     dataset_images = relationship("DatasetImage", back_populates="character", cascade="all, delete-orphan")
     processing_jobs = relationship("ProcessingJob", back_populates="character", cascade="all, delete-orphan")
 
+    @property
+    def reference_count(self):
+        return len(self.reference_images)
+
+    @property
+    def image_count(self):
+        return len(self.dataset_images)
+
 
 class ReferenceImage(Base):
     """Reference/source-of-truth images for a character."""

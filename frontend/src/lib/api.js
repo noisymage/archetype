@@ -97,10 +97,10 @@ export async function listImages(folderPath) {
 
 // === Batch Processing ===
 
-export async function startBatchProcess(characterId) {
+export async function startBatchProcess(characterId, reprocessAll = false) {
     return apiFetch('/api/process/batch', {
         method: 'POST',
-        body: JSON.stringify({ character_id: characterId })
+        body: JSON.stringify({ character_id: characterId, reprocess_all: reprocessAll })
     });
 }
 

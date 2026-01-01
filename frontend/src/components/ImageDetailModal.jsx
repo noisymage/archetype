@@ -115,6 +115,16 @@ export function ImageDetailModal({ image, metrics, onClose }) {
         return 'text-red-400';
     };
 
+    // Determine ratios and method from nested or flat structure
+    let displayedRatios = metrics?.limb_ratios || {};
+    let analysisMethod = null;
+
+    if (displayedRatios.ratios) {
+        // New structure: { ratios: {...}, degraded_mode: bool }
+        analysisMethod = displayedRatios.degraded_mode ? '2D Keypoints (YOLO)' : '3D Mesh (SMPLer-X)';
+        displayedRatios = displayedRatios.ratios;
+    }
+
     return (
         <div className="fixed inset-0 z-50 flex">
             {/* Backdrop */}
@@ -204,6 +214,18 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                         </div>
                     )}
 
+                    {/* Analysis Method */}
+                    {analysisMethod && (
+                        <div className="mb-6">
+                            <span className="text-xs text-zinc-500 uppercase tracking-wider">Method</span>
+                            <p className={cn("text-sm font-medium mt-1",
+                                analysisMethod.includes('SMPL') ? "text-fuchsia-400" : "text-yellow-400"
+                            )}>
+                                {analysisMethod}
+                            </p>
+                        </div>
+                    )}
+
                     {/* Scores Section */}
                     <div className="border-t border-white/10 pt-6 mt-6">
                         <h4 className="text-sm font-medium text-zinc-300 mb-4">Scores</h4>
@@ -251,11 +273,11 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                     </div>
 
                     {/* Limb Ratios (if available) */}
-                    {metrics?.limb_ratios && Object.keys(metrics.limb_ratios).length > 0 && (
+                    {displayedRatios && Object.keys(displayedRatios).length > 0 && (
                         <div className="border-t border-white/10 pt-6 mt-6">
                             <h4 className="text-sm font-medium text-zinc-300 mb-4">Limb Ratios</h4>
                             <div className="space-y-2">
-                                {Object.entries(metrics.limb_ratios).map(([key, value]) => (
+                                {Object.entries(displayedRatios).map(([key, value]) => (
                                     <div key={key} className="flex items-center justify-between">
                                         <span className="text-xs text-zinc-400 capitalize">
                                             {key.replace(/_/g, ' ')}
