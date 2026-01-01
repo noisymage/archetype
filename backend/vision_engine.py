@@ -10,6 +10,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Optional, Any
 import numpy as np
+import scipy.spatial as spatial
 import scipy.spatial.distance as dist
 import sys
 import cv2
@@ -18,33 +19,44 @@ from torchvision import transforms
 
 # --- SMPLest-X Path Setup ---
 BASE_DIR = Path(__file__).parent.parent 
-SMPLEST_X_PATH = BASE_DIR / "backend/smplest_x_lib" # This depends on where BASE_DIR points. 
-# Relative to this file (backend/vision_engine.py), the lib is in backend/smplest_x_lib? 
-# Wait, __file__ is backend/vision_engine.py. .parent is backend.
-# The submodule is at backend/smplest_x_lib.
+# We need to target the submodule root explicitly for its internal imports (e.g. 'import common.utils')
+# Internal structure is often: backend/smplest_x_lib/ ...
 SMPLEST_X_PATH = Path(__file__).parent / "smplest_x_lib"
 
 if SMPLEST_X_PATH.exists():
+    # 1. Add the lib root so "from smplest_x_lib.demo import ..." works if needed (less likely)
     if str(SMPLEST_X_PATH) not in sys.path:
         sys.path.insert(0, str(SMPLEST_X_PATH))
-    if str(SMPLEST_X_PATH / "main") not in sys.path:
-        sys.path.insert(0, str(SMPLEST_X_PATH / "main"))
+    
+    # 2. CRITICAL: Add the library root so its internal relative imports resolve 
+    # (some repos assume they are the root)
+    if str(SMPLEST_X_PATH.resolve()) not in sys.path:
+        sys.path.insert(0, str(SMPLEST_X_PATH.resolve()))
 
-SMPLEST_X_AVAILABLE = False
-try:
-    # Try importing essential SMPLest-X modules
-    import config as smpl_config_module 
-    from human_models.human_models import SMPLX
-    from models.SMPLest_X import get_model
-    from utils.data_utils import load_img, process_bbox, generate_patch_image
-    from main.config import Config as SMPLConfig
-    SMPLEST_X_AVAILABLE = True
-except ImportError:
-    pass # Logged later via ModelManager if needed
+    # 3. Add 'main' if that is where config stays (common in some research code)
+    if str((SMPLEST_X_PATH / "main").resolve()) not in sys.path:
+        sys.path.insert(0, str((SMPLEST_X_PATH / "main").resolve()))
 
 
 # Configure logging
 logger = logging.getLogger(__name__)
+
+SMPLEST_X_AVAILABLE = False
+try:
+    # Try importing essential SMPLest-X modules
+    # We do this after path injection
+    import config as smpl_config_module 
+    from human_models.human_models import SMPLX
+    from models.SMPLest_X import get_model
+    from utils.data_utils import load_img, process_bbox, generate_patch_image
+    # main is in sys.path, so imports work directly
+    from config import Config as SMPLConfig
+    SMPLEST_X_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"SMPLest-X imports failed despite path injection: {e}")
+    # We allow it to fail here, ModelManager will report it later
+    pass
+
 
 # Supported image formats
 SUPPORTED_FORMATS = {'.png', '.jpg', '.jpeg'}
@@ -168,7 +180,8 @@ class SMPLestXWrapper:
                     'focal': (5000, 5000), 'princpt': (192 / 2, 256 / 2),
                     'camera_3d_size': 2.5,
                 },
-                "test": {"test_batch_size": 1}
+                "test": {"test_batch_size": 1},
+                "data": {"testset": "custom"}
             }
             
             self.cfg = SMPLConfig(conf_dict)
@@ -266,21 +279,29 @@ class SMPLestXWrapper:
             }
             
         except Exception as e:
-            logger.error(f"Inference run failed: {e}")
+            logger.exception(f"Inference run failed: {e}")
             return None
 
     def _calc_volume(self, mesh_vertices):
-        """Estimate volume from mesh vertices (proxy)."""
-        # Simple bounding box volume of the mesh for now
+        """Estimate volume from mesh vertices using Convex Hull."""
         try:
-            min_coords = np.min(mesh_vertices, axis=0)
-            max_coords = np.max(mesh_vertices, axis=0)
-            dims = max_coords - min_coords # [width, height, depth]
-            # Volume of bounding box
-            vol = dims[0] * dims[1] * dims[2]
-            return float(vol)
-        except:
-            return 0.0
+            # Load convex hull
+            hull = spatial.ConvexHull(mesh_vertices)
+            return float(hull.volume * 1000) # Convert m^3 to liters (assuming vertices in meters) 
+            # Note: SMPL-X usually output in meters. 1 m^3 = 1000 Liters.
+            # If vertices are not in meters, this scaling factor needs adjustment.
+            # Usually SMPL templates are unit height ~1.7 range.
+        except Exception as e:
+            logger.warning(f"Volume calculation failed: {e}")
+            # Fallback to bbox
+            try:
+                min_coords = np.min(mesh_vertices, axis=0)
+                max_coords = np.max(mesh_vertices, axis=0)
+                dims = max_coords - min_coords 
+                vol = dims[0] * dims[1] * dims[2]
+                return float(vol * 1000)
+            except:
+                return 0.0
 
 
 class ModelManager:
@@ -415,6 +436,7 @@ class ModelManager:
         if self._smplx_loaded and self._smplx_wrapper:
             return self.smplx_available
             
+        # try:
         try:
             if not self._smplx_wrapper:
                 self._smplx_wrapper = SMPLestXWrapper(self._device)
@@ -436,9 +458,9 @@ class ModelManager:
     
     def _unload_mesh_model(self):
         """Unload SMPL-X model."""
-        if self._smplx_model is not None:
-            del self._smplx_model
-            self._smplx_model = None
+        if self._smplx_wrapper is not None:
+            del self._smplx_wrapper
+            self._smplx_wrapper = None
         self._smplx_loaded = False
         self._smplx_available = False
         self._current_gender = None
@@ -689,14 +711,14 @@ class BodyAnalyzer:
         smplx_loaded = self._manager.load_mesh_model(gender)
         result.degraded_mode = not smplx_loaded
         
-        if smplx_loaded and self._manager._smplx_model is not None:
+        if smplx_loaded and self._manager._smplx_wrapper is not None:
             # Full SMPLer-X analysis
-            return self._analyze_with_smplx(image_path, result)
+            return self._analyze_with_smplx(image_path, result, keypoints)
         else:
             # Degraded: 2D keypoint-based analysis
             return self._analyze_with_keypoints(image_path, keypoints, result)
     
-    def _analyze_with_smplx(self, image_path: str, result: BodyResult) -> BodyResult:
+    def _analyze_with_smplx(self, image_path: str, result: BodyResult, keypoints: Optional[dict] = None) -> BodyResult:
         """
         Full 3D analysis using SMPLest-X.
         """
@@ -745,7 +767,7 @@ class BodyAnalyzer:
             
             if inference_out:
                 result.betas = inference_out['betas']
-                result.volume = inference_out['volume_proxy']
+                result.volume_estimate = inference_out['volume_proxy']
                 result.analyzed = True
                 
                 # Also calculate metrics from 3D (or still use 2D keypoints if clearer?)
@@ -754,12 +776,13 @@ class BodyAnalyzer:
                 result.error = "Inference returned no result"
                 
             # Fallback to 2D metrics for ratios as they answer "proportions" well
-            return self._analyze_with_keypoints(image_path, None, result)
+            return self._analyze_with_keypoints(image_path, keypoints, result)
             
         except Exception as e:
+            logger.exception(f"SMPLest-X analysis failed: {e}")
             result.error = f"SMPLest-X analysis failed: {str(e)}"
-            logger.exception("SMPLest-X analysis error")
-            return self._analyze_with_keypoints(image_path, None, result)
+            result.degraded_mode = True
+            return self._analyze_with_keypoints(image_path, keypoints, result)
     
     def _analyze_with_keypoints(self, image_path: str, 
                                  keypoints: Optional[dict],
@@ -775,7 +798,7 @@ class BodyAnalyzer:
             
             result.analyzed = True
             result.ratios = ratios
-            result.degraded_mode = True
+            # result.degraded_mode = True # Inherited from caller
             
             return result
             
@@ -913,7 +936,7 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
         if body_result.analyzed:
             body_metrics[view] = {
                 'degraded_mode': body_result.degraded_mode,
-                'betas': body_result.betas.tolist() if body_result.betas is not None else None,
+                'betas': body_result.betas if body_result.betas is not None else None,
                 'volume': body_result.volume_estimate,
                 'ratios': body_result.ratios
             }
