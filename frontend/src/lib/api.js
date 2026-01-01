@@ -153,7 +153,8 @@ export function getFullImageUrl(imagePath) {
 // === WebSocket ===
 
 export function createProgressWebSocket(jobId, onMessage) {
-    const ws = new WebSocket(`ws://localhost:8000/ws/process/${jobId}`);
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const ws = new WebSocket(`${protocol}//${window.location.host}/ws/process/${jobId}`);
 
     ws.onopen = () => {
         console.log(`WebSocket connected for job ${jobId}`);

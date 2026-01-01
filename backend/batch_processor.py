@@ -289,8 +289,16 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 })
                 
                 # Analyze image
-                face_result = face_analyzer.analyze(image_path)
-                pose_result = pose_estimator.estimate(image_path)
+                loop = asyncio.get_event_loop()
+                
+                def _vision_task():
+                    logger.info(f"[{i+1}] Running Face Analysis...")
+                    f_res = face_analyzer.analyze(image_path)
+                    logger.info(f"[{i+1}] Running Pose Estimation...")
+                    p_res = pose_estimator.estimate(image_path)
+                    return f_res, p_res
+
+                face_result, pose_result = await loop.run_in_executor(None, _vision_task)
                 
                 # Determine shot type
                 shot_type = "unknown"
@@ -334,11 +342,16 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 limb_ratios = None
                 
                 if shot_type in ["full-body", "medium"]:
-                    body_result = body_analyzer.analyze(
-                        image_path,
-                        keypoints=pose_result.keypoints if pose_result.detected else None,
-                        gender=character.gender.value if character.gender else "neutral"
-                    )
+                    def _body_task():
+                        logger.info(f"[{i+1}] Running Body Analysis (SMPLest-X)...")
+                        return body_analyzer.analyze(
+                            image_path,
+                            keypoints=pose_result.keypoints if pose_result.detected else None,
+                            gender=character.gender.value if character.gender else "neutral"
+                        )
+                    
+                    body_result = await loop.run_in_executor(None, _body_task)
+                    logger.info(f"[{i+1}] Body Analysis Complete.")
                     
                     if body_result.analyzed and body_result.ratios:
                         # Extract dual metrics structure
