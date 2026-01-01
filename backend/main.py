@@ -532,6 +532,20 @@ async def set_reference_images(
         if not is_valid:
             raise HTTPException(status_code=400, detail=f"Invalid path for {view_type}: {error}")
     
+    # Run analysis to get embeddings and metrics
+    from vision_engine import validate_references
+    import json
+    
+    try:
+        # Determine gender string for model selection
+        gender_str = character.gender.value if character.gender else "neutral"
+        analysis_result = validate_references(request.images, gender=gender_str)
+    except Exception as e:
+        logger.error(f"Reference analysis failed during set: {e}")
+        # We proceed even if analysis fails, but log it
+        # Ideally we should warn, but for now we just save paths
+        analysis_result = None
+
     # Clear existing references
     db.query(ReferenceImage).filter(ReferenceImage.character_id == character_id).delete()
     
@@ -542,10 +556,38 @@ async def set_reference_images(
             path=path,
             view_type=view_type
         )
+        
+        if analysis_result:
+            # Store face embedding
+            if view_type in analysis_result.face_embeddings:
+                ref.embedding_blob = analysis_result.face_embeddings[view_type].tobytes()
+            
+            # Store body metrics in JSON
+            if analysis_result.body_metrics and view_type in analysis_result.body_metrics:
+                metrics = analysis_result.body_metrics[view_type]
+                data_to_store = {}
+                
+                if metrics.get('betas') is not None:
+                    # Convert numpy array to list if needed
+                    val = metrics['betas']
+                    if hasattr(val, 'tolist'):
+                        data_to_store['betas'] = val.tolist()
+                    else:
+                        data_to_store['betas'] = val
+                
+                if metrics.get('volume'):
+                    data_to_store['volume'] = metrics['volume']
+                    
+                if metrics.get('ratios'):
+                    data_to_store['ratios'] = metrics['ratios']
+                    
+                if data_to_store:
+                    ref.smpl_params_json = json.dumps(data_to_store)
+        
         db.add(ref)
     
     db.commit()
-    return {"message": "Reference images set", "count": len(request.images)}
+    return {"message": "Reference images set and analyzed", "count": len(request.images)}
 
 
 @app.get("/api/characters/{character_id}/references")

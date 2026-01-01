@@ -131,6 +131,7 @@ class ValidationResult:
     degraded_mode: bool = True
     warnings: list[ValidationWarning] = field(default_factory=list)
     master_embedding: Optional[np.ndarray] = None
+    face_embeddings: dict[str, np.ndarray] = field(default_factory=dict)
     body_metrics: Optional[dict] = None
     error: Optional[str] = None
 
@@ -895,10 +896,12 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     
     # === Head Group Analysis ===
     head_embeddings = []
+    face_embeddings = {}
     for view in ['head_front', 'head_45l', 'head_45r']:
         face_result = face_analyzer.analyze(images[view])
         if face_result.detected and face_result.embedding is not None:
             head_embeddings.append(face_result.embedding)
+            face_embeddings[view] = face_result.embedding
         else:
             result.warnings.append(ValidationWarning(
                 code="HEAD_FACE_NOT_DETECTED",
@@ -975,6 +978,7 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
         result.warnings.extend(ratio_warnings)
     
     # Final result
+    result.face_embeddings = face_embeddings
     result.body_metrics = body_metrics
     result.success = not any(w.severity == "error" for w in result.warnings)
     
