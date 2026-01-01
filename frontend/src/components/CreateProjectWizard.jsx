@@ -6,12 +6,16 @@ import { useProject } from '../context/ProjectContext';
 import * as api from '../lib/api';
 
 /**
- * Reference image slot configuration
+ * Reference image slot configurations
  */
-const HEAD_SLOTS = [
-    { key: 'head_front', label: 'Front', icon: '○' },
-    { key: 'head_45l', label: '45° Left', icon: '←', description: "Viewer's left" },
-    { key: 'head_45r', label: '45° Right', icon: '→', description: "Viewer's right" }
+const headSlots = [
+    { key: 'head_front', label: 'Front', icon: '⚫', description: 'Face camera', required: true },
+    { key: 'head_45l', label: '45° Left', icon: '←', description: "Viewer's left", required: true },
+    { key: 'head_45r', label: '45° Right', icon: '→', description: "Viewer's right", required: true },
+    { key: 'head_90l', label: '90° Left Profile', icon: '⮜', description: 'Full left side', required: false, optional: true },
+    { key: 'head_90r', label: '90° Right Profile', icon: '⮞', description: 'Full right side', required: false, optional: true },
+    { key: 'head_up', label: 'Looking Up', icon: '⮝', description: 'Pitch +30°', required: false, optional: true },
+    { key: 'head_down', label: 'Looking Down', icon: '⮟', description: 'Pitch -30°', required: false, optional: true },
 ];
 
 const BODY_SLOTS = [
@@ -107,15 +111,18 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                     break;
 
                 case 2: // References step
-                    const allSlots = [...HEAD_SLOTS, ...BODY_SLOTS];
-                    const filledSlots = allSlots.filter(s => referenceImages[s.key]);
-                    if (filledSlots.length < 6) {
-                        throw new Error(`Please assign all 6 reference images (${filledSlots.length}/6 filled)`);
+                    const requiredSlots = [...headSlots.filter(s => s.required), ...BODY_SLOTS];
+                    const filledRequired = requiredSlots.filter(s => referenceImages[s.key]);
+                    if (filledRequired.length < 6) {
+                        throw new Error(`Please assign all 6 required reference images (${filledRequired.length}/6 filled)`);
                     }
                     // Save reference paths
+                    const allSlots = [...headSlots, ...BODY_SLOTS]; // Keep allSlots for saving all assigned images
                     const paths = {};
                     for (const slot of allSlots) {
-                        paths[slot.key] = referenceImages[slot.key].path;
+                        if (referenceImages[slot.key]) { // Only save if an image is assigned
+                            paths[slot.key] = referenceImages[slot.key].path;
+                        }
                     }
                     await setReferenceImages(createdCharacter.id, paths);
                     break;
@@ -132,7 +139,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                     if (!validationResult) {
                         // Run validation
                         const paths = {};
-                        for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
+                        for (const slot of [...headSlots, ...BODY_SLOTS]) {
                             paths[slot.key] = referenceImages[slot.key].path;
                         }
                         const validation = await analyzeReferences(paths, gender);
@@ -161,7 +168,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
         setError(null);
         try {
             const paths = {};
-            for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
+            for (const slot of [...headSlots, ...BODY_SLOTS]) {
                 paths[slot.key] = referenceImages[slot.key].path;
             }
             const validation = await analyzeReferences(paths, gender);
@@ -238,6 +245,36 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                                 className="w-full px-4 py-3 bg-zinc-900 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50"
                                 autoFocus
                             />
+                        </div>
+                        {/* Head References */}
+                        <div>
+                            <h3 className="text-sm font-medium text-zinc-300 mb-3">Head References</h3>
+                            <div className="grid grid-cols-3 gap-3">
+                                {headSlots.filter(s => s.required).map(slot => (
+                                    <ReferenceSlot
+                                        key={slot.key}
+                                        slot={slot}
+                                        selectedImages={selectedImages}
+                                        onSelect={() => handleSelectReference(slot.key)}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Optional head references */}
+                            <div className="mt-4">
+                                <h4 className="text-xs font-medium text-zinc-500 mb-2">Optional (Improves accuracy)</h4>
+                                <div className="grid grid-cols-4 gap-2">
+                                    {headSlots.filter(s => s.optional).map(slot => (
+                                        <ReferenceSlot
+                                            key={slot.key}
+                                            slot={slot}
+                                            selectedImages={selectedImages}
+                                            onSelect={() => handleSelectReference(slot.key)}
+                                            optional={true}
+                                        />
+                                    ))}
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-zinc-300 mb-2">LoRA Preset</label>

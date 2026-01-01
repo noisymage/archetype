@@ -2,7 +2,7 @@
  * API client for backend communication
  */
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = '';
 
 /**
  * Generic fetch wrapper with error handling
@@ -112,13 +112,32 @@ export async function cancelJob(jobId) {
     return apiFetch(`/api/process/${jobId}/cancel`, { method: 'POST' });
 }
 
+export async function getCharacterReferences(characterId) {
+    const res = await fetch(`${API_BASE}/api/characters/${characterId}/references`);
+    if (!res.ok) throw new Error('Failed to get references');
+    return res.json();
+}
+
+export async function setCharacterReferences(characterId, imagePaths) {
+    const res = await fetch(`${API_BASE}/api/characters/${characterId}/references`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: imagePaths })
+    });
+    if (!res.ok) throw new Error('Failed to set references');
+    return res.json();
+}
+
 // === Reference Analysis ===
 
-export async function analyzeReferences(images, gender = 'neutral') {
-    return apiFetch('/api/analyze/reference', {
+export async function analyzeReferences(imagePaths, gender = 'neutral') {
+    const res = await fetch(`${API_BASE}/api/analyze/reference`, {
         method: 'POST',
-        body: JSON.stringify({ images, gender })
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ images: imagePaths, gender })
     });
+    if (!res.ok) throw new Error('Failed to analyze references');
+    return res.json();
 }
 
 // === Image URLs ===

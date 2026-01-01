@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Filter, Grid3X3, LayoutList, Image as ImageIcon, Play, X, Loader2 } from 'lucide-react';
+import { Filter, Grid3X3, LayoutList, Image as ImageIcon, Play, X, Loader2, FolderOpen, PlayCircle, Pause, Check, ChevronDown, Pencil } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ImageCard } from './ImageCard';
 import { Skeleton } from './ui/Skeleton';
 import { Button } from './ui/Button';
 import { useProject } from '../context/ProjectContext';
 import { ImageDetailModal } from './ImageDetailModal';
+import EditReferencesModal from './EditReferencesModal';
 
 /**
  * Main content area with responsive image grid
@@ -23,6 +24,7 @@ export function MainContent() {
     const [selectedImage, setSelectedImage] = useState(null);
     const [statusFilter, setStatusFilter] = useState('all');
     const [reprocessMode, setReprocessMode] = useState(false);
+    const [editReferencesOpen, setEditReferencesOpen] = useState(false);
 
     // Filter images by status
     const filteredImages = statusFilter === 'all'
@@ -167,6 +169,21 @@ export function MainContent() {
                     </div>
                 )}
 
+                {/* Edit References Button */}
+                {selectedCharacter && !activeJob && (
+                    <div className="px-6 py-3 border-b border-white/5 bg-zinc-900/50 flex justify-end">
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => setEditReferencesOpen(true)}
+                        >
+                            <Pencil className="w-3.5 h-3.5" />
+                            Edit References
+                        </Button>
+                    </div>
+                )}
+
                 {/* Image Grid */}
                 <div className="flex-1 overflow-y-auto p-8 z-10">
                     {selectedCharacter ? (
@@ -218,17 +235,32 @@ export function MainContent() {
                 </div>
             </main>
 
-            {/* Detail Modal */}
+            {/* Image Detail Modal */}
             {selectedImage && (
                 <ImageDetailModal
                     image={selectedImage}
-                    metrics={{
-                        face_bbox: selectedImage.face_bbox,
-                        keypoints: selectedImage.keypoints,
-                        shot_type: selectedImage.shot_type,
-                        limb_ratios: selectedImage.limb_ratios
-                    }}
+                    open={!!selectedImage}
                     onClose={() => setSelectedImage(null)}
+                    metrics={{
+                        keypoints: selectedImage.keypoints,
+                        face_bbox: selectedImage.face_bbox
+                    }}
+                />
+            )}
+
+            {/* Edit References Modal */}
+            {selectedCharacter && (
+                <EditReferencesModal
+                    character={selectedCharacter}
+                    open={editReferencesOpen}
+                    onClose={() => setEditReferencesOpen(false)}
+                    onSave={() => {
+                        // Refresh character data
+                        if (selectedCharacter) {
+                            // The context will auto-refresh on next render
+                            setEditReferencesOpen(false);
+                        }
+                    }}
                 />
             )}
         </>

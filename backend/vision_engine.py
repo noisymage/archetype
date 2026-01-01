@@ -984,8 +984,12 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     
     Args:
         images: Dict mapping view type to image path:
-            - head_front, head_45l, head_45r (Face Analysis only)
+            Required:
+            - head_front, head_45l, head_45r (Face Analysis)
             - body_front, body_side, body_posterior (Full analysis)
+            Optional (improves pose-aware matching):
+            - head_90l, head_90r (Full left/right profiles)
+            - head_up, head_down (Pitch variation)
         gender: Character gender for SMPL-X model selection.
         
     Returns:
@@ -1001,6 +1005,7 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     # Validate required images
     required_head = {'head_front', 'head_45l', 'head_45r'}
     required_body = {'body_front', 'body_side', 'body_posterior'}
+    optional_head = {'head_90l', 'head_90r', 'head_up', 'head_down'}
     
     provided = set(images.keys())
     missing_head = required_head - provided
@@ -1009,14 +1014,14 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     if missing_head:
         result.warnings.append(ValidationWarning(
             code="MISSING_HEAD_REFS",
-            message=f"Missing head reference images: {missing_head}",
+            message=f"Missing required head reference images: {missing_head}",
             severity="error"
         ))
     
     if missing_body:
         result.warnings.append(ValidationWarning(
             code="MISSING_BODY_REFS", 
-            message=f"Missing body reference images: {missing_body}",
+            message=f"Missing required body reference images: {missing_body}",
             severity="error"
         ))
     
@@ -1024,12 +1029,18 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
         result.error = "Required reference images missing"
         return result
     
-    # === Head Group Analysis ===
+    # === Head Group Analysis (Required + Optional) ===
     head_embeddings = []
     face_embeddings = {}
     face_poses = {}
     
-    for view in ['head_front', 'head_45l', 'head_45r']:
+    # Process all provided head references (required + optional)
+    all_head_views = required_head | (provided & optional_head)
+    
+    for view in all_head_views:
+        if view not in images:
+            continue
+            
         face_result = face_analyzer.analyze(images[view])
         if face_result.detected and face_result.embedding is not None:
             head_embeddings.append(face_result.embedding)
@@ -1039,10 +1050,11 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
             if face_result.pose:
                 face_poses[view] = face_result.pose
         else:
+            severity = "error" if view in required_head else "warning"
             result.warnings.append(ValidationWarning(
                 code="HEAD_FACE_NOT_DETECTED",
                 message=f"No face detected in {view}: {face_result.error}",
-                severity="warning"
+                severity=severity
             ))
     
     # Store embeddings and poses in result
@@ -1193,26 +1205,58 @@ def _check_volume_consistency(body_metrics: dict) -> list[ValidationWarning]:
 
 
 def _check_ratio_consistency(body_metrics: dict) -> list[ValidationWarning]:
-    """Check if skeletal ratios are consistent across views."""
+    """Check if limb ratios are consistent across body views."""
     warnings = []
     
-    # Collect all ratio keys
-    all_ratios = {}
-    for view, metrics in body_metrics.items():
-        for key, value in metrics.get('ratios', {}).items():
-            if key not in all_ratios:
-                all_ratios[key] = []
-            all_ratios[key].append(value)
+    if not body_metrics:
+        return warnings
     
-    # Check variance for each ratio
-    for ratio_name, values in all_ratios.items():
+    # Extract ratios from each view's metrics
+    # New format: {view: {"metrics_3d": {...}, "metrics_2d": {...}, "preferred": "3d"}}
+    # Old format: {view: {"ratios": {...}, "degraded_mode": bool}}
+    
+    ratio_by_type = {}  # ratio_name -> [values]
+    
+    for view, metrics in body_metrics.items():
+        # Handle new dual-metrics structure
+        if 'metrics_3d' in metrics or 'metrics_2d' in metrics:
+            # Use preferred metric or fallback to 3d then 2d
+            preferred = metrics.get('preferred', '3d')
+            
+            if preferred == '3d' and 'metrics_3d' in metrics:
+                ratios = metrics['metrics_3d'].get('ratios', {})
+            elif preferred == '2d' and 'metrics_2d' in metrics:
+                ratios = metrics['metrics_2d'].get('ratios', {})
+            elif 'metrics_3d' in metrics:
+                ratios = metrics['metrics_3d'].get('ratios', {})
+            elif 'metrics_2d' in metrics:
+                ratios = metrics['metrics_2d'].get('ratios', {})
+            else:
+                continue
+        # Handle old flat structure
+        elif 'ratios' in metrics:
+            ratios = metrics['ratios']
+        else:
+            continue
+        
+        # Collect ratio values
+        for ratio_name, ratio_value in ratios.items():
+            if isinstance(ratio_value, (int, float)):
+                if ratio_name not in ratio_by_type:
+                    ratio_by_type[ratio_name] = []
+                ratio_by_type[ratio_name].append(ratio_value)
+    
+    # Check consistency (coefficient of variation < 0.15)
+    for ratio_name, values in ratio_by_type.items():
         if len(values) >= 2:
             mean_val = np.mean(values)
-            max_var = max(abs(v - mean_val) / mean_val for v in values) if mean_val != 0 else 0
-            if max_var > 0.10:  # 10% variance threshold
+            std_val = np.std(values)
+            cv = std_val / mean_val if mean_val != 0 else 0
+            
+            if cv > 0.15:
                 warnings.append(ValidationWarning(
                     code="RATIO_INCONSISTENCY",
-                    message=f"Ratio '{ratio_name}' varies by {max_var*100:.1f}% across views",
+                    message=f"Inconsistent {ratio_name} across views (CV={cv:.2f})",
                     severity="warning"
                 ))
     
