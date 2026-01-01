@@ -5,6 +5,7 @@ backend/*.pyc
 backend/*.db
 backend/test_data/
 backend/models/
+backend/.cache/
 
 # Node
 frontend/node_modules/

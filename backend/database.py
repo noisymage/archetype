@@ -2,9 +2,10 @@
 Database models and configuration for Character Consistency Validator.
 Uses SQLAlchemy ORM with SQLite backend.
 """
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, ForeignKey, Enum, LargeBinary
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, ForeignKey, Enum, LargeBinary, DateTime, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from datetime import datetime
 import enum
 import os
 
@@ -43,6 +44,15 @@ class Gender(enum.Enum):
     NEUTRAL = "neutral"
 
 
+class JobStatus(enum.Enum):
+    """Status of a batch processing job."""
+    PENDING = "pending"
+    PROCESSING = "processing"
+    COMPLETED = "completed"
+    CANCELLED = "cancelled"
+    FAILED = "failed"
+
+
 class Project(Base):
     """Project container for organizing characters and datasets."""
     __tablename__ = "projects"
@@ -66,6 +76,7 @@ class Character(Base):
     project = relationship("Project", back_populates="characters")
     reference_images = relationship("ReferenceImage", back_populates="character", cascade="all, delete-orphan")
     dataset_images = relationship("DatasetImage", back_populates="character", cascade="all, delete-orphan")
+    processing_jobs = relationship("ProcessingJob", back_populates="character", cascade="all, delete-orphan")
 
 
 class ReferenceImage(Base):
@@ -120,6 +131,23 @@ class Caption(Base):
     text_content = Column(Text, nullable=False)
 
     image = relationship("DatasetImage", back_populates="captions")
+
+
+class ProcessingJob(Base):
+    """Track batch processing jobs for characters."""
+    __tablename__ = "processing_jobs"
+
+    id = Column(String(36), primary_key=True)  # UUID
+    character_id = Column(Integer, ForeignKey("characters.id"), nullable=False)
+    status = Column(Enum(JobStatus), default=JobStatus.PENDING)
+    total_images = Column(Integer, default=0)
+    processed_count = Column(Integer, default=0)
+    cancelled = Column(Boolean, default=False)
+    error_message = Column(Text, nullable=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    character = relationship("Character", back_populates="processing_jobs")
 
 
 def get_db():

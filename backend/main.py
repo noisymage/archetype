@@ -3,16 +3,22 @@ FastAPI application entry point for Character Consistency Validator.
 """
 import os
 import logging
+import asyncio
+import uuid
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Depends, WebSocket, WebSocketDisconnect, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from contextlib import asynccontextmanager
 from pydantic import BaseModel, Field
+from sqlalchemy.orm import Session
 
-from database import init_db
+from database import (
+    init_db, get_db, Project, Character, ReferenceImage, DatasetImage, 
+    ImageMetrics, ProcessingJob, JobStatus, ImageStatus, LoraPresetType, Gender
+)
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -71,6 +77,102 @@ class SingleImageResponse(BaseModel):
     keypoints: Optional[dict] = None
     shot_type: str = "unknown"
     error: Optional[str] = None
+
+
+# --- Project/Character CRUD Models ---
+
+class ProjectCreate(BaseModel):
+    """Request to create a project."""
+    name: str = Field(..., min_length=1, max_length=255)
+    lora_preset_type: str = Field(default="SDXL")
+
+
+class ProjectResponse(BaseModel):
+    """Project data response."""
+    id: int
+    name: str
+    lora_preset_type: str
+    character_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class CharacterCreate(BaseModel):
+    """Request to create a character."""
+    name: str = Field(..., min_length=1, max_length=255)
+    gender: str = Field(default="neutral")
+
+
+class CharacterResponse(BaseModel):
+    """Character data response."""
+    id: int
+    project_id: int
+    name: str
+    gender: str
+    reference_count: int = 0
+    image_count: int = 0
+
+    class Config:
+        from_attributes = True
+
+
+class ReferenceImageCreate(BaseModel):
+    """Request to add reference images."""
+    images: dict[str, str] = Field(
+        ...,
+        description="Mapping of view type to absolute image path"
+    )
+
+
+class DatasetImageResponse(BaseModel):
+    """Dataset image data response."""
+    id: int
+    original_path: str
+    filename: str
+    status: str
+    face_similarity: Optional[float] = None
+    body_consistency: Optional[float] = None
+    shot_type: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class FolderScanRequest(BaseModel):
+    """Request to scan a folder for images."""
+    folder_path: str = Field(..., description="Absolute path to folder")
+    character_id: int
+
+
+class FolderScanResponse(BaseModel):
+    """Response from folder scan."""
+    folder_path: str
+    total_found: int
+    new_entries: int
+    already_exists: int
+
+
+class BatchProcessRequest(BaseModel):
+    """Request to start batch processing."""
+    character_id: int
+
+
+class BatchProcessResponse(BaseModel):
+    """Response from batch process start."""
+    job_id: str
+    character_id: int
+    total_images: int
+    status: str
+
+
+class JobStatusResponse(BaseModel):
+    """Job status response."""
+    job_id: str
+    status: str
+    total_images: int
+    processed_count: int
+    error_message: Optional[str] = None
 
 
 # === Lifespan ===
@@ -258,3 +360,402 @@ async def serve_image(path: str = Query(..., description="Absolute path to image
         media_type=media_type,
         filename=resolved.name
     )
+
+
+# === Project CRUD Endpoints ===
+
+@app.get("/api/projects", response_model=List[ProjectResponse])
+async def list_projects(db: Session = Depends(get_db)):
+    """List all projects."""
+    projects = db.query(Project).all()
+    return [
+        ProjectResponse(
+            id=p.id,
+            name=p.name,
+            lora_preset_type=p.lora_preset_type.value if p.lora_preset_type else "SDXL",
+            character_count=len(p.characters)
+        )
+        for p in projects
+    ]
+
+
+@app.post("/api/projects", response_model=ProjectResponse)
+async def create_project(request: ProjectCreate, db: Session = Depends(get_db)):
+    """Create a new project."""
+    try:
+        preset_type = LoraPresetType(request.lora_preset_type)
+    except ValueError:
+        preset_type = LoraPresetType.SDXL
+    
+    project = Project(name=request.name, lora_preset_type=preset_type)
+    db.add(project)
+    db.commit()
+    db.refresh(project)
+    
+    return ProjectResponse(
+        id=project.id,
+        name=project.name,
+        lora_preset_type=project.lora_preset_type.value,
+        character_count=0
+    )
+
+
+@app.get("/api/projects/{project_id}", response_model=ProjectResponse)
+async def get_project(project_id: int, db: Session = Depends(get_db)):
+    """Get a project by ID."""
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return ProjectResponse(
+        id=project.id,
+        name=project.name,
+        lora_preset_type=project.lora_preset_type.value if project.lora_preset_type else "SDXL",
+        character_count=len(project.characters)
+    )
+
+
+@app.delete("/api/projects/{project_id}")
+async def delete_project(project_id: int, db: Session = Depends(get_db)):
+    """Delete a project and all its characters."""
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    db.delete(project)
+    db.commit()
+    return {"message": "Project deleted", "id": project_id}
+
+
+# === Character CRUD Endpoints ===
+
+@app.get("/api/projects/{project_id}/characters", response_model=List[CharacterResponse])
+async def list_characters(project_id: int, db: Session = Depends(get_db)):
+    """List all characters in a project."""
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return [
+        CharacterResponse(
+            id=c.id,
+            project_id=c.project_id,
+            name=c.name,
+            gender=c.gender.value if c.gender else "neutral",
+            reference_count=len(c.reference_images),
+            image_count=len(c.dataset_images)
+        )
+        for c in project.characters
+    ]
+
+
+@app.post("/api/projects/{project_id}/characters", response_model=CharacterResponse)
+async def create_character(
+    project_id: int, 
+    request: CharacterCreate, 
+    db: Session = Depends(get_db)
+):
+    """Create a new character in a project."""
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    try:
+        gender = Gender(request.gender)
+    except ValueError:
+        gender = Gender.NEUTRAL
+    
+    character = Character(
+        project_id=project_id,
+        name=request.name,
+        gender=gender
+    )
+    db.add(character)
+    db.commit()
+    db.refresh(character)
+    
+    return CharacterResponse(
+        id=character.id,
+        project_id=character.project_id,
+        name=character.name,
+        gender=character.gender.value,
+        reference_count=0,
+        image_count=0
+    )
+
+
+@app.get("/api/characters/{character_id}", response_model=CharacterResponse)
+async def get_character(character_id: int, db: Session = Depends(get_db)):
+    """Get a character by ID."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    return CharacterResponse(
+        id=character.id,
+        project_id=character.project_id,
+        name=character.name,
+        gender=character.gender.value if character.gender else "neutral",
+        reference_count=len(character.reference_images),
+        image_count=len(character.dataset_images)
+    )
+
+
+@app.delete("/api/characters/{character_id}")
+async def delete_character(character_id: int, db: Session = Depends(get_db)):
+    """Delete a character."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    db.delete(character)
+    db.commit()
+    return {"message": "Character deleted", "id": character_id}
+
+
+# === Reference Images Endpoints ===
+
+@app.post("/api/characters/{character_id}/references")
+async def set_reference_images(
+    character_id: int,
+    request: ReferenceImageCreate,
+    db: Session = Depends(get_db)
+):
+    """Set reference images for a character (replaces existing)."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    # Validate all paths
+    for view_type, path in request.images.items():
+        is_valid, error = validate_image_path(path)
+        if not is_valid:
+            raise HTTPException(status_code=400, detail=f"Invalid path for {view_type}: {error}")
+    
+    # Clear existing references
+    db.query(ReferenceImage).filter(ReferenceImage.character_id == character_id).delete()
+    
+    # Add new references
+    for view_type, path in request.images.items():
+        ref = ReferenceImage(
+            character_id=character_id,
+            path=path,
+            view_type=view_type
+        )
+        db.add(ref)
+    
+    db.commit()
+    return {"message": "Reference images set", "count": len(request.images)}
+
+
+@app.get("/api/characters/{character_id}/references")
+async def get_reference_images(character_id: int, db: Session = Depends(get_db)):
+    """Get reference images for a character."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    return [
+        {
+            "id": ref.id,
+            "view_type": ref.view_type,
+            "path": ref.path
+        }
+        for ref in character.reference_images
+    ]
+
+
+# === Dataset Images Endpoints ===
+
+@app.get("/api/characters/{character_id}/images", response_model=List[DatasetImageResponse])
+async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
+    """List all dataset images for a character."""
+    character = db.query(Character).filter(Character.id == character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    result = []
+    for img in character.dataset_images:
+        metrics = img.metrics
+        result.append(DatasetImageResponse(
+            id=img.id,
+            original_path=img.original_path,
+            filename=Path(img.original_path).name,
+            status=img.status.value if img.status else "pending",
+            face_similarity=metrics.face_similarity_score if metrics else None,
+            body_consistency=metrics.body_consistency_score if metrics else None,
+            shot_type=metrics.shot_type if metrics else None
+        ))
+    
+    return result
+
+
+# === Folder Scanning ===
+
+@app.post("/api/scan-folder", response_model=FolderScanResponse)
+async def scan_folder(request: FolderScanRequest, db: Session = Depends(get_db)):
+    """Scan a folder for images and create dataset entries."""
+    from batch_processor import scan_folder_for_images, create_dataset_entries
+    
+    character = db.query(Character).filter(Character.id == request.character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    try:
+        images = scan_folder_for_images(request.folder_path)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    new_count = create_dataset_entries(db, request.character_id, images)
+    
+    return FolderScanResponse(
+        folder_path=request.folder_path,
+        total_found=len(images),
+        new_entries=new_count,
+        already_exists=len(images) - new_count
+    )
+
+
+@app.get("/api/list-images")
+async def list_images(folder_path: str = Query(..., description="Absolute path to folder")):
+    """List images in a folder without creating database entries."""
+    from batch_processor import scan_folder_for_images
+    
+    try:
+        images = scan_folder_for_images(folder_path)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    
+    return {
+        "folder_path": folder_path,
+        "images": images
+    }
+
+
+# === Batch Processing ===
+
+@app.post("/api/process/batch", response_model=BatchProcessResponse)
+async def start_batch_process(
+    request: BatchProcessRequest,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    """Start batch processing for a character's dataset images."""
+    from batch_processor import process_batch
+    
+    character = db.query(Character).filter(Character.id == request.character_id).first()
+    if not character:
+        raise HTTPException(status_code=404, detail="Character not found")
+    
+    # Count pending images
+    pending_count = db.query(DatasetImage).filter(
+        DatasetImage.character_id == request.character_id,
+        DatasetImage.status == ImageStatus.PENDING
+    ).count()
+    
+    if pending_count == 0:
+        raise HTTPException(status_code=400, detail="No pending images to process")
+    
+    # Create job
+    job_id = str(uuid.uuid4())
+    job = ProcessingJob(
+        id=job_id,
+        character_id=request.character_id,
+        status=JobStatus.PENDING,
+        total_images=pending_count
+    )
+    db.add(job)
+    db.commit()
+    
+    # Start background processing
+    background_tasks.add_task(process_batch, request.character_id, job_id)
+    
+    return BatchProcessResponse(
+        job_id=job_id,
+        character_id=request.character_id,
+        total_images=pending_count,
+        status="pending"
+    )
+
+
+@app.get("/api/process/status/{job_id}", response_model=JobStatusResponse)
+async def get_job_status(job_id: str, db: Session = Depends(get_db)):
+    """Get the status of a processing job."""
+    job = db.query(ProcessingJob).filter(ProcessingJob.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    return JobStatusResponse(
+        job_id=job.id,
+        status=job.status.value if job.status else "unknown",
+        total_images=job.total_images,
+        processed_count=job.processed_count,
+        error_message=job.error_message
+    )
+
+
+@app.post("/api/process/{job_id}/cancel")
+async def cancel_job(job_id: str, db: Session = Depends(get_db)):
+    """Cancel a running processing job."""
+    from batch_processor import request_cancellation
+    
+    job = db.query(ProcessingJob).filter(ProcessingJob.id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+    
+    if job.status not in [JobStatus.PENDING, JobStatus.PROCESSING]:
+        raise HTTPException(status_code=400, detail="Job cannot be cancelled")
+    
+    success = request_cancellation(job_id)
+    if success:
+        return {"message": "Cancellation requested", "job_id": job_id}
+    else:
+        raise HTTPException(status_code=400, detail="Job not found or already completed")
+
+
+# === WebSocket for Progress ===
+
+@app.websocket("/ws/process/{job_id}")
+async def websocket_progress(websocket: WebSocket, job_id: str):
+    """WebSocket endpoint for real-time processing progress."""
+    from batch_processor import register_websocket, unregister_websocket
+    
+    await websocket.accept()
+    register_websocket(job_id, websocket)
+    
+    try:
+        while True:
+            # Keep connection alive, wait for messages
+            data = await websocket.receive_text()
+            # Echo back for ping/pong
+            if data == "ping":
+                await websocket.send_text("pong")
+    except WebSocketDisconnect:
+        unregister_websocket(job_id, websocket)
+
+
+# === Thumbnail Service ===
+
+@app.get("/api/image/thumbnail")
+async def serve_thumbnail(
+    path: str = Query(..., description="Absolute path to image file"),
+    size: int = Query(256, description="Maximum thumbnail dimension")
+):
+    """Serve a cached thumbnail for an image."""
+    from thumbnail_service import generate_thumbnail
+    
+    # Basic path validation (less strict than full images)
+    resolved = Path(path).resolve()
+    if not resolved.exists():
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    thumbnail_path = generate_thumbnail(path, size)
+    if not thumbnail_path:
+        raise HTTPException(status_code=500, detail="Failed to generate thumbnail")
+    
+    return FileResponse(
+        path=thumbnail_path,
+        media_type="image/jpeg",
+        filename=f"thumb_{resolved.stem}.jpg"
+    )
+
