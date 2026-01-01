@@ -4,9 +4,40 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 
 /**
+ * Math Utils for Similarity
+ */
+const dotProduct = (a, b) => a.reduce((acc, val, i) => acc + val * b[i], 0);
+const magnitude = (a) => Math.sqrt(a.reduce((acc, val) => acc + val * val, 0));
+const cosineSimilarity = (a, b) => {
+    if (!a || !b || a.length !== b.length) return 0;
+    return dotProduct(a, b) / (magnitude(a) * magnitude(b));
+};
+
+const euclideanDistance = (a, b) => {
+    if (!a || !b || a.length !== b.length) return Infinity;
+    return Math.sqrt(a.reduce((acc, val, i) => acc + Math.pow(val - b[i], 2), 0));
+};
+
+// Normalize keypoints to 0-1 range based on bbox [x, y, w, h]
+const normalizeKeypoints = (keypoints, bbox) => {
+    if (!keypoints || !bbox) return {};
+    const [bx, by, bw, bh] = bbox;
+    const normalized = {};
+    Object.entries(keypoints).forEach(([name, data]) => {
+        if (data.confidence > 0.3) { // Only consider visible points
+            normalized[name] = {
+                x: (data.x - bx) / bw,
+                y: (data.y - by) / bh
+            };
+        }
+    });
+    return normalized;
+};
+
+/**
  * Image Analysis Result Viewer
  */
-function AnalysisResult({ data, loading, error }) {
+function AnalysisResult({ data, loading, error, referenceData }) {
     const [expanded, setExpanded] = useState({ face: true, pose: true, body: true });
 
     const toggle = (section) => {
@@ -41,7 +72,17 @@ function AnalysisResult({ data, loading, error }) {
                     onClick={() => toggle('face')}
                     className="w-full px-3 py-2 flex items-center justify-between hover:bg-white/5 transition-colors"
                 >
-                    <span className="font-semibold text-zinc-300">Face Analysis</span>
+                    <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-300">Face Analysis</span>
+                        {referenceData?.face?.embedding && data?.face?.embedding && (
+                            <span className={cn(
+                                "text-xs px-1.5 py-0.5 rounded",
+                                cosineSimilarity(referenceData.face.embedding, data.face.embedding) > 0.5 ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400"
+                            )}>
+                                {(cosineSimilarity(referenceData.face.embedding, data.face.embedding) * 100).toFixed(1)}% Match
+                            </span>
+                        )}
+                    </div>
                     {expanded.face ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
                 {expanded.face && (
@@ -95,7 +136,40 @@ function AnalysisResult({ data, loading, error }) {
                     onClick={() => toggle('pose')}
                     className="w-full px-3 py-2 flex items-center justify-between hover:bg-white/5 transition-colors"
                 >
-                    <span className="font-semibold text-zinc-300">2D Pose (YOLO)</span>
+                    <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-300">2D Pose (YOLO)</span>
+                        {referenceData?.pose?.keypoints && data?.pose?.keypoints && (
+                            (() => {
+                                // Calculate simple pose similarity
+                                const normRef = normalizeKeypoints(referenceData.pose.keypoints, referenceData.pose.bbox);
+                                const normCand = normalizeKeypoints(data.pose.keypoints, data.pose.bbox);
+
+                                let totalDist = 0;
+                                let count = 0;
+                                Object.keys(normRef).forEach(k => {
+                                    if (normCand[k]) {
+                                        const dist = Math.sqrt(Math.pow(normRef[k].x - normCand[k].x, 2) + Math.pow(normRef[k].y - normCand[k].y, 2));
+                                        totalDist += dist;
+                                        count++;
+                                    }
+                                });
+
+                                if (count > 0) {
+                                    const avgDist = totalDist / count;
+                                    const match = Math.max(0, 100 * (1 - avgDist * 2)); // *2 is heuristic scaling
+                                    return (
+                                        <span className={cn(
+                                            "text-xs px-1.5 py-0.5 rounded",
+                                            match > 70 ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"
+                                        )}>
+                                            ~{match.toFixed(0)}% Match
+                                        </span>
+                                    );
+                                }
+                                return null;
+                            })()
+                        )}
+                    </div>
                     {expanded.pose ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
                 {expanded.pose && (
@@ -137,7 +211,18 @@ function AnalysisResult({ data, loading, error }) {
                     onClick={() => toggle('body')}
                     className="w-full px-3 py-2 flex items-center justify-between hover:bg-white/5 transition-colors"
                 >
-                    <span className="font-semibold text-zinc-300">3D Body Analysis</span>
+                    <div className="flex items-center gap-2">
+                        <span className="font-semibold text-zinc-300">3D Body Analysis</span>
+                        {referenceData?.body?.volume_estimate && data?.body?.volume_estimate && (
+                            <span className={cn(
+                                "text-xs px-1.5 py-0.5 rounded",
+                                (Math.min(referenceData.body.volume_estimate, data.body.volume_estimate) / Math.max(referenceData.body.volume_estimate, data.body.volume_estimate)) > 0.9
+                                    ? "bg-green-500/20 text-green-400" : "bg-yellow-500/20 text-yellow-400"
+                            )}>
+                                {(100 * Math.min(referenceData.body.volume_estimate, data.body.volume_estimate) / Math.max(referenceData.body.volume_estimate, data.body.volume_estimate)).toFixed(1)}% Vol Match
+                            </span>
+                        )}
+                    </div>
                     {expanded.body ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
                 </button>
                 {expanded.body && (
@@ -199,7 +284,7 @@ function AnalysisResult({ data, loading, error }) {
 /**
  * Single Image Upload and Display Card
  */
-function ImageSlot({ title, imageState, onFileSelect, onRemove }) {
+function ImageSlot({ title, imageState, onFileSelect, onRemove, referenceData }) {
     const inputRef = useRef(null);
 
     const handleDragOver = (e) => {
@@ -265,6 +350,7 @@ function ImageSlot({ title, imageState, onFileSelect, onRemove }) {
                             data={imageState.data}
                             loading={imageState.loading}
                             error={imageState.error}
+                            referenceData={referenceData}
                         />
                     </div>
                 )}
@@ -359,6 +445,7 @@ export function CompareTool() {
                         imageState={images.candidate}
                         onFileSelect={(f) => handleFileSelect('candidate', f)}
                         onRemove={() => handleRemove('candidate')}
+                        referenceData={images.reference.data}
                     />
                 </div>
             </div>
