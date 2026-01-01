@@ -1,0 +1,3 @@
+[submodule "backend/smplest_x_lib"]
+	path = backend/smplest_x_lib
+	url = https://github.com/SMPLCap/SMPLest-X.git
