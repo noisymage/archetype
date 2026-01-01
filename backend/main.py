@@ -567,6 +567,11 @@ async def set_reference_images(
             if view_type in analysis_result.face_embeddings:
                 ref.embedding_blob = analysis_result.face_embeddings[view_type].tobytes()
             
+            # Store face pose (NEW!)
+            if view_type in analysis_result.face_poses:
+                import json
+                ref.pose_json = json.dumps(analysis_result.face_poses[view_type])
+            
             # Store body metrics in JSON
             if analysis_result.body_metrics and view_type in analysis_result.body_metrics:
                 metrics = analysis_result.body_metrics[view_type]
@@ -587,7 +592,7 @@ async def set_reference_images(
                     data_to_store['ratios'] = metrics['ratios']
                     
                 if data_to_store:
-                    ref.smpl_params_json = json.dumps(data_to_store)
+                    ref.body_metrics_json = json.dumps(data_to_store)
         
         db.add(ref)
     

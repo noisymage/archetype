@@ -81,6 +81,7 @@ class FaceResult:
     bbox: Optional[list[float]] = None  # [x, y, w, h]
     landmarks: Optional[np.ndarray] = None
     confidence: float = 0.0
+    pose: Optional[dict] = None  # {"yaw": float, "pitch": float, "roll": float}
     error: Optional[str] = None
 
 
@@ -113,17 +114,6 @@ class ValidationWarning:
     severity: str = "warning"  # "warning" or "error"
 
 
-@dataclass
-class ValidationResult:
-    """Result from reference image validation."""
-    success: bool = False
-    degraded_mode: bool = True
-    warnings: list[ValidationWarning] = field(default_factory=list)
-    master_embedding: Optional[np.ndarray] = None
-    body_metrics: Optional[dict] = None
-    error: Optional[str] = None
-
-
 @dataclass 
 class ValidationResult:
     """Result from reference image validation."""
@@ -132,6 +122,7 @@ class ValidationResult:
     warnings: list[ValidationWarning] = field(default_factory=list)
     master_embedding: Optional[np.ndarray] = None
     face_embeddings: dict[str, np.ndarray] = field(default_factory=dict)
+    face_poses: dict[str, dict] = field(default_factory=dict)  # view_type -> {"yaw": ..., "pitch": ..., "roll": ...}
     body_metrics: Optional[dict] = None
     error: Optional[str] = None
 
@@ -517,6 +508,112 @@ class ModelManager:
         return ['CPUExecutionProvider']
 
 
+def estimate_head_pose(landmarks: np.ndarray, image_shape: tuple) -> Optional[dict]:
+    """
+    Estimate head pose (yaw, pitch, roll) from facial landmarks using PnP algorithm.
+    
+    Args:
+        landmarks: Facial landmarks array (5 or 106 points)
+        image_shape: (height, width) of the image
+    
+    Returns:
+        {"yaw": float, "pitch": float, "roll": float} in degrees, or None if failed
+    """
+    try:
+        import cv2
+        
+        # InsightFace returns 106 or 5 landmarks depending on model
+        # We need at least 6 points for reliable pose estimation
+        if landmarks.shape[0] < 6:
+            logger.debug(f"Not enough landmarks for pose estimation: {landmarks.shape}")
+            return None
+        
+        # Extract 6 key facial points
+        if len(landmarks.shape) == 2 and landmarks.shape[1] >= 2:
+            # Use first 6 points from 106-landmark model
+            # These correspond to: various face outline and feature points
+            image_points = landmarks[:6, :2].copy().astype(np.float32)
+        else:
+            logger.debug(f"Unexpected landmark shape: {landmarks.shape}")
+            return None
+        
+        # Ensure it's a contiguous array (OpenCV requirement)
+        image_points = np.ascontiguousarray(image_points, dtype=np.float32)
+        
+        # Verify we have exactly 6 valid 2D points
+        if image_points.shape != (6, 2):
+            logger.debug(f"Invalid image_points shape after processing: {image_points.shape}")
+            return None
+        
+        # 3D model points of a generic face (in mm)
+        # Approximate positions for first 6 landmarks from InsightFace 106-point model
+        model_points = np.array([
+            (0.0, -330.0, -65.0),      # Chin center
+            (-225.0, 170.0, -135.0),   # Left eye outer corner
+            (225.0, 170.0, -135.0),    # Right eye outer corner
+            (-150.0, -150.0, -125.0),  # Left mouth corner
+            (150.0, -150.0, -125.0),   # Right mouth corner
+            (0.0, 0.0, 0.0),           # Nose tip
+        ], dtype=np.float32)
+        
+        # Camera internals (approximate monocular camera)
+        h, w = image_shape[:2]
+        focal_length = w
+        center = (w / 2, h / 2)
+        camera_matrix = np.array([
+            [focal_length, 0, center[0]],
+            [0, focal_length, center[1]],
+            [0, 0, 1]
+        ], dtype=np.float32)
+        
+        # Assume no lens distortion
+        dist_coeffs = np.zeros((4, 1), dtype=np.float32)
+        
+        # Solve PnP using EPNP (works with 4+ points, more robust than ITERATIVE)
+        success, rotation_vec, translation_vec = cv2.solvePnP(
+            model_points,
+            image_points,
+            camera_matrix,
+            dist_coeffs,
+            flags=cv2.SOLVEPNP_EPNP  # Changed from ITERATIVE
+        )
+        
+        if not success:
+            return None
+        
+        # Convert rotation vector to rotation matrix
+        rotation_mat, _ = cv2.Rodrigues(rotation_vec)
+        
+        # Create projection matrix
+        pose_mat = cv2.hconcat((rotation_mat, translation_vec))
+        
+        # Decompose projection matrix to get Euler angles
+        _, _, _, _, _, _, euler_angles = cv2.decomposeProjectionMatrix(pose_mat)
+        
+        # Extract pitch, yaw, roll (in degrees)
+        pitch = float(euler_angles[0, 0])
+        yaw = float(euler_angles[1, 0])
+        roll = float(euler_angles[2, 0])
+        
+        # Normalize angles to reasonable ranges
+        # Yaw: -180 to 180
+        # Pitch: -90 to 90  
+        # Roll: -180 to 180
+        yaw = ((yaw + 180) % 360) - 180
+        pitch = ((pitch + 90) % 180) - 90
+        roll = ((roll + 180) % 360) - 180
+        
+        return {
+            "yaw": yaw,
+            "pitch": pitch,
+            "roll": roll
+        }
+        
+    except Exception as e:
+        logger.warning(f"Head pose estimation failed: {e}")
+        return None
+
+
 class FaceAnalyzer:
     """
     Face detection and embedding extraction using InsightFace.
@@ -575,6 +672,10 @@ class FaceAnalyzer:
             result.bbox = face.bbox.tolist()  # [x1, y1, x2, y2]
             result.landmarks = face.landmark_2d_106 if hasattr(face, 'landmark_2d_106') else face.kps
             result.confidence = float(face.det_score)
+            
+            # Calculate head pose from landmarks
+            if result.landmarks is not None:
+                result.pose = estimate_head_pose(result.landmarks, img.shape)
             
             return result
             
@@ -926,17 +1027,27 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     # === Head Group Analysis ===
     head_embeddings = []
     face_embeddings = {}
+    face_poses = {}
+    
     for view in ['head_front', 'head_45l', 'head_45r']:
         face_result = face_analyzer.analyze(images[view])
         if face_result.detected and face_result.embedding is not None:
             head_embeddings.append(face_result.embedding)
             face_embeddings[view] = face_result.embedding
+            
+            # Store pose for pose-aware matching
+            if face_result.pose:
+                face_poses[view] = face_result.pose
         else:
             result.warnings.append(ValidationWarning(
                 code="HEAD_FACE_NOT_DETECTED",
                 message=f"No face detected in {view}: {face_result.error}",
                 severity="warning"
             ))
+    
+    # Store embeddings and poses in result
+    result.face_embeddings = face_embeddings
+    result.face_poses = face_poses
     
     # Compute Master Identity Vector
     if head_embeddings:

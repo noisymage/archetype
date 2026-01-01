@@ -668,3 +668,1854 @@ INFO:     127.0.0.1:49650 - "GET /api/health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49687 - "GET /api/health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49735 - "GET /api/health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:49788 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49843 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49886 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49935 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49986 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50056 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'vision_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [10701]
+INFO:     Started server process [12975]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'vision_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12975]
+INFO:     Started server process [13027]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50118 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'vision_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13027]
+INFO:     Started server process [13061]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13061]
+INFO:     Started server process [13101]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'database.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13101]
+INFO:     Started server process [13116]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50240 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'batch_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13116]
+INFO:     Started server process [13374]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50277 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50302 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'batch_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13374]
+INFO:     Started server process [13460]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'batch_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13460]
+INFO:     Started server process [13483]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50349 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'batch_processor.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13483]
+INFO:     Started server process [13517]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50386 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'vision_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13517]
+INFO:     Started server process [13584]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50424 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'vision_engine.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13584]
+INFO:     Started server process [13624]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13624]
+INFO:     Started server process [13651]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50486 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50505 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50545 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50579 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50612 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50644 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50654 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50655 - "OPTIONS /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50657 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50659 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50655 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x11190f0e0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50654 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1119bc690>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50661 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1119bfd90>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50672 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50670 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111e4ed70>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50674 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50676 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111e4f230>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50678 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111fca9f0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50685 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50683 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111973460>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50687 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50689 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1119fa470>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50691 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111eb1750>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50696 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50698 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111eb1350>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50700 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50702 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111fc1c70>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50704 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1119c23f0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50711 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50709 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111ec65f0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50714 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50715 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x111ec4590>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50717 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x11198f380>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50757 - "GET /api/health HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'main.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13651]
+INFO:     Started server process [13939]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:50795 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50820 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50837 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50839 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50835 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10707f0e0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50841 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10712d090>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50843 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10712c690>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50852 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50850 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10820e9e0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50854 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50856 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10820f100>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50858 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1082cbbf0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50865 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50863 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x10716ae00>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50867 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50869 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x107169e10>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50871 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1082ad350>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50878 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50876 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1082ad150>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50880 - "GET /api/health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50882 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x1085c28a0>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     127.0.0.1:50884 - "GET /api/projects HTTP/1.1" 500 Internal Server Error
+ERROR:    Exception in ASGI application
+Traceback (most recent call last):
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/protocols/http/httptools_impl.py", line 416, in run_asgi
+    result = await app(  # type: ignore[func-returns-value]
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        self.scope, self.receive, self.send
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/uvicorn/middleware/proxy_headers.py", line 60, in __call__
+    return await self.app(scope, receive, send)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/applications.py", line 1135, in __call__
+    await super().__call__(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/applications.py", line 107, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 186, in __call__
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/errors.py", line 164, in __call__
+    await self.app(scope, receive, _send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 93, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/cors.py", line 144, in simple_response
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 115, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 53, in wrapped_app
+    raise exc
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/starlette/_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 101, in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 377, in app
+    content = await serialize_response(
+              ^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<10 lines>...
+    )
+    ^
+  File "/Users/johan/Development/archetype/backend/.venv/lib/python3.13/site-packages/fastapi/routing.py", line 215, in serialize_response
+    raise ResponseValidationError(
+    ...<3 lines>...
+    )
+fastapi.exceptions.ResponseValidationError: 1 validation error:
+  {'type': 'get_attribute_error', 'loc': ('response', 0, 'characters', 0, 'reference_count'), 'msg': 'Error extracting attribute: OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)', 'input': <database.Character object at 0x108287200>, 'ctx': {'error': 'OperationalError: (sqlite3.OperationalError) no such column: reference_images.body_metrics_json\n[SQL: SELECT reference_images.id AS reference_images_id, reference_images.character_id AS reference_images_character_id, reference_images.path AS reference_images_path, reference_images.view_type AS reference_images_view_type, reference_images.embedding_blob AS reference_images_embedding_blob, reference_images.body_metrics_json AS reference_images_body_metrics_json, reference_images.pose_json AS reference_images_pose_json \nFROM reference_images \nWHERE ? = reference_images.character_id]\n[parameters: (1,)]\n(Background on this error at: https://sqlalche.me/e/20/e3q8)'}}
+
+  File "/Users/johan/Development/archetype/backend/main.py", line 380, in list_projects
+    GET /api/projects
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [13939]
+INFO:     Stopping reloader process [7020]

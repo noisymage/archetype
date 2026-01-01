@@ -93,10 +93,11 @@ class ReferenceImage(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     character_id = Column(Integer, ForeignKey("characters.id"), nullable=False)
-    path = Column(String(1024), nullable=False)  # Absolute local path
-    view_type = Column(String(50))  # e.g., "front", "side", "3/4"
-    embedding_blob = Column(LargeBinary)  # Face embedding storage
-    smpl_params_blob = Column(LargeBinary)  # Body params storage
+    path = Column(String(500), nullable=False)
+    view_type = Column(String(50))  # e.g., "head_front", "body_front"
+    embedding_blob = Column(LargeBinary)  # Face embedding as binary
+    body_metrics_json = Column(Text)  # Body metrics (betas, ratios, etc.)
+    pose_json = Column(Text)  # Head pose: {"yaw": float, "pitch": float, "roll": float}
 
     character = relationship("Character", back_populates="reference_images")
 
@@ -127,6 +128,7 @@ class ImageMetrics(Base):
     shot_type = Column(String(50))  # e.g., "close-up", "medium", "full-body"
     keypoints_json = Column(Text)  # JSON string of YOLO keypoints for overlay
     face_bbox_json = Column(Text)  # JSON string of face bounding box [x1, y1, x2, y2]
+    face_pose_json = Column(Text)  # JSON string of head pose {"yaw": ..., "pitch": ..., "roll": ...}
 
     image = relationship("DatasetImage", back_populates="metrics")
 
