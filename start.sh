@@ -19,7 +19,7 @@ cd "$BACKEND_DIR"
 # Create venv if it doesn't exist
 if [ ! -d ".venv" ]; then
     echo "   Creating Python virtual environment..."
-    python3 -m venv .venv
+    python3.13 -m venv .venv
 fi
 
 # Activate venv and install dependencies
