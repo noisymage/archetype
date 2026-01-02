@@ -140,6 +140,12 @@ export async function analyzeReferences(imagePaths, gender = 'neutral') {
     return res.json();
 }
 
+export async function reprocessImage(imageId) {
+    return apiFetch(`/api/images/${imageId}/reprocess`, {
+        method: 'POST'
+    });
+}
+
 // === Image URLs ===
 
 export function getThumbnailUrl(imagePath, size = 256) {

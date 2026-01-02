@@ -194,13 +194,176 @@ def compute_pose_aware_similarity(
     return sum(weighted_similarities) / total_weight, best_ref_id
 
 
+async def process_single_dataset_image(
+    db: Session,
+    dataset_image: DatasetImage,
+    reference_data: list,
+    models: dict,
+    master_embedding: Optional[np.ndarray] = None
+) -> dict:
+    """
+    Process a single dataset image and update its metrics.
+    
+    Args:
+        db: Database session
+        dataset_image: Image to process
+        reference_data: List of (embedding, pose, ref_id) tuples
+        models: Dictionary containing initialized analyzer instances
+        master_embedding: Fallback embedding for non-pose-aware matching
+        
+    Returns:
+        Dictionary with processing results/metrics
+    """
+    from database import ImageStatus
+    
+    # Unpack models
+    face_analyzer = models['face_analyzer']
+    pose_estimator = models['pose_estimator']
+    body_analyzer = models['body_analyzer']
+    
+    image_path = dataset_image.original_path
+    character = dataset_image.character
+    
+    # Run analysis tasks
+    loop = asyncio.get_event_loop()
+    
+    def _vision_task():
+        logger.info(f"Running Face Analysis for {Path(image_path).name}...")
+        f_res = face_analyzer.analyze(image_path)
+        logger.info(f"Running Pose Estimation for {Path(image_path).name}...")
+        p_res = pose_estimator.estimate(image_path)
+        return f_res, p_res
+
+    face_result, pose_result = await loop.run_in_executor(None, _vision_task)
+    
+    # Determine shot type
+    shot_type = "unknown"
+    if pose_result.detected and pose_result.keypoints:
+        kp = pose_result.keypoints
+        has_full_body = all(
+            k in kp and kp[k].get('confidence', 0) > 0.3
+            for k in ['left_ankle', 'right_ankle', 'left_shoulder', 'right_shoulder']
+        )
+        has_upper = all(
+            k in kp and kp[k].get('confidence', 0) > 0.3
+            for k in ['left_shoulder', 'right_shoulder', 'left_hip', 'right_hip']
+        )
+        if has_full_body:
+            shot_type = "full-body"
+        elif has_upper:
+            shot_type = "medium"
+        elif face_result.detected:
+            shot_type = "close-up"
+    elif face_result.detected:
+        shot_type = "close-up"
+    
+    # Compute face similarity
+    face_similarity = None
+    closest_face_ref_id = None
+    
+    if face_result.detected and face_result.embedding is not None:
+        if face_result.pose and reference_data:
+            # Use pose-aware similarity
+            face_similarity, closest_face_ref_id = compute_pose_aware_similarity(
+                face_result.embedding,
+                face_result.pose,
+                reference_data
+            )
+        elif master_embedding is not None:
+            # Fallback
+            face_similarity = compute_similarity(master_embedding, face_result.embedding)
+    
+    # Body analysis
+    body_consistency = None
+    body_consistency_3d = None
+    body_consistency_2d = None
+    limb_ratios = None
+    
+    if shot_type in ["full-body", "medium"]:
+        def _body_task():
+            logger.info(f"Running Body Analysis for {Path(image_path).name}...")
+            return body_analyzer.analyze(
+                image_path,
+                keypoints=pose_result.keypoints if pose_result.detected else None,
+                gender=character.gender.value if character.gender else "neutral"
+            )
+        
+        body_result = await loop.run_in_executor(None, _body_task)
+        
+        if body_result.analyzed and body_result.ratios:
+            metrics_3d = body_result.ratios.get('metrics_3d')
+            metrics_2d = body_result.ratios.get('metrics_2d')
+            preferred = body_result.ratios.get('preferred', 'none')
+            
+            if metrics_3d:
+                body_consistency_3d = metrics_3d.get('consistency_score', 0.85)
+            if metrics_2d:
+                body_consistency_2d = metrics_2d.get('consistency_score', 0.75)
+            
+            if preferred == "3d" and body_consistency_3d:
+                body_consistency = body_consistency_3d
+            elif preferred == "2d" and body_consistency_2d:
+                body_consistency = body_consistency_2d
+            
+            limb_ratios = {
+                "metrics_3d": metrics_3d,
+                "metrics_2d": metrics_2d,
+                "preferred": preferred
+            }
+    
+    # Create or update metrics
+    metrics = db.query(ImageMetrics).filter(
+        ImageMetrics.image_id == dataset_image.id
+    ).first()
+    
+    if not metrics:
+        metrics = ImageMetrics(image_id=dataset_image.id)
+        db.add(metrics)
+    
+    metrics.face_similarity_score = face_similarity
+    metrics.closest_face_ref_id = closest_face_ref_id
+    metrics.body_consistency_score = body_consistency
+    metrics.shot_type = shot_type
+    
+    if pose_result.detected and pose_result.keypoints:
+        import json
+        metrics.keypoints_json = json.dumps(pose_result.keypoints)
+    
+    if face_result.detected and face_result.bbox:
+        import json
+        metrics.face_bbox_json = json.dumps(face_result.bbox)
+    
+    if face_result.detected and face_result.pose:
+        import json
+        metrics.face_pose_json = json.dumps(face_result.pose)
+    
+    if limb_ratios:
+        import json
+        metrics.limb_ratios_json = json.dumps(limb_ratios)
+    
+    # Update status
+    if face_similarity is not None:
+        if face_similarity >= 0.85:
+            dataset_image.status = ImageStatus.APPROVED
+        elif face_similarity < 0.7:
+            dataset_image.status = ImageStatus.REJECTED
+        else:
+            dataset_image.status = ImageStatus.ANALYZED
+    else:
+        dataset_image.status = ImageStatus.ANALYZED
+        
+    return {
+        "face_similarity": face_similarity,
+        "body_consistency": body_consistency,
+        "shot_type": shot_type
+    }
+
+
 async def process_batch(character_id: int, job_id: str, reprocess_all: bool = False):
     """
     Process images for a character.
-    
-    This runs in a background task and updates the job progress.
-    Uses serial processing (one at a time) to manage VRAM.
     """
+    from database import ImageStatus
     from vision_engine import ModelManager, FaceAnalyzer, PoseEstimator, BodyAnalyzer
     
     # Initialize cancellation flag
@@ -208,6 +371,7 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
     
     db = SessionLocal()
     try:
+        # ... (setup logic remains same until loop) ...
         # Get job and character
         job = db.query(ProcessingJob).filter(ProcessingJob.id == job_id).first()
         character = db.query(Character).filter(Character.id == character_id).first()
@@ -225,7 +389,6 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         if not reprocess_all:
             query = query.filter(DatasetImage.status == ImageStatus.PENDING)
             
-        
         pending_images = query.all()
         
         if not pending_images:
@@ -241,227 +404,88 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         job.total_images = len(pending_images)
         db.commit()
         
-        # Get reference embeddings AND poses for pose-aware matching
+        # Get reference data
         references = db.query(ReferenceImage).filter(
             ReferenceImage.character_id == character_id,
             ReferenceImage.embedding_blob.isnot(None)
         ).all()
         
-        reference_data = []  # List of (embedding, pose, ref_id) tuples
-        master_embedding = None  # Fallback for old method
+        reference_data = [] 
+        master_embedding = None
         
         for ref in references:
             embedding = np.frombuffer(ref.embedding_blob, dtype=np.float32)
-            
             if ref.pose_json:
-                # New pose-aware method
                 import json
                 pose = json.loads(ref.pose_json)
                 reference_data.append((embedding, pose, ref.id))
             else:
-                # Old averaging fallback (no pose data)
                 if master_embedding is None:
                     master_embedding = embedding.copy()
                 else:
                     master_embedding = (master_embedding + embedding) / 2
         
-        # If no pose data available, compute master embedding the old way
         if not reference_data and master_embedding is None:
             master_embedding = get_master_embedding(db, character_id)
         
         # Initialize models
         manager = ModelManager()
-        face_analyzer = FaceAnalyzer(manager)
-        pose_estimator = PoseEstimator(manager)
-        body_analyzer = BodyAnalyzer(manager)
+        models = {
+            'face_analyzer': FaceAnalyzer(manager),
+            'pose_estimator': PoseEstimator(manager),
+            'body_analyzer': BodyAnalyzer(manager)
+        }
         
-        # Process each image serially
+        # Process loop
         for i, dataset_image in enumerate(pending_images):
-            # Check for cancellation
             if is_cancelled(job_id):
                 job.status = JobStatus.CANCELLED
                 job.cancelled = True
                 db.commit()
-                await broadcast_progress(job_id, {
-                    "type": "cancelled",
-                    "processed": i,
-                    "total": len(pending_images)
-                })
+                await broadcast_progress(job_id, {"type": "cancelled", "processed": i, "total": len(pending_images)})
                 break
             
             try:
-                image_path = dataset_image.original_path
-                
-                # Broadcast current progress
+                # Progress update
                 await broadcast_progress(job_id, {
                     "type": "progress",
                     "processed": i,
                     "total": len(pending_images),
-                    "current_image": Path(image_path).name,
-                    "current_path": image_path
+                    "current_image": Path(dataset_image.original_path).name,
+                    "current_path": dataset_image.original_path
                 })
                 
-                # Analyze image
-                loop = asyncio.get_event_loop()
+                # Process SINGLE image
+                await process_single_dataset_image(
+                    db,
+                    dataset_image,
+                    reference_data,
+                    models,
+                    master_embedding
+                )
                 
-                def _vision_task():
-                    logger.info(f"[{i+1}] Running Face Analysis...")
-                    f_res = face_analyzer.analyze(image_path)
-                    logger.info(f"[{i+1}] Running Pose Estimation...")
-                    p_res = pose_estimator.estimate(image_path)
-                    return f_res, p_res
-
-                face_result, pose_result = await loop.run_in_executor(None, _vision_task)
-                
-                # Determine shot type
-                shot_type = "unknown"
-                if pose_result.detected and pose_result.keypoints:
-                    kp = pose_result.keypoints
-                    has_full_body = all(
-                        k in kp and kp[k].get('confidence', 0) > 0.3
-                        for k in ['left_ankle', 'right_ankle', 'left_shoulder', 'right_shoulder']
-                    )
-                    has_upper = all(
-                        k in kp and kp[k].get('confidence', 0) > 0.3
-                        for k in ['left_shoulder', 'right_shoulder', 'left_hip', 'right_hip']
-                    )
-                    if has_full_body:
-                        shot_type = "full-body"
-                    elif has_upper:
-                        shot_type = "medium"
-                    elif face_result.detected:
-                        shot_type = "close-up"
-                elif face_result.detected:
-                    shot_type = "close-up"
-                
-                # Compute face similarity (POSE-AWARE!)
-                face_similarity = None
-                closest_face_ref_id = None
-                
-                if face_result.detected and face_result.embedding is not None:
-                    if face_result.pose and reference_data:
-                        # Use pose-aware similarity
-                        face_similarity, closest_face_ref_id = compute_pose_aware_similarity(
-                            face_result.embedding,
-                            face_result.pose,
-                            reference_data
-                        )
-                    elif master_embedding is not None:
-                        # Fallback to old averaging method
-                        face_similarity = compute_similarity(master_embedding, face_result.embedding)
-                
-                # Body analysis for full/medium shots
-                body_consistency = None
-                body_consistency_3d = None
-                body_consistency_2d = None
-                limb_ratios = None
-                
-                if shot_type in ["full-body", "medium"]:
-                    def _body_task():
-                        logger.info(f"[{i+1}] Running Body Analysis (SMPLest-X)...")
-                        return body_analyzer.analyze(
-                            image_path,
-                            keypoints=pose_result.keypoints if pose_result.detected else None,
-                            gender=character.gender.value if character.gender else "neutral"
-                        )
-                    
-                    body_result = await loop.run_in_executor(None, _body_task)
-                    logger.info(f"[{i+1}] Body Analysis Complete.")
-                    
-                    if body_result.analyzed and body_result.ratios:
-                        # Extract dual metrics structure
-                        metrics_3d = body_result.ratios.get('metrics_3d')
-                        metrics_2d = body_result.ratios.get('metrics_2d')
-                        preferred = body_result.ratios.get('preferred', 'none')
-                        
-                        # Store both consistency scores if available
-                        if metrics_3d:
-                            body_consistency_3d = metrics_3d.get('consistency_score', 0.85)
-                        if metrics_2d:
-                            body_consistency_2d = metrics_2d.get('consistency_score', 0.75)
-                        
-                        # Use preferred for legacy body_consistency field
-                        if preferred == "3d" and body_consistency_3d:
-                            body_consistency = body_consistency_3d
-                        elif preferred == "2d" and body_consistency_2d:
-                            body_consistency = body_consistency_2d
-                        
-                        # Store complete dual metrics
-                        limb_ratios = {
-                            "metrics_3d": metrics_3d,
-                            "metrics_2d": metrics_2d,
-                            "preferred": preferred
-                        }
-                
-                # Create or update metrics
-                metrics = db.query(ImageMetrics).filter(
-                    ImageMetrics.image_id == dataset_image.id
-                ).first()
-                
-                if not metrics:
-                    metrics = ImageMetrics(image_id=dataset_image.id)
-                    db.add(metrics)
-                
-                metrics.face_similarity_score = face_similarity
-                metrics.closest_face_ref_id = closest_face_ref_id
-                metrics.body_consistency_score = body_consistency
-                metrics.shot_type = shot_type
-                
-                # Store keypoints for skeleton overlay
-                if pose_result.detected and pose_result.keypoints:
-                    import json
-                    metrics.keypoints_json = json.dumps(pose_result.keypoints)
-                
-                # Store face bbox for face overlay  
-                if face_result.detected and face_result.bbox:
-                    import json
-                    metrics.face_bbox_json = json.dumps(face_result.bbox)
-                
-                # Store face pose for pose-aware matching
-                if face_result.detected and face_result.pose:
-                    import json
-                    metrics.face_pose_json = json.dumps(face_result.pose)
-                
-                # Store limb ratios
-                if limb_ratios:
-                    import json
-                    metrics.limb_ratios_json = json.dumps(limb_ratios)
-                
-                # Update image status based on scores
-                if face_similarity is not None:
-                    if face_similarity >= 0.85:
-                        dataset_image.status = ImageStatus.APPROVED
-                    elif face_similarity < 0.7:
-                        dataset_image.status = ImageStatus.REJECTED
-                    else:
-                        dataset_image.status = ImageStatus.ANALYZED
-                else:
-                    dataset_image.status = ImageStatus.ANALYZED
-                
-                # Update job progress
+                # Update job count
                 job.processed_count = i + 1
                 db.commit()
                 
-                # Small delay to prevent UI flooding
                 await asyncio.sleep(0.05)
                 
             except Exception as e:
                 logger.exception(f"Error processing image {dataset_image.id}: {e}")
-                dataset_image.status = ImageStatus.ANALYZED  # Mark as analyzed even with errors
+                dataset_image.status = ImageStatus.ANALYZED
                 db.commit()
         
-        # Final status update
+        # Final status
         if not is_cancelled(job_id):
             job.status = JobStatus.COMPLETED
             job.processed_count = len(pending_images)
             db.commit()
-            
             await broadcast_progress(job_id, {
                 "type": "completed",
                 "processed": len(pending_images),
                 "total": len(pending_images)
             })
-        
+            
     except Exception as e:
         logger.exception(f"Batch processing failed: {e}")
         try:
@@ -472,15 +496,9 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 db.commit()
         except:
             pass
-        
-        await broadcast_progress(job_id, {
-            "type": "error",
-            "message": str(e)
-        })
-    
+        await broadcast_progress(job_id, {"type": "error", "message": str(e)})
     finally:
         db.close()
-        # Cleanup cancellation flag
         if job_id in cancellation_flags:
             del cancellation_flags[job_id]
 

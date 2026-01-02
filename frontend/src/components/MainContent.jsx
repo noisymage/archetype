@@ -19,7 +19,8 @@ export function MainContent() {
         isLoading,
         activeJob,
         startProcessing,
-        cancelProcessing
+        cancelProcessing,
+        loadDatasetImages
     } = useProject();
 
     const [selectedImage, setSelectedImage] = useState(null);
@@ -259,6 +260,11 @@ export function MainContent() {
                     metrics={{
                         keypoints: selectedImage.keypoints,
                         face_bbox: selectedImage.face_bbox
+                    }}
+                    onUpdate={(updatedImage) => {
+                        setSelectedImage(updatedImage);
+                        // Refresh grid
+                        if (selectedCharacter) loadDatasetImages(selectedCharacter.id);
                     }}
                 />
             )}

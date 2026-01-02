@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
-import { X, ZoomIn, ZoomOut, Eye, EyeOff, Bone, User, Square, Maximize2 } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, Eye, EyeOff, Bone, User, Square, Maximize2, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
-import { getFullImageUrl } from '../lib/api';
+import { getFullImageUrl, reprocessImage } from '../lib/api';
 
 /**
  * Image Detail Modal - Full-screen view with overlay toggles
  */
-export function ImageDetailModal({ image, metrics, onClose }) {
+export function ImageDetailModal({ image, metrics, onClose, onUpdate }) {
     const [showSkeleton, setShowSkeleton] = useState(false);
     const [showFaceBbox, setShowFaceBbox] = useState(false);
+    const [isReprocessing, setIsReprocessing] = useState(false);
     const [ratiosView, setRatiosView] = useState('preferred'); // 'preferred', '3d', or '2d'
     const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
     const canvasRef = useRef(null);
@@ -387,6 +388,31 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                         <Button variant="secondary" className="w-full gap-2">
                             <Eye className="w-4 h-4" />
                             Compare with Reference
+                        </Button>
+                        <Button
+                            variant="secondary"
+                            className="w-full gap-2"
+                            onClick={async () => {
+                                try {
+                                    setIsReprocessing(true);
+                                    const updatedImage = await reprocessImage(image.id);
+                                    // Update local state by calling passed update function or reloading?
+                                    // ideally we need to update the parent state.
+                                    // For now, let's just reload grid data if possible, or force update metrics locally.
+                                    // But metrics are passed as prop.
+                                    // We need an onUpdate callback.
+                                    if (onUpdate) onUpdate(updatedImage);
+                                } catch (e) {
+                                    console.error(e);
+                                    alert("Failed to reprocess image: " + e.message);
+                                } finally {
+                                    setIsReprocessing(false);
+                                }
+                            }}
+                            disabled={isReprocessing}
+                        >
+                            <RefreshCw className={cn("w-4 h-4", isReprocessing && "animate-spin")} />
+                            {isReprocessing ? "Reprocessing..." : "Reprocess Image"}
                         </Button>
                     </div>
                 </div>

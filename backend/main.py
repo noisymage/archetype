@@ -266,6 +266,88 @@ def validate_image_path(path: str) -> tuple[bool, str]:
     return True, ""
 
 
+# === Processing Endpoints ===
+
+@app.post("/api/images/{image_id}/reprocess", response_model=DatasetImageResponse)
+async def reprocess_image(image_id: int, db: Session = Depends(get_db)):
+    """Reprocess a single image."""
+    image = db.query(DatasetImage).filter(DatasetImage.id == image_id).first()
+    if not image:
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    from batch_processor import process_single_dataset_image, get_master_embedding
+    from vision_engine import ModelManager, FaceAnalyzer, PoseEstimator, BodyAnalyzer
+    import numpy as np
+
+    # Prepare reference data
+    character_id = image.character_id
+    references = db.query(ReferenceImage).filter(
+        ReferenceImage.character_id == character_id,
+        ReferenceImage.embedding_blob.isnot(None)
+    ).all()
+    
+    reference_data = [] 
+    master_embedding = None
+    
+    for ref in references:
+        embedding = np.frombuffer(ref.embedding_blob, dtype=np.float32)
+        if ref.pose_json:
+            import json
+            pose = json.loads(ref.pose_json)
+            reference_data.append((embedding, pose, ref.id))
+        else:
+            if master_embedding is None:
+                master_embedding = embedding.copy()
+            else:
+                master_embedding = (master_embedding + embedding) / 2
+    
+    if not reference_data and master_embedding is None:
+        master_embedding = get_master_embedding(db, character_id)
+
+    # Init models
+    manager = ModelManager()
+    models = {
+        'face_analyzer': FaceAnalyzer(manager),
+        'pose_estimator': PoseEstimator(manager),
+        'body_analyzer': BodyAnalyzer(manager)
+    }
+
+    try:
+        await process_single_dataset_image(
+            db,
+            image,
+            reference_data,
+            models,
+            master_embedding
+        )
+        db.commit()
+        db.refresh(image)
+        
+        # Format response
+        metrics = image.metrics
+        closest_ref_path = None
+        if metrics and metrics.closest_face_ref:
+            closest_ref_path = metrics.closest_face_ref.path
+            
+        return DatasetImageResponse(
+            id=image.id,
+            original_path=image.original_path,
+            filename=Path(image.original_path).name,
+            status=image.status.value if image.status else "pending",
+            face_similarity=metrics.face_similarity_score if metrics else None,
+            body_consistency=metrics.body_consistency_score if metrics else None,
+            shot_type=metrics.shot_type if metrics else None,
+            limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None,
+            keypoints=json.loads(metrics.keypoints_json) if metrics and metrics.keypoints_json else None,
+            face_bbox=json.loads(metrics.face_bbox_json) if metrics and metrics.face_bbox_json else None,
+            closest_face_ref=closest_ref_path
+        )
+        
+    except Exception as e:
+        logger.exception(f"Reprocessing failed: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # === API Endpoints ===
 
 @app.get("/api/health")
