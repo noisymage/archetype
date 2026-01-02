@@ -26,6 +26,8 @@ export function MainContent() {
 
     const [selectedImage, setSelectedImage] = useState(null);
     const [statusFilter, setStatusFilter] = useState('all');
+    const [sortBy, setSortBy] = useState('date');
+    const [viewMode, setViewMode] = useState('grid');
     const [reprocessMode, setReprocessMode] = useState(false);
     const [editReferencesOpen, setEditReferencesOpen] = useState(false);
     const [scanModalOpen, setScanModalOpen] = useState(false);
@@ -48,6 +50,26 @@ export function MainContent() {
     const filteredImages = statusFilter === 'all'
         ? datasetImages
         : datasetImages.filter(img => img.status === statusFilter);
+
+    // Sort images
+    const sortedImages = useMemo(() => {
+        return [...filteredImages].sort((a, b) => {
+            switch (sortBy) {
+                case 'date':
+                    return (b.id || 0) - (a.id || 0); // Assuming ID is roughly chronological
+                case 'date_asc':
+                    return (a.id || 0) - (b.id || 0);
+                case 'face_sim':
+                    return (b.face_similarity || 0) - (a.face_similarity || 0);
+                case 'body_sim':
+                    return (b.body_consistency || 0) - (a.body_consistency || 0);
+                case 'status':
+                    return a.status.localeCompare(b.status);
+                default:
+                    return 0;
+            }
+        });
+    }, [filteredImages, sortBy]);
 
     // Count by status
     const statusCounts = {
@@ -147,12 +169,12 @@ export function MainContent() {
                             )}
 
                             {/* Filter Dropdown */}
-                            <div className="flex items-center gap-1 text-sm">
+                            <div className="flex items-center gap-1 text-sm bg-zinc-900/50 rounded-md border border-white/10 px-2 py-1">
                                 <Filter className="w-3.5 h-3.5 text-zinc-500" />
                                 <select
                                     value={statusFilter}
                                     onChange={(e) => setStatusFilter(e.target.value)}
-                                    className="bg-transparent text-zinc-400 border-none focus:outline-none cursor-pointer"
+                                    className="bg-transparent text-zinc-400 border-none focus:outline-none cursor-pointer text-xs"
                                 >
                                     <option value="all">All ({statusCounts.all})</option>
                                     <option value="pending">Pending ({statusCounts.pending})</option>
@@ -162,12 +184,40 @@ export function MainContent() {
                                 </select>
                             </div>
 
+                            {/* Sort Dropdown */}
+                            <div className="flex items-center gap-1 text-sm bg-zinc-900/50 rounded-md border border-white/10 px-2 py-1">
+                                <ChevronDown className="w-3.5 h-3.5 text-zinc-500" />
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    className="bg-transparent text-zinc-400 border-none focus:outline-none cursor-pointer text-xs"
+                                >
+                                    <option value="date">Newest First</option>
+                                    <option value="date_asc">Oldest First</option>
+                                    <option value="face_sim">Face Match</option>
+                                    <option value="body_sim">Body Match</option>
+                                    <option value="status">Status</option>
+                                </select>
+                            </div>
+
                             {/* View Toggle */}
                             <div className="flex rounded-md overflow-hidden border border-white/10 p-0.5 bg-zinc-900/50">
-                                <button className="p-1.5 rounded bg-white/10 text-cyan-400">
+                                <button
+                                    onClick={() => setViewMode('grid')}
+                                    className={cn(
+                                        "p-1.5 rounded transition-colors",
+                                        viewMode === 'grid' ? "bg-white/10 text-cyan-400" : "hover:bg-white/5 text-zinc-500 hover:text-zinc-300"
+                                    )}
+                                >
                                     <Grid3X3 className="w-3.5 h-3.5" />
                                 </button>
-                                <button className="p-1.5 rounded hover:bg-white/5 text-zinc-500 hover:text-zinc-300 transition-colors">
+                                <button
+                                    onClick={() => setViewMode('list')}
+                                    className={cn(
+                                        "p-1.5 rounded transition-colors",
+                                        viewMode === 'list' ? "bg-white/10 text-cyan-400" : "hover:bg-white/5 text-zinc-500 hover:text-zinc-300"
+                                    )}
+                                >
                                     <LayoutList className="w-3.5 h-3.5" />
                                 </button>
                             </div>
@@ -249,9 +299,9 @@ export function MainContent() {
                                         : 'Scan a folder to import images for this character.'}
                                 </p>
                             </div>
-                        ) : (
+                        ) : viewMode === 'grid' ? (
                             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 p-2">
-                                {filteredImages.map((image) => (
+                                {sortedImages.map((image) => (
                                     <ImageCard
                                         key={image.id}
                                         image={image}
@@ -259,6 +309,76 @@ export function MainContent() {
                                         onClick={() => setSelectedImage(image)}
                                     />
                                 ))}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col min-w-full">
+                                <div className="grid grid-cols-[80px_1fr_100px_100px_120px_120px] gap-4 px-4 py-2 border-b border-white/10 text-xs font-medium text-zinc-500 uppercase tracking-wider sticky top-0 bg-zinc-950 z-10">
+                                    <div>Image</div>
+                                    <div>Filename</div>
+                                    <div>Status</div>
+                                    <div>Shot Type</div>
+                                    <div>Face Match</div>
+                                    <div>Body Match</div>
+                                </div>
+                                <div className="divide-y divide-white/5">
+                                    {sortedImages.map((image) => (
+                                        <div
+                                            key={image.id}
+                                            onClick={() => setSelectedImage(image)}
+                                            className={cn(
+                                                "grid grid-cols-[80px_1fr_100px_100px_120px_120px] gap-4 px-4 py-3 items-center hover:bg-white/5 cursor-pointer transition-colors group",
+                                                selectedImage?.id === image.id && "bg-cyan-500/10 hover:bg-cyan-500/15"
+                                            )}
+                                        >
+                                            <div className="relative aspect-square w-12 h-12 rounded overflow-hidden bg-zinc-800">
+                                                <img
+                                                    src={api.getThumbnailUrl(image.original_path || image.path, 256)}
+                                                    alt={image.filename}
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="truncate text-sm text-zinc-300 font-mono">
+                                                {image.filename}
+                                            </div>
+                                            <div>
+                                                <span className={cn(
+                                                    "px-2 py-0.5 rounded text-[10px] font-medium uppercase tracking-wider",
+                                                    image.status === 'approved' && "bg-emerald-500/20 text-emerald-400",
+                                                    image.status === 'rejected' && "bg-red-500/20 text-red-400",
+                                                    image.status === 'analyzed' && "bg-blue-500/20 text-blue-400",
+                                                    image.status === 'pending' && "bg-zinc-500/20 text-zinc-400"
+                                                )}>
+                                                    {image.status}
+                                                </span>
+                                            </div>
+                                            <div className="text-xs text-zinc-400 uppercase">
+                                                {image.shot_type || '-'}
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-cyan-500 rounded-full"
+                                                        style={{ width: `${(image.face_similarity || 0) * 100}%` }}
+                                                    />
+                                                </div>
+                                                <span className="text-xs text-zinc-500 w-8 text-right">
+                                                    {image.face_similarity ? Math.round(image.face_similarity * 100) : 0}%
+                                                </span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex-1 h-1.5 bg-zinc-800 rounded-full overflow-hidden">
+                                                    <div
+                                                        className="h-full bg-fuchsia-500 rounded-full"
+                                                        style={{ width: `${(image.body_consistency || 0) * 100}%` }}
+                                                    />
+                                                </div>
+                                                <span className="text-xs text-zinc-500 w-8 text-right">
+                                                    {image.body_consistency ? Math.round(image.body_consistency * 100) : 0}%
+                                                </span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         )
                     ) : (
