@@ -7,6 +7,7 @@ import { Button } from './ui/Button';
 import { useProject } from '../context/ProjectContext';
 import { ImageDetailModal } from './ImageDetailModal';
 import EditReferencesModal from './EditReferencesModal';
+import { ScanFolderModal } from './ScanFolderModal';
 
 /**
  * Main content area with responsive image grid
@@ -25,6 +26,7 @@ export function MainContent() {
     const [statusFilter, setStatusFilter] = useState('all');
     const [reprocessMode, setReprocessMode] = useState(false);
     const [editReferencesOpen, setEditReferencesOpen] = useState(false);
+    const [scanModalOpen, setScanModalOpen] = useState(false);
 
     // Filter images by status
     const filteredImages = statusFilter === 'all'
@@ -101,6 +103,19 @@ export function MainContent() {
                                 >
                                     <Play className="w-3.5 h-3.5" />
                                     Process ({reprocessMode ? datasetImages.length : statusCounts.pending})
+                                </Button>
+                            )}
+
+                            {/* Scan Button */}
+                            {!activeJob && (
+                                <Button
+                                    variant={datasetImages.length === 0 ? "primary" : "secondary"}
+                                    size="sm"
+                                    className="gap-2"
+                                    onClick={() => setScanModalOpen(true)}
+                                >
+                                    <FolderOpen className="w-3.5 h-3.5" />
+                                    {datasetImages.length === 0 ? "Scan Image Folder" : "Rescan"}
                                 </Button>
                             )}
 
@@ -261,6 +276,15 @@ export function MainContent() {
                             setEditReferencesOpen(false);
                         }
                     }}
+                />
+            )}
+
+            {/* Scan Folder Modal */}
+            {selectedCharacter && (
+                <ScanFolderModal
+                    character={selectedCharacter}
+                    open={scanModalOpen}
+                    onClose={() => setScanModalOpen(false)}
                 />
             )}
         </>

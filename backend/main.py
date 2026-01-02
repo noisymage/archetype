@@ -376,7 +376,10 @@ def _run_detailed_analysis(image_path: str) -> DetailedAnalysisResponse:
     # Body (needs keypoints from pose if available)
     body_analyzer = BodyAnalyzer(manager)
     keypoints = pose_result.keypoints if pose_result.detected else None
-    body_result = body_analyzer.analyze(image_path, keypoints=keypoints)
+    bbox = pose_result.bbox if pose_result.detected else None
+    
+    # Pass bbox to skip redundant detection
+    body_result = body_analyzer.analyze(image_path, keypoints=keypoints, bbox=bbox)
     
     # Construct response
     resp = DetailedAnalysisResponse()

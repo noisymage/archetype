@@ -790,13 +790,14 @@ class BodyAnalyzer:
         self._manager = model_manager
     
     def analyze(self, image_path: str, keypoints: Optional[dict] = None, 
-                gender: str = "neutral") -> BodyResult:
+                bbox: Optional[list] = None, gender: str = "neutral") -> BodyResult:
         """
         Analyze body shape and proportions using both 3D and 2D methods.
         
         Args:
             image_path: Absolute path to image file.
             keypoints: Pre-computed keypoints (optional).
+            bbox: Pre-computed bounding box [x1, y1, x2, y2] (optional).
             gender: Character gender for model selection.
             
         Returns:
@@ -818,9 +819,11 @@ class BodyAnalyzer:
         smplx_loaded = self._manager.load_mesh_model(gender)
         if smplx_loaded and self._manager._smplx_wrapper is not None:
             try:
-                metrics_3d = self._analyze_with_smplx(image_path, keypoints)
+                metrics_3d = self._analyze_with_smplx(image_path, bbox)
                 if metrics_3d and metrics_3d.get('success'):
                     preferred = "3d"
+                elif metrics_3d and metrics_3d.get('error'):
+                    logger.warning(f"3D analysis explicit failure: {metrics_3d.get('error')}")
             except Exception as e:
                 logger.warning(f"3D analysis failed, continuing with 2D: {e}")
         
@@ -838,6 +841,11 @@ class BodyAnalyzer:
         result.analyzed = (metrics_3d is not None or metrics_2d is not None)
         result.degraded_mode = (preferred == "2d")
         
+        if metrics_3d and metrics_3d.get("success"):
+            import numpy as np
+            result.volume_estimate = metrics_3d.get("volume")
+            result.betas = np.array(metrics_3d.get("betas")) if metrics_3d.get("betas") else None
+
         # Store dual metrics in ratios field (will be restructured in batch_processor)
         result.ratios = {
             "metrics_3d": metrics_3d,
@@ -847,10 +855,14 @@ class BodyAnalyzer:
         
         return result
     
-    def _analyze_with_smplx(self, image_path: str, keypoints: Optional[dict] = None) -> Optional[dict]:
+    def _analyze_with_smplx(self, image_path: str, bbox: Optional[list] = None) -> Optional[dict]:
         """
         Full 3D analysis using SMPLest-X.
         
+        Args:
+            image_path: Path to image
+            bbox: Optional [x1, y1, x2, y2] bounding box to skip detection
+            
         Returns:
             Dict with 3D metrics or None if failed.
         """
@@ -867,26 +879,35 @@ class BodyAnalyzer:
             if img is None:
                 return None
                 
-            # Get bounding box from pose detection
-            if not self._manager._pose_loaded:
-                self._manager.load_pose_model()
+            # Use provided bbox or detect new one
+            final_bbox = None
             
-            pose_res = self._manager._pose_model(image_path, verbose=False)[0]
-            if not pose_res.boxes or len(pose_res.boxes) == 0:
-                return None
-                 
-            # Best person
-            boxes = pose_res.boxes.xyxy.cpu().numpy()
-            areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
-            best_idx = int(areas.argmax())
-            bbox = boxes[best_idx].tolist()
+            if bbox:
+                final_bbox = bbox
+            else:
+                # Fallback to internal detection
+                if not self._manager._pose_loaded:
+                    self._manager.load_pose_model()
+                
+                pose_res = self._manager._pose_model(image_path, verbose=False)[0]
+                if pose_res.boxes and len(pose_res.boxes) > 0:
+                     # Best person
+                    boxes = pose_res.boxes.xyxy.cpu().numpy()
+                    areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
+                    best_idx = int(areas.argmax())
+                    final_bbox = boxes[best_idx].tolist()
             
+            if not final_bbox:
+                return {"error": "No person detected for 3D Analysis"}
+
             # Run SMPLest-X inference
-            inference_out = wrapper.run_inference(img, bbox)
+            inference_out = wrapper.run_inference(img, final_bbox)
             
             if inference_out:
                 # Calculate 3D-based ratios from mesh if available
-                ratios = self._compute_3d_ratios(inference_out) if keypoints else {}
+                # Note: We passed 'keypoints' in the original but it wasn't used properly here
+                # We can compute ratios from mesh vertices later
+                ratios = {}
                 
                 return {
                     "success": True,
