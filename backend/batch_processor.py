@@ -169,6 +169,11 @@ def compute_pose_aware_similarity(
             best_score = similarity
             best_ref_id = ref_id
         
+        # PRIORITY: If we found a near-perfect match (>95%), use it directly
+        # This prevents dilution from averaging with lower-scoring references
+        if similarity >= 0.95:
+            return (similarity, ref_id)
+        
         # Weight by inverse pose distance (exponential decay)
         # weight = exp(-distance / sigma)
         sigma = 15.0  # Controls decay rate
@@ -190,8 +195,9 @@ def compute_pose_aware_similarity(
                 
         return (best_score, best_ref_id) if best_score >= 0 else (0.0, None)
     
-    # Return weighted average and best individual match ID
-    return sum(weighted_similarities) / total_weight, best_ref_id
+    # Use best individual match instead of weighted average
+    # This fixes the issue where perfect matches were being diluted
+    return best_score, best_ref_id
 
 
 async def process_single_dataset_image(
@@ -296,9 +302,9 @@ async def process_single_dataset_image(
             preferred = body_result.ratios.get('preferred', 'none')
             
             if metrics_3d:
-                body_consistency_3d = metrics_3d.get('consistency_score', 0.85)
+                body_consistency_3d = metrics_3d.get('consistency_score')
             if metrics_2d:
-                body_consistency_2d = metrics_2d.get('consistency_score', 0.75)
+                body_consistency_2d = metrics_2d.get('consistency_score')
             
             if preferred == "3d" and body_consistency_3d:
                 body_consistency = body_consistency_3d

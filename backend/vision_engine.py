@@ -914,7 +914,9 @@ class BodyAnalyzer:
                     "betas": inference_out['betas'],
                     "volume": inference_out.get('volume_proxy'),
                     "ratios": ratios,
-                    "consistency_score": 0.85  # Placeholder - implement proper consistency metric
+                    # TODO: Implement actual consistency comparison against reference body metrics
+                    # For now, return None instead of fake placeholder value
+                    "consistency_score": None
                 }
             
             return None
@@ -943,7 +945,9 @@ class BodyAnalyzer:
             return {
                 "success": True,
                 "ratios": ratios,
-                "consistency_score": 0.75  # Placeholder - 2D is less reliable
+                # TODO: Implement actual consistency comparison against reference 2D ratios
+                # For now, return None instead of fake placeholder value
+                "consistency_score": None
             }
             
         except Exception as e:
