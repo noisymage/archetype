@@ -14,12 +14,18 @@ _mtcnn = None
 
 
 def get_mtcnn(device: str = "cpu"):
-    """Get or create MTCNN detector."""
+    """Get or create MTCNN detector.
+    
+    Note: MTCNN is always created on CPU due to MPS adaptive pool bug
+    with non-divisible image sizes (PyTorch issue #96056).
+    """
     global _mtcnn
     
     if _mtcnn is None:
         try:
             from facenet_pytorch import MTCNN
+            # Force CPU to avoid MPS adaptive pool bug
+            # "Adaptive pool MPS: input sizes must be divisible by output sizes"
             _mtcnn = MTCNN(
                 image_size=112,
                 margin=0,
@@ -27,9 +33,9 @@ def get_mtcnn(device: str = "cpu"):
                 thresholds=[0.6, 0.7, 0.7],  # Slightly lower for difficult poses
                 factor=0.709,
                 post_process=True,  # Returns PIL Image
-                device=device
+                device="cpu"  # Always use CPU - MPS has adaptive pool bugs
             )
-            logger.info("MTCNN loaded for AdaFace alignment")
+            logger.info("MTCNN loaded for AdaFace alignment (CPU mode)")
         except ImportError:
             logger.error("facenet-pytorch not installed. Run: pip install facenet-pytorch")
             raise

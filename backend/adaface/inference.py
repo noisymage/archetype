@@ -133,7 +133,7 @@ def extract_embedding(model, aligned_face, device: str = "cpu") -> np.ndarray:
     # Convert to input tensor  
     input_tensor = to_input(aligned_face).to(device)
     
-    # Extract features
-    embedding = model(input_tensor)
+    # Extract features - model returns (embedding, norm) tuple
+    embedding, norm = model(input_tensor)
     
     return embedding.cpu().numpy().flatten()

@@ -315,7 +315,8 @@ async def process_single_dataset_image(
             face_similarity = adaface_score
             closest_face_ref_id = adaface_ref_id
             face_model_used = "adaface"
-            logger.debug(f"Using AdaFace score: {adaface_score:.3f} > InsightFace: {insightface_score:.3f if insightface_score else 'N/A'}")
+            insightface_str = f"{insightface_score:.3f}" if insightface_score is not None else "N/A"
+            logger.debug(f"Using AdaFace score: {adaface_score:.3f} > InsightFace: {insightface_str}")
         elif insightface_score is not None:
             face_similarity = insightface_score
             closest_face_ref_id = insightface_ref_id
