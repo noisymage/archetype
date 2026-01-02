@@ -951,7 +951,11 @@ class BodyAnalyzer:
             # Compute actual consistency score if references available
             consistency_score = None
             if reference_ratios:
+                logger.info(f"Computing ratio consistency - dataset has {len(ratios)} ratios, {len(reference_ratios)} references")
                 consistency_score = compute_ratio_consistency(ratios, reference_ratios)
+                logger.info(f"Ratio consistency result: {consistency_score}")
+            else:
+                logger.info("No reference_ratios provided, skipping consistency computation")
             
             return {
                 "success": True,

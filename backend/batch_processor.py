@@ -414,10 +414,9 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         job.total_images = len(pending_images)
         db.commit()
         
-        # Get reference data
+        # Get ALL reference data (face AND body)
         references = db.query(ReferenceImage).filter(
-            ReferenceImage.character_id == character_id,
-            ReferenceImage.embedding_blob.isnot(None)
+            ReferenceImage.character_id == character_id
         ).all()
         
         reference_data = [] 
@@ -428,16 +427,18 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         reference_ratios = []
         
         for ref in references:
-            embedding = np.frombuffer(ref.embedding_blob, dtype=np.float32)
-            if ref.pose_json:
-                import json
-                pose = json.loads(ref.pose_json)
-                reference_data.append((embedding, pose, ref.id))
-            else:
-                if master_embedding is None:
-                    master_embedding = embedding.copy()
+            # Load face embedding if available (head references)
+            if ref.embedding_blob:
+                embedding = np.frombuffer(ref.embedding_blob, dtype=np.float32)
+                if ref.pose_json:
+                    import json
+                    pose = json.loads(ref.pose_json)
+                    reference_data.append((embedding, pose, ref.id))
                 else:
-                    master_embedding = (master_embedding + embedding) / 2
+                    if master_embedding is None:
+                        master_embedding = embedding.copy()
+                    else:
+                        master_embedding = (master_embedding + embedding) / 2
             
             # Load body metrics if available
             if ref.betas_blob:
@@ -447,8 +448,13 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
             if ref.body_metrics_json:
                 import json
                 body_metrics = json.loads(ref.body_metrics_json)
+                # Extract 2D ratios from nested structure: {ratios: {metrics_2d: {ratios: {...}}}}
                 if isinstance(body_metrics, dict) and 'ratios' in body_metrics:
-                    reference_ratios.append(body_metrics['ratios'])
+                    ratios_data = body_metrics['ratios']
+                    if 'metrics_2d' in ratios_data:
+                        metrics_2d = ratios_data['metrics_2d']
+                        if isinstance(metrics_2d, dict) and 'ratios' in metrics_2d:
+                            reference_ratios.append(metrics_2d['ratios'])
         
         if not reference_data and master_embedding is None:
             master_embedding = get_master_embedding(db, character_id)
