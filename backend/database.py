@@ -94,6 +94,8 @@ def migrate_db():
     """Simple migration to add new columns if they don't exist."""
     from sqlalchemy import inspect, text
     inspector = inspect(engine)
+    
+    # Migrate characters table
     columns = [c['name'] for c in inspector.get_columns('characters')]
     
     with engine.connect() as conn:
@@ -104,6 +106,22 @@ def migrate_db():
         if 'dataset_images_path' not in columns:
             conn.execute(text("ALTER TABLE characters ADD COLUMN dataset_images_path VARCHAR(1024)"))
             print("Added dataset_images_path column")
+        
+        conn.commit()
+    
+    # Migrate reference_images table
+    ref_columns = [c['name'] for c in inspector.get_columns('reference_images')]
+    
+    with engine.connect() as conn:
+        if 'betas_blob' not in ref_columns:
+            conn.execute(text("ALTER TABLE reference_images ADD COLUMN betas_blob BLOB"))
+            print("Added betas_blob column to reference_images")
+        
+        if 'volume_estimate' not in ref_columns:
+            conn.execute(text("ALTER TABLE reference_images ADD COLUMN volume_estimate FLOAT"))
+            print("Added volume_estimate column to reference_images")
+        
+        conn.commit()
 
 
 class ReferenceImage(Base):
@@ -115,8 +133,12 @@ class ReferenceImage(Base):
     path = Column(String(500), nullable=False)
     view_type = Column(String(50))  # e.g., "head_front", "body_front"
     embedding_blob = Column(LargeBinary)  # Face embedding as binary
-    body_metrics_json = Column(Text)  # Body metrics (betas, ratios, etc.)
     pose_json = Column(Text)  # Head pose: {"yaw": float, "pitch": float, "roll": float}
+    
+    # Body metrics for body references
+    betas_blob = Column(LargeBinary)  # SMPL-X beta parameters (shape) as binary
+    volume_estimate = Column(Float)  # 3D volume proxy from mesh
+    body_metrics_json = Column(Text)  # 2D skeletal ratios and other body data
 
     character = relationship("Character", back_populates="reference_images")
 

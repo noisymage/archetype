@@ -805,27 +805,26 @@ async def set_reference_images(
                 import json
                 ref.pose_json = json.dumps(analysis_result.face_poses[view_type])
             
-            # Store body metrics in JSON
+            # Store body metrics
             if analysis_result.body_metrics and view_type in analysis_result.body_metrics:
                 metrics = analysis_result.body_metrics[view_type]
-                data_to_store = {}
                 
+                # Store SMPL-X betas in separate blob column
                 if metrics.get('betas') is not None:
-                    # Convert numpy array to list if needed
-                    val = metrics['betas']
-                    if hasattr(val, 'tolist'):
-                        data_to_store['betas'] = val.tolist()
-                    else:
-                        data_to_store['betas'] = val
+                    import numpy as np
+                    betas = metrics['betas']
+                    if not isinstance(betas, np.ndarray):
+                        betas = np.array(betas)
+                    ref.betas_blob = betas.astype(np.float32).tobytes()
                 
+                # Store volume in separate column
                 if metrics.get('volume'):
-                    data_to_store['volume'] = metrics['volume']
-                    
+                    ref.volume_estimate = float(metrics['volume'])
+                
+                # Store 2D ratios in JSON
                 if metrics.get('ratios'):
-                    data_to_store['ratios'] = metrics['ratios']
-                    
-                if data_to_store:
-                    ref.body_metrics_json = json.dumps(data_to_store)
+                    import json
+                    ref.body_metrics_json = json.dumps({'ratios': metrics['ratios']})
         
         db.add(ref)
     

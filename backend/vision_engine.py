@@ -790,7 +790,9 @@ class BodyAnalyzer:
         self._manager = model_manager
     
     def analyze(self, image_path: str, keypoints: Optional[dict] = None, 
-                bbox: Optional[list] = None, gender: str = "neutral") -> BodyResult:
+                bbox: Optional[list] = None, gender: str = "neutral",
+                reference_betas: Optional[list[np.ndarray]] = None,
+                reference_ratios: Optional[list[dict]] = None) -> BodyResult:
         """
         Analyze body shape and proportions using both 3D and 2D methods.
         
@@ -819,7 +821,7 @@ class BodyAnalyzer:
         smplx_loaded = self._manager.load_mesh_model(gender)
         if smplx_loaded and self._manager._smplx_wrapper is not None:
             try:
-                metrics_3d = self._analyze_with_smplx(image_path, bbox)
+                metrics_3d = self._analyze_with_smplx(image_path, bbox, reference_betas)
                 if metrics_3d and metrics_3d.get('success'):
                     preferred = "3d"
                 elif metrics_3d and metrics_3d.get('error'):
@@ -830,7 +832,7 @@ class BodyAnalyzer:
         # Always attempt 2D analysis if keypoints available
         if keypoints:
             try:
-                metrics_2d = self._analyze_with_keypoints(keypoints)
+                metrics_2d = self._analyze_with_keypoints(keypoints, reference_ratios)
                 if metrics_2d and metrics_2d.get('success'):
                     if preferred == "none":
                         preferred = "2d"
@@ -855,7 +857,8 @@ class BodyAnalyzer:
         
         return result
     
-    def _analyze_with_smplx(self, image_path: str, bbox: Optional[list] = None) -> Optional[dict]:
+    def _analyze_with_smplx(self, image_path: str, bbox: Optional[list] = None, 
+                             reference_betas: Optional[list[np.ndarray]] = None) -> Optional[dict]:
         """
         Full 3D analysis using SMPLest-X.
         
@@ -905,18 +908,20 @@ class BodyAnalyzer:
             
             if inference_out:
                 # Calculate 3D-based ratios from mesh if available
-                # Note: We passed 'keypoints' in the original but it wasn't used properly here
-                # We can compute ratios from mesh vertices later
                 ratios = {}
+                
+                # Compute actual consistency score if references available
+                betas = inference_out.get('betas')
+                consistency_score = None
+                if betas is not None and reference_betas:
+                    consistency_score = compute_beta_consistency(betas, reference_betas)
                 
                 return {
                     "success": True,
-                    "betas": inference_out['betas'],
+                    "betas": betas,
                     "volume": inference_out.get('volume_proxy'),
                     "ratios": ratios,
-                    # TODO: Implement actual consistency comparison against reference body metrics
-                    # For now, return None instead of fake placeholder value
-                    "consistency_score": None
+                    "consistency_score": consistency_score
                 }
             
             return None
@@ -925,7 +930,8 @@ class BodyAnalyzer:
             logger.exception(f"SMPLest-X analysis error: {e}")
             return None
     
-    def _analyze_with_keypoints(self, keypoints: dict) -> Optional[dict]:
+    def _analyze_with_keypoints(self, keypoints: dict, 
+                                  reference_ratios: Optional[list[dict]] = None) -> Optional[dict]:
         """
         2D analysis using keypoints.
         
@@ -942,12 +948,15 @@ class BodyAnalyzer:
             if not ratios:
                 return None
             
+            # Compute actual consistency score if references available
+            consistency_score = None
+            if reference_ratios:
+                consistency_score = compute_ratio_consistency(ratios, reference_ratios)
+            
             return {
                 "success": True,
                 "ratios": ratios,
-                # TODO: Implement actual consistency comparison against reference 2D ratios
-                # For now, return None instead of fake placeholder value
-                "consistency_score": None
+                "consistency_score": consistency_score
             }
             
         except Exception as e:
@@ -1001,6 +1010,102 @@ class BodyAnalyzer:
         # TODO: Implement 3D mesh-based ratio calculation
         # This would use the SMPL vertices to compute limb volumes
         return {}
+
+
+def compute_beta_consistency(
+    dataset_betas: np.ndarray,
+    reference_betas_list: list[np.ndarray]
+) -> float:
+    """
+    Compute 3D body shape consistency using SMPL-X beta parameters.
+    
+    Args:
+        dataset_betas: Beta parameters from dataset image (shape: (10,) or (11,))
+        reference_betas_list: List of beta parameters from reference images
+    
+    Returns:
+        Consistency score 0-1, where 1 means identical shape
+    """
+    if not reference_betas_list or dataset_betas is None:
+        return None
+    
+    # Normalize beta dimensions (some may be 10, some 11)
+    min_dim = min(len(dataset_betas), min(len(ref) for ref in reference_betas_list))
+    dataset_betas_norm = dataset_betas[:min_dim]
+    
+    # Compute L2 distance to each reference
+    distances = []
+    for ref_betas in reference_betas_list:
+        ref_betas_norm = ref_betas[:min_dim]
+        # Euclidean distance in beta space
+        dist = np.linalg.norm(dataset_betas_norm - ref_betas_norm)
+        distances.append(dist)
+    
+    # Use minimum distance (closest reference)
+    min_distance = min(distances)
+    
+    # Convert distance to similarity score using exponential decay
+    # Typical beta L2 distances range from 0 (identical) to ~5-10 (very different)
+    # We use sigma=2.0 so that distance=2 gives ~0.37 similarity
+    sigma = 2.0
+    similarity = np.exp(-min_distance / sigma)
+    
+    return float(similarity)
+
+
+def compute_ratio_consistency(
+    dataset_ratios: dict,
+    reference_ratios_list: list[dict]
+) -> float:
+    """
+    Compute 2D skeletal ratio consistency.
+    
+    Args:
+        dataset_ratios: Dict of skeletal ratios from dataset image
+        reference_ratios_list: List of ratio dicts from reference images
+    
+    Returns:
+        Consistency score 0-1, where 1 means identical proportions
+    """
+    if not reference_ratios_list or not dataset_ratios:
+        return None
+    
+    # Find common ratio keys across all references and dataset
+    common_keys = set(dataset_ratios.keys())
+    for ref_ratios in reference_ratios_list:
+        common_keys &= set(ref_ratios.keys())
+    
+    if not common_keys:
+        return None
+    
+    # Compute average absolute percentage differences for each reference
+    similarities = []
+    
+    for ref_ratios in reference_ratios_list:
+        diffs = []
+        for key in common_keys:
+            dataset_val = dataset_ratios[key]
+            ref_val = ref_ratios[key]
+            
+            if ref_val == 0:
+                continue
+            
+            # Percentage difference
+            pct_diff = abs(dataset_val - ref_val) / ref_val
+            diffs.append(pct_diff)
+        
+        if diffs:
+            # Average percentage difference
+            avg_diff = np.mean(diffs)
+            # Convert to similarity (0% diff = 100% similarity)
+            similarity = np.exp(-avg_diff * 3.0)  # Scale factor 3.0
+            similarities.append(similarity)
+    
+    if not similarities:
+        return None
+    
+    # Use best (maximum) similarity
+    return float(max(similarities))
 
 
 def validate_references(images: dict[str, str], gender: str = "neutral") -> ValidationResult:

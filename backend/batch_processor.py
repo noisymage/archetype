@@ -205,7 +205,9 @@ async def process_single_dataset_image(
     dataset_image: DatasetImage,
     reference_data: list,
     models: dict,
-    master_embedding: Optional[np.ndarray] = None
+    master_embedding: Optional[np.ndarray] = None,
+    reference_betas: Optional[list[np.ndarray]] = None,
+    reference_ratios: Optional[list[dict]] = None
 ) -> dict:
     """
     Process a single dataset image and update its metrics.
@@ -291,7 +293,9 @@ async def process_single_dataset_image(
             return body_analyzer.analyze(
                 image_path,
                 keypoints=pose_result.keypoints if pose_result.detected else None,
-                gender=character.gender.value if character.gender else "neutral"
+                gender=character.gender.value if character.gender else "neutral",
+                reference_betas=reference_betas,
+                reference_ratios=reference_ratios
             )
         
         body_result = await loop.run_in_executor(None, _body_task)
@@ -419,6 +423,10 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         reference_data = [] 
         master_embedding = None
         
+        # Body reference metrics for consistency comparison
+        reference_betas = []
+        reference_ratios = []
+        
         for ref in references:
             embedding = np.frombuffer(ref.embedding_blob, dtype=np.float32)
             if ref.pose_json:
@@ -430,6 +438,17 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                     master_embedding = embedding.copy()
                 else:
                     master_embedding = (master_embedding + embedding) / 2
+            
+            # Load body metrics if available
+            if ref.betas_blob:
+                betas = np.frombuffer(ref.betas_blob, dtype=np.float32)
+                reference_betas.append(betas)
+            
+            if ref.body_metrics_json:
+                import json
+                body_metrics = json.loads(ref.body_metrics_json)
+                if isinstance(body_metrics, dict) and 'ratios' in body_metrics:
+                    reference_ratios.append(body_metrics['ratios'])
         
         if not reference_data and master_embedding is None:
             master_embedding = get_master_embedding(db, character_id)
@@ -467,7 +486,9 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                     dataset_image,
                     reference_data,
                     models,
-                    master_embedding
+                    master_embedding,
+                    reference_betas,
+                    reference_ratios
                 )
                 
                 # Update job count
