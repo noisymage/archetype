@@ -408,30 +408,12 @@ export function ImageDetailModal({ image, metrics, onClose, onUpdate, references
                         {/* Face Similarity */}
                         <div className="mb-4">
                             <div className="flex items-center justify-between mb-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xs text-zinc-400">Face Similarity</span>
-                                    {image.closest_face_ref && (
-                                        <div className="relative group z-10">
-                                            <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 ring-1 ring-black/50 cursor-help transition-transform hover:scale-[2.5] hover:z-50 origin-left shadow-lg">
-                                                <img
-                                                    src={getFullImageUrl(image.closest_face_ref)}
-                                                    alt="Closest reference"
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <span className="text-xs text-zinc-400">Face Similarity</span>
                                 <span className={cn("text-sm font-mono", getSimilarityColor(image.face_similarity))}>
                                     {image.face_similarity !== null && image.face_similarity !== undefined
                                         ? `${(image.face_similarity * 100).toFixed(1)}%`
                                         : '—'
                                     }
-                                    {image.face_model_used && (
-                                        <span className="ml-1 text-xs text-zinc-500 font-normal">
-                                            via {image.face_model_used === 'adaface' ? 'AdaFace' : 'InsightFace'}
-                                        </span>
-                                    )}
                                 </span>
                             </div>
                             <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">

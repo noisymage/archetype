@@ -549,27 +549,6 @@ class FaceAnalyzer:
             if result.landmarks is not None:
                 result.pose = estimate_head_pose(result.landmarks, processed_img.shape)
             
-            # Try to extract AdaFace embedding (optional, for ensemble comparison)
-            try:
-                if self._manager.load_adaface_model():
-                    from adaface import align_face, extract_embedding
-                    
-                    # Align face for AdaFace (needs 112x112 aligned face)
-                    device = "cpu"
-                    if self._manager._device == "mps":
-                        device = "mps"
-                    
-                    aligned = align_face(img, device=device)
-                    if aligned is not None:
-                        result.adaface_embedding = extract_embedding(
-                            self._manager._adaface_model,
-                            aligned,
-                            device=device
-                        )
-                        logger.debug("AdaFace embedding extracted successfully")
-            except Exception as e:
-                logger.debug(f"AdaFace embedding extraction failed (non-critical): {e}")
-            
             return result
             
         except Exception as e:

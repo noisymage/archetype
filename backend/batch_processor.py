@@ -90,27 +90,6 @@ def get_master_embedding(db: Session, character_id: int) -> Optional[np.ndarray]
     return None
 
 
-def get_adaface_reference_embeddings(db: Session, character_id: int) -> list[tuple[int, np.ndarray]]:
-    """Get AdaFace embeddings for all reference images of a character.
-    
-    Returns:
-        List of (ref_id, embedding) tuples
-    """
-    ref_images = db.query(ReferenceImage).filter(
-        ReferenceImage.character_id == character_id,
-        ReferenceImage.adaface_embedding_blob.isnot(None)
-    ).all()
-    
-    result = []
-    for ref in ref_images:
-        if ref.adaface_embedding_blob:
-            try:
-                embedding = np.frombuffer(ref.adaface_embedding_blob, dtype=np.float32)
-                result.append((ref.id, embedding))
-            except Exception as e:
-                logger.warning(f"Failed to decode AdaFace embedding for ref {ref.id}: {e}")
-    
-    return result
 
 
 def compute_similarity(embedding1: np.ndarray, embedding2: np.ndarray) -> float:
@@ -122,90 +101,8 @@ def compute_similarity(embedding1: np.ndarray, embedding2: np.ndarray) -> float:
     return float(np.dot(embedding1, embedding2) / (norm1 * norm2))
 
 
-def compute_pose_distance(pose1: dict, pose2: dict) -> float:
-    """
-    Compute angular distance between two head poses.
-    
-    Args:
-        pose1, pose2: Dicts with keys 'yaw', 'pitch', 'roll' (in degrees)
-    
-    Returns:
-        Distance in degrees (weighted Euclidean)
-    """
-    import math
-    
-    yaw_diff = abs(pose1['yaw'] - pose2['yaw'])
-    pitch_diff = abs(pose1['pitch'] - pose2['pitch'])
-    roll_diff = abs(pose1['roll'] - pose2['roll'])
-    
-    # Weighted Euclidean distance (yaw is most important)
-    distance = math.sqrt(
-        (yaw_diff * 2.0) ** 2 +   # Yaw weight = 2x (left/right is critical)
-        (pitch_diff * 1.0) ** 2 +  # Pitch weight = 1x  
-        (roll_diff * 0.5) ** 2     # Roll weight = 0.5x (tilt less important)
-    )
-    return distance
+# NOTE: Removed pose-aware similarity computation - now using centroid matching
 
-
-def compute_pose_aware_similarity(
-    dataset_embedding: np.ndarray,
-    dataset_pose: dict,
-    reference_data: list[tuple[np.ndarray, dict, int]],  # (embedding, pose, ref_id)
-    pose_weight_sigma: float = 15.0  # Controls pose distance decay rate
-) -> tuple[float, Optional[int]]:
-    """
-    Compute face similarity with pose-aware weighting.
-    
-    Compares dataset image against ALL references, using pose distance
-    only for weighting (not filtering). Returns the best individual match.
-    
-    For LoRA training datasets, we want to know "does this face match ANY
-    reference angle?" rather than only comparing against similar poses.
-    
-    Args:
-        dataset_embedding: Face embedding of dataset image
-        dataset_pose: Head pose of dataset image
-        reference_data: List of (embedding, pose, ref_id) tuples from references
-        pose_weight_sigma: Controls exponential decay rate for pose weighting
-    
-    Returns:
-        Tuple of (Best similarity score, Best match reference ID)
-    """
-    import math
-    
-    if not reference_data:
-        return (0.0, None)
-    
-    best_score = -1.0
-    best_ref_id = None
-    best_weighted_score = -1.0
-    best_weighted_ref_id = None
-    
-    for ref_embedding, ref_pose, ref_id in reference_data:
-        # Calculate raw embedding similarity
-        similarity = compute_similarity(dataset_embedding, ref_embedding)
-        
-        # Track absolute best match (used for final return)
-        if similarity > best_score:
-            best_score = similarity
-            best_ref_id = ref_id
-        
-        # PRIORITY: If we found a near-perfect match (>95%), use it directly
-        if similarity >= 0.95:
-            return (similarity, ref_id)
-        
-        # Calculate pose-weighted score (for reference, could be used for logging)
-        pose_dist = compute_pose_distance(dataset_pose, ref_pose)
-        weight = math.exp(-pose_dist / pose_weight_sigma)
-        weighted_score = similarity * weight
-        
-        if weighted_score > best_weighted_score:
-            best_weighted_score = weighted_score
-            best_weighted_ref_id = ref_id
-    
-    # Return the best raw similarity score (not weighted)
-    # This ensures rotated faces still get high scores if they match any reference
-    return (best_score, best_ref_id) if best_score >= 0 else (0.0, None)
 
 
 async def process_single_dataset_image(
@@ -273,54 +170,12 @@ async def process_single_dataset_image(
     elif face_result.detected:
         shot_type = "close-up"
     
-    # Compute face similarity (with dual-model ensemble)
+    # Compute face similarity using centroid matching
     face_similarity = None
-    closest_face_ref_id = None
-    face_model_used = None
     
     if face_result.detected and face_result.embedding is not None:
-        # Compute InsightFace similarity
-        insightface_score = None
-        insightface_ref_id = None
-        
-        if face_result.pose and reference_data:
-            insightface_score, insightface_ref_id = compute_pose_aware_similarity(
-                face_result.embedding,
-                face_result.pose,
-                reference_data
-            )
-        elif master_embedding is not None:
-            insightface_score = compute_similarity(master_embedding, face_result.embedding)
-        
-        # Compute AdaFace similarity (if available)
-        adaface_score = None
-        adaface_ref_id = None
-        
-        if face_result.adaface_embedding is not None:
-            # Get AdaFace reference embeddings
-            adaface_ref_embeddings = get_adaface_reference_embeddings(db, character.id)
-            
-            if adaface_ref_embeddings:
-                # Compare against each AdaFace reference and get best match
-                best_ada_score = 0.0
-                for ref_id, ref_ada_emb in adaface_ref_embeddings:
-                    score = compute_similarity(ref_ada_emb, face_result.adaface_embedding)
-                    if score > best_ada_score:
-                        best_ada_score = score
-                        adaface_ref_id = ref_id
-                adaface_score = best_ada_score
-        
-        # Use the better model's result
-        if adaface_score is not None and (insightface_score is None or adaface_score > insightface_score):
-            face_similarity = adaface_score
-            closest_face_ref_id = adaface_ref_id
-            face_model_used = "adaface"
-            insightface_str = f"{insightface_score:.3f}" if insightface_score is not None else "N/A"
-            logger.debug(f"Using AdaFace score: {adaface_score:.3f} > InsightFace: {insightface_str}")
-        elif insightface_score is not None:
-            face_similarity = insightface_score
-            closest_face_ref_id = insightface_ref_id
-            face_model_used = "insightface"
+        if master_embedding is not None:
+            face_similarity = compute_similarity(master_embedding, face_result.embedding)
         
     
     # Body analysis
@@ -373,8 +228,6 @@ async def process_single_dataset_image(
         db.add(metrics)
     
     metrics.face_similarity_score = face_similarity
-    metrics.face_model_used = face_model_used
-    metrics.closest_face_ref_id = closest_face_ref_id
     metrics.body_consistency_score = body_consistency
     metrics.shot_type = shot_type
     
