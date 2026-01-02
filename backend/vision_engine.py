@@ -910,15 +910,15 @@ class BodyAnalyzer:
                 # Calculate 3D-based ratios from mesh if available
                 ratios = {}
                 
-                # Compute actual consistency score if references available
-                betas = inference_out.get('betas')
+                # DISABLED: Beta-based consistency is unreliable due to model non-determinism
+                # Same image produces different betas each run, making it unsuitable for identity matching
+                # TODO: Replace with optimization-based SMPL fitting for deterministic results
+                # See: optimization_based_smpl_fitting.md for implementation guide
                 consistency_score = None
-                if betas is not None and reference_betas:
-                    consistency_score = compute_beta_consistency(betas, reference_betas)
                 
                 return {
                     "success": True,
-                    "betas": betas,
+                    "betas": inference_out.get('betas'),
                     "volume": inference_out.get('volume_proxy'),
                     "ratios": ratios,
                     "consistency_score": consistency_score
