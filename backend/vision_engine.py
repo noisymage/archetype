@@ -1,7 +1,7 @@
 """
 Vision Engine for Character Consistency Validator.
 
-Provides face analysis (InsightFace), pose estimation (YOLO-Pose),
+Provides face analysis (InsightFace), pose estimation (YOLO11-Pose),
 and body shape analysis (SMPLer-X) with graceful degradation.
 """
 import logging
@@ -194,7 +194,7 @@ class ModelManager:
     
     def load_pose_model(self) -> bool:
         """
-        Load YOLO-Pose model for 2D pose estimation.
+        Load YOLO11-Pose model for 2D pose estimation.
         
         Returns:
             True if loaded successfully, False otherwise.
@@ -210,20 +210,20 @@ class ModelManager:
             yolo_dir.mkdir(parents=True, exist_ok=True)
             
             # Model path in gitignored directory
-            model_path = yolo_dir / "yolov8m-pose.pt"
+            model_path = yolo_dir / "yolo11m-pose.pt"
             
-            # Load YOLOv8 pose model (auto-downloads if not present)
-            self._pose_model = YOLO(str(model_path) if model_path.exists() else 'yolov8m-pose.pt')
+            # Load YOLO11 pose model (auto-downloads if not present)
+            self._pose_model = YOLO(str(model_path) if model_path.exists() else 'yolo11m-pose.pt')
             
             # Move model to correct location if downloaded to CWD
-            cwd_model = Path('yolov8m-pose.pt')
+            cwd_model = Path('yolo11m-pose.pt')
             if cwd_model.exists() and not model_path.exists():
                 import shutil
                 shutil.move(str(cwd_model), str(model_path))
                 logger.info(f"Moved YOLO model to {model_path}")
             
             self._pose_loaded = True
-            logger.info("YOLO-Pose model loaded successfully")
+            logger.info("YOLO11-Pose model loaded successfully")
             return True
             
         except ImportError as e:
@@ -469,7 +469,7 @@ class FaceAnalyzer:
 
 class PoseEstimator:
     """
-    2D pose estimation using Ultralytics YOLO-Pose.
+    2D pose estimation using Ultralytics YOLO11-Pose.
     """
     
     # COCO keypoint names (17 keypoints)
@@ -485,7 +485,7 @@ class PoseEstimator:
     
     def estimate(self, image_path: str) -> PoseResult:
         """
-        Estimate 2D pose keypoints using YOLO-Pose.
+        Estimate 2D pose keypoints using YOLO11-Pose.
         
         Args:
             image_path: Absolute path to image file.
@@ -510,7 +510,7 @@ class PoseEstimator:
             return result
         
         try:
-            # Run YOLO-Pose inference
+            # Run YOLO11-Pose inference
             predictions = self._manager._pose_model(image_path, verbose=False)
             
             if not predictions or len(predictions) == 0:
