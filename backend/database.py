@@ -129,8 +129,10 @@ class ImageMetrics(Base):
     keypoints_json = Column(Text)  # JSON string of YOLO keypoints for overlay
     face_bbox_json = Column(Text)  # JSON string of face bounding box [x1, y1, x2, y2]
     face_pose_json = Column(Text)  # JSON string of head pose {"yaw": ..., "pitch": ..., "roll": ...}
+    closest_face_ref_id = Column(Integer, ForeignKey("reference_images.id"), nullable=True)
 
     image = relationship("DatasetImage", back_populates="metrics")
+    closest_face_ref = relationship("ReferenceImage")
 
 
 class Caption(Base):

@@ -258,7 +258,24 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                         {/* Face Similarity */}
                         <div className="mb-4">
                             <div className="flex items-center justify-between mb-1">
-                                <span className="text-xs text-zinc-400">Face Similarity</span>
+                                <div className="flex items-center gap-2">
+                                    <span className="text-xs text-zinc-400">Face Similarity</span>
+                                    {image.closest_face_ref && (
+                                        <div className="relative group z-10">
+                                            <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10 ring-1 ring-black/50 cursor-help transition-transform hover:scale-[2.5] hover:z-50 origin-left shadow-lg">
+                                                <img
+                                                    src={getFullImageUrl(image.closest_face_ref)}
+                                                    alt="Closest reference"
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            </div>
+                                            {/* Tooltip */}
+                                            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-max max-w-[150px] px-2 py-1 bg-black/90 border border-white/10 text-[10px] text-zinc-300 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                                                <p className="truncate">Match: {image.closest_face_ref.split(/[/\\]/).pop()}</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                                 <span className={cn("text-sm font-mono", getSimilarityColor(image.face_similarity))}>
                                     {image.face_similarity !== null && image.face_similarity !== undefined
                                         ? `${(image.face_similarity * 100).toFixed(1)}%`
@@ -277,6 +294,7 @@ export function ImageDetailModal({ image, metrics, onClose }) {
                                 />
                             </div>
                         </div>
+
 
                         {/* Body Consistency (3D) */}
                         {metrics3d && (

@@ -157,6 +157,7 @@ class DatasetImageResponse(BaseModel):
     limb_ratios: Optional[dict] = None
     keypoints: Optional[dict] = None
     face_bbox: Optional[list] = None
+    closest_face_ref: Optional[str] = None  # Path to closest reference image
 
     class Config:
         from_attributes = True
@@ -753,6 +754,10 @@ async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
     result = []
     for img in character.dataset_images:
         metrics = img.metrics
+        closest_ref_path = None
+        if metrics and metrics.closest_face_ref:
+            closest_ref_path = metrics.closest_face_ref.path
+
         result.append(DatasetImageResponse(
             id=img.id,
             original_path=img.original_path,
@@ -763,7 +768,8 @@ async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
             shot_type=metrics.shot_type if metrics else None,
             limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None,
             keypoints=json.loads(metrics.keypoints_json) if metrics and metrics.keypoints_json else None,
-            face_bbox=json.loads(metrics.face_bbox_json) if metrics and metrics.face_bbox_json else None
+            face_bbox=json.loads(metrics.face_bbox_json) if metrics and metrics.face_bbox_json else None,
+            closest_face_ref=closest_ref_path
         ))
     
     return result

@@ -127,9 +127,9 @@ def compute_pose_distance(pose1: dict, pose2: dict) -> float:
 def compute_pose_aware_similarity(
     dataset_embedding: np.ndarray,
     dataset_pose: dict,
-    reference_data: list[tuple[np.ndarray, dict]],  # (embedding, pose)
+    reference_data: list[tuple[np.ndarray, dict, int]],  # (embedding, pose, ref_id)
     pose_threshold: float = 30.0  # degrees
-) -> float:
+) -> tuple[float, Optional[int]]:
     """
     Compute face similarity with pose-aware weighting.
     
@@ -139,18 +139,21 @@ def compute_pose_aware_similarity(
     Args:
         dataset_embedding: Face embedding of dataset image
         dataset_pose: Head pose of dataset image
-        reference_data: List of (embedding, pose) tuples from references
+        reference_data: List of (embedding, pose, ref_id) tuples from references
         pose_threshold: Max pose distance to consider (degrees)
     
     Returns:
-        Weighted similarity score (0.0 to 1.0)
+        Tuple of (Weighted similarity score, Best match reference ID)
     """
     import math
     
     weighted_similarities = []
     total_weight = 0.0
     
-    for ref_embedding, ref_pose in reference_data:
+    best_score = -1.0
+    best_ref_id = None
+    
+    for ref_embedding, ref_pose, ref_id in reference_data:
         # Calculate pose distance
         pose_dist = compute_pose_distance(dataset_pose, ref_pose)
         
@@ -160,6 +163,11 @@ def compute_pose_aware_similarity(
         
         # Calculate embedding similarity
         similarity = compute_similarity(dataset_embedding, ref_embedding)
+        
+        # Track best individual match
+        if similarity > best_score:
+            best_score = similarity
+            best_ref_id = ref_id
         
         # Weight by inverse pose distance (exponential decay)
         # weight = exp(-distance / sigma)
@@ -171,14 +179,19 @@ def compute_pose_aware_similarity(
     
     if total_weight == 0:
         # No close references found - fall back to best match across all
-        similarities = [
-            compute_similarity(dataset_embedding, ref_emb)
-            for ref_emb, ref_pose in reference_data
-        ]
-        return max(similarities) if similarities else 0.0
+        best_score = -1.0
+        best_ref_id = None
+        
+        for ref_emb, ref_pose, ref_id in reference_data:
+            sim = compute_similarity(dataset_embedding, ref_emb)
+            if sim > best_score:
+                best_score = sim
+                best_ref_id = ref_id
+                
+        return (best_score, best_ref_id) if best_score >= 0 else (0.0, None)
     
-    # Return weighted average
-    return sum(weighted_similarities) / total_weight
+    # Return weighted average and best individual match ID
+    return sum(weighted_similarities) / total_weight, best_ref_id
 
 
 async def process_batch(character_id: int, job_id: str, reprocess_all: bool = False):
@@ -234,7 +247,7 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
             ReferenceImage.embedding_blob.isnot(None)
         ).all()
         
-        reference_data = []  # List of (embedding, pose) tuples
+        reference_data = []  # List of (embedding, pose, ref_id) tuples
         master_embedding = None  # Fallback for old method
         
         for ref in references:
@@ -244,7 +257,7 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 # New pose-aware method
                 import json
                 pose = json.loads(ref.pose_json)
-                reference_data.append((embedding, pose))
+                reference_data.append((embedding, pose, ref.id))
             else:
                 # Old averaging fallback (no pose data)
                 if master_embedding is None:
@@ -323,10 +336,12 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                 
                 # Compute face similarity (POSE-AWARE!)
                 face_similarity = None
+                closest_face_ref_id = None
+                
                 if face_result.detected and face_result.embedding is not None:
                     if face_result.pose and reference_data:
                         # Use pose-aware similarity
-                        face_similarity = compute_pose_aware_similarity(
+                        face_similarity, closest_face_ref_id = compute_pose_aware_similarity(
                             face_result.embedding,
                             face_result.pose,
                             reference_data
@@ -388,6 +403,7 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                     db.add(metrics)
                 
                 metrics.face_similarity_score = face_similarity
+                metrics.closest_face_ref_id = closest_face_ref_id
                 metrics.body_consistency_score = body_consistency
                 metrics.shot_type = shot_type
                 
