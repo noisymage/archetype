@@ -121,7 +121,25 @@ def migrate_db():
             conn.execute(text("ALTER TABLE reference_images ADD COLUMN volume_estimate FLOAT"))
             print("Added volume_estimate column to reference_images")
         
+        if 'adaface_embedding_blob' not in ref_columns:
+            conn.execute(text("ALTER TABLE reference_images ADD COLUMN adaface_embedding_blob BLOB"))
+            print("Added adaface_embedding_blob column to reference_images")
+        
         conn.commit()
+    
+    # Migrate image_metrics table
+    try:
+        metrics_columns = [c['name'] for c in inspector.get_columns('image_metrics')]
+        
+        with engine.connect() as conn:
+            if 'face_model_used' not in metrics_columns:
+                conn.execute(text("ALTER TABLE image_metrics ADD COLUMN face_model_used VARCHAR(20)"))
+                print("Added face_model_used column to image_metrics")
+            
+            conn.commit()
+    except Exception:
+        pass  # Table may not exist yet
+
 
 
 class ReferenceImage(Base):
@@ -132,7 +150,8 @@ class ReferenceImage(Base):
     character_id = Column(Integer, ForeignKey("characters.id"), nullable=False)
     path = Column(String(500), nullable=False)
     view_type = Column(String(50))  # e.g., "head_front", "body_front"
-    embedding_blob = Column(LargeBinary)  # Face embedding as binary
+    embedding_blob = Column(LargeBinary)  # InsightFace embedding as binary
+    adaface_embedding_blob = Column(LargeBinary)  # AdaFace embedding as binary
     pose_json = Column(Text)  # Head pose: {"yaw": float, "pitch": float, "roll": float}
     
     # Body metrics for body references
@@ -164,6 +183,7 @@ class ImageMetrics(Base):
     id = Column(Integer, primary_key=True, index=True)
     image_id = Column(Integer, ForeignKey("dataset_images.id"), nullable=False, unique=True)
     face_similarity_score = Column(Float)
+    face_model_used = Column(String(20))  # "insightface", "adaface", or None
     body_consistency_score = Column(Float)
     limb_ratios_json = Column(Text)  # JSON string of limb ratio data
     shot_type = Column(String(50))  # e.g., "close-up", "medium", "full-body"

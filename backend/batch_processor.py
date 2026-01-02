@@ -90,6 +90,29 @@ def get_master_embedding(db: Session, character_id: int) -> Optional[np.ndarray]
     return None
 
 
+def get_adaface_reference_embeddings(db: Session, character_id: int) -> list[tuple[int, np.ndarray]]:
+    """Get AdaFace embeddings for all reference images of a character.
+    
+    Returns:
+        List of (ref_id, embedding) tuples
+    """
+    ref_images = db.query(ReferenceImage).filter(
+        ReferenceImage.character_id == character_id,
+        ReferenceImage.adaface_embedding_blob.isnot(None)
+    ).all()
+    
+    result = []
+    for ref in ref_images:
+        if ref.adaface_embedding_blob:
+            try:
+                embedding = np.frombuffer(ref.adaface_embedding_blob, dtype=np.float32)
+                result.append((ref.id, embedding))
+            except Exception as e:
+                logger.warning(f"Failed to decode AdaFace embedding for ref {ref.id}: {e}")
+    
+    return result
+
+
 def compute_similarity(embedding1: np.ndarray, embedding2: np.ndarray) -> float:
     """Compute cosine similarity between two embeddings."""
     norm1 = np.linalg.norm(embedding1)
@@ -250,21 +273,54 @@ async def process_single_dataset_image(
     elif face_result.detected:
         shot_type = "close-up"
     
-    # Compute face similarity
+    # Compute face similarity (with dual-model ensemble)
     face_similarity = None
     closest_face_ref_id = None
+    face_model_used = None
     
     if face_result.detected and face_result.embedding is not None:
+        # Compute InsightFace similarity
+        insightface_score = None
+        insightface_ref_id = None
+        
         if face_result.pose and reference_data:
-            # Use pose-aware similarity
-            face_similarity, closest_face_ref_id = compute_pose_aware_similarity(
+            insightface_score, insightface_ref_id = compute_pose_aware_similarity(
                 face_result.embedding,
                 face_result.pose,
                 reference_data
             )
         elif master_embedding is not None:
-            # Fallback to simple comparison
-            face_similarity = compute_similarity(master_embedding, face_result.embedding)
+            insightface_score = compute_similarity(master_embedding, face_result.embedding)
+        
+        # Compute AdaFace similarity (if available)
+        adaface_score = None
+        adaface_ref_id = None
+        
+        if face_result.adaface_embedding is not None:
+            # Get AdaFace reference embeddings
+            adaface_ref_embeddings = get_adaface_reference_embeddings(db, character.id)
+            
+            if adaface_ref_embeddings:
+                # Compare against each AdaFace reference and get best match
+                best_ada_score = 0.0
+                for ref_id, ref_ada_emb in adaface_ref_embeddings:
+                    score = compute_similarity(ref_ada_emb, face_result.adaface_embedding)
+                    if score > best_ada_score:
+                        best_ada_score = score
+                        adaface_ref_id = ref_id
+                adaface_score = best_ada_score
+        
+        # Use the better model's result
+        if adaface_score is not None and (insightface_score is None or adaface_score > insightface_score):
+            face_similarity = adaface_score
+            closest_face_ref_id = adaface_ref_id
+            face_model_used = "adaface"
+            logger.debug(f"Using AdaFace score: {adaface_score:.3f} > InsightFace: {insightface_score:.3f if insightface_score else 'N/A'}")
+        elif insightface_score is not None:
+            face_similarity = insightface_score
+            closest_face_ref_id = insightface_ref_id
+            face_model_used = "insightface"
+        
     
     # Body analysis
     body_consistency = None
@@ -316,6 +372,7 @@ async def process_single_dataset_image(
         db.add(metrics)
     
     metrics.face_similarity_score = face_similarity
+    metrics.face_model_used = face_model_used
     metrics.closest_face_ref_id = closest_face_ref_id
     metrics.body_consistency_score = body_consistency
     metrics.shot_type = shot_type

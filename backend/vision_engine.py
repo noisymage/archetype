@@ -58,7 +58,8 @@ def is_supported_image(path: str) -> bool:
 class FaceResult:
     """Result from face analysis."""
     detected: bool = False
-    embedding: Optional[np.ndarray] = None
+    embedding: Optional[np.ndarray] = None  # InsightFace embedding
+    adaface_embedding: Optional[np.ndarray] = None  # AdaFace embedding (if available)
     bbox: Optional[list[float]] = None  # [x1, y1, x2, y2]
     landmarks: Optional[np.ndarray] = None
     confidence: float = 0.0
@@ -103,6 +104,7 @@ class ValidationResult:
     warnings: list[ValidationWarning] = field(default_factory=list)
     master_embedding: Optional[np.ndarray] = None
     face_embeddings: dict[str, np.ndarray] = field(default_factory=dict)
+    adaface_embeddings: dict[str, np.ndarray] = field(default_factory=dict)  # AdaFace embeddings per view
     face_poses: dict[str, dict] = field(default_factory=dict)  # view_type -> {"yaw": ..., "pitch": ..., "roll": ...}
     body_metrics: Optional[dict] = None
     error: Optional[str] = None
@@ -131,11 +133,13 @@ class ModelManager:
         # Model instances
         self._face_app = None
         self._pose_model = None
+        self._adaface_model = None
         # SMPLest-X removed
         
         # State tracking
         self._face_loaded = False
         self._pose_loaded = False
+        self._adaface_loaded = False
         self._smplx_loaded = False # Still track if an attempt was made
         
         # Device detection
@@ -196,6 +200,39 @@ class ModelManager:
         except Exception as e:
             logger.error(f"Failed to load InsightFace: {e}")
             self._face_app = None
+            return False
+    
+    def load_adaface_model(self) -> bool:
+        """
+        Load AdaFace model for additional face embedding.
+        
+        Returns:
+            True if loaded successfully, False otherwise.
+        """
+        if self._adaface_loaded:
+            return True
+        
+        try:
+            from adaface import load_pretrained_model, download_model
+            
+            # Ensure model is downloaded
+            model_dir = Path(__file__).parent / "models" / "adaface"
+            model_path = download_model(model_dir)
+            
+            # Use CPU for AdaFace to avoid memory pressure on GPU
+            # (InsightFace already uses GPU if available)
+            device = "cpu"
+            if self._device == "mps":
+                device = "mps"  # MPS is fine for AdaFace
+            
+            self._adaface_model = load_pretrained_model(str(model_path), device)
+            self._adaface_loaded = True
+            logger.info(f"AdaFace model loaded successfully on {device}")
+            return True
+            
+        except Exception as e:
+            logger.warning(f"Failed to load AdaFace (will use InsightFace only): {e}")
+            self._adaface_model = None
             return False
     
     def load_pose_model(self) -> bool:
@@ -511,6 +548,27 @@ class FaceAnalyzer:
             # Calculate head pose from landmarks
             if result.landmarks is not None:
                 result.pose = estimate_head_pose(result.landmarks, processed_img.shape)
+            
+            # Try to extract AdaFace embedding (optional, for ensemble comparison)
+            try:
+                if self._manager.load_adaface_model():
+                    from adaface import align_face, extract_embedding
+                    
+                    # Align face for AdaFace (needs 112x112 aligned face)
+                    device = "cpu"
+                    if self._manager._device == "mps":
+                        device = "mps"
+                    
+                    aligned = align_face(img, device=device)
+                    if aligned is not None:
+                        result.adaface_embedding = extract_embedding(
+                            self._manager._adaface_model,
+                            aligned,
+                            device=device
+                        )
+                        logger.debug("AdaFace embedding extracted successfully")
+            except Exception as e:
+                logger.debug(f"AdaFace embedding extraction failed (non-critical): {e}")
             
             return result
             
@@ -995,6 +1053,7 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     # === Head Group Analysis (Required + Optional) ===
     head_embeddings = []
     face_embeddings = {}
+    adaface_embeddings = {}
     face_poses = {}
     
     # Process all provided head references (required + optional)
@@ -1009,6 +1068,10 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
             head_embeddings.append(face_result.embedding)
             face_embeddings[view] = face_result.embedding
             
+            # Store AdaFace embedding if available
+            if face_result.adaface_embedding is not None:
+                adaface_embeddings[view] = face_result.adaface_embedding
+            
             # Store pose for pose-aware matching
             if face_result.pose:
                 face_poses[view] = face_result.pose
@@ -1022,6 +1085,7 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     
     # Store embeddings and poses in result
     result.face_embeddings = face_embeddings
+    result.adaface_embeddings = adaface_embeddings
     result.face_poses = face_poses
     
     # Compute Master Identity Vector

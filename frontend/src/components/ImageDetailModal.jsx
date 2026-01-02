@@ -427,6 +427,11 @@ export function ImageDetailModal({ image, metrics, onClose, onUpdate, references
                                         ? `${(image.face_similarity * 100).toFixed(1)}%`
                                         : '—'
                                     }
+                                    {image.face_model_used && (
+                                        <span className="ml-1 text-xs text-zinc-500 font-normal">
+                                            via {image.face_model_used === 'adaface' ? 'AdaFace' : 'InsightFace'}
+                                        </span>
+                                    )}
                                 </span>
                             </div>
                             <div className="h-1.5 bg-zinc-800 rounded-full overflow-hidden">

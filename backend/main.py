@@ -155,6 +155,7 @@ class DatasetImageResponse(BaseModel):
     filename: str
     status: str
     face_similarity: Optional[float] = None
+    face_model_used: Optional[str] = None  # "insightface" or "adaface"
     body_consistency: Optional[float] = None
     shot_type: Optional[str] = None
     limb_ratios: Optional[dict] = None
@@ -374,6 +375,7 @@ async def reprocess_image(image_id: int, db: Session = Depends(get_db)):
             filename=Path(image.original_path).name,
             status=image.status.value if image.status else "pending",
             face_similarity=metrics.face_similarity_score if metrics else None,
+            face_model_used=metrics.face_model_used if metrics else None,
             body_consistency=metrics.body_consistency_score if metrics else None,
             shot_type=metrics.shot_type if metrics else None,
             limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None,
@@ -820,9 +822,13 @@ async def set_reference_images(
         )
         
         if analysis_result:
-            # Store face embedding
+            # Store face embedding (InsightFace)
             if view_type in analysis_result.face_embeddings:
                 ref.embedding_blob = analysis_result.face_embeddings[view_type].tobytes()
+            
+            # Store AdaFace embedding if available
+            if view_type in analysis_result.adaface_embeddings:
+                ref.adaface_embedding_blob = analysis_result.adaface_embeddings[view_type].tobytes()
             
             # Store face pose (NEW!)
             if view_type in analysis_result.face_poses:
@@ -895,6 +901,7 @@ async def list_dataset_images(character_id: int, db: Session = Depends(get_db)):
             filename=Path(img.original_path).name,
             status=img.status.value if img.status else "pending",
             face_similarity=metrics.face_similarity_score if metrics else None,
+            face_model_used=metrics.face_model_used if metrics else None,
             body_consistency=metrics.body_consistency_score if metrics else None,
             shot_type=metrics.shot_type if metrics else None,
             limb_ratios=json.loads(metrics.limb_ratios_json) if metrics and metrics.limb_ratios_json else None,
