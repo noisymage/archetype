@@ -8,7 +8,7 @@ import * as api from '../lib/api';
 /**
  * Reference image slot configurations
  */
-const headSlots = [
+const HEAD_SLOTS = [
     { key: 'head_front', label: 'Front', icon: '⚫', description: 'Face camera', required: true },
     { key: 'head_45l', label: '45° Left', icon: '←', description: "Viewer's left", required: true },
     { key: 'head_45r', label: '45° Right', icon: '→', description: "Viewer's right", required: true },
@@ -111,13 +111,13 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                     break;
 
                 case 2: // References step
-                    const requiredSlots = [...headSlots.filter(s => s.required), ...BODY_SLOTS];
+                    const requiredSlots = [...HEAD_SLOTS.filter(s => s.required), ...BODY_SLOTS];
                     const filledRequired = requiredSlots.filter(s => referenceImages[s.key]);
                     if (filledRequired.length < 6) {
                         throw new Error(`Please assign all 6 required reference images (${filledRequired.length}/6 filled)`);
                     }
                     // Save reference paths
-                    const allSlots = [...headSlots, ...BODY_SLOTS]; // Keep allSlots for saving all assigned images
+                    const allSlots = [...HEAD_SLOTS, ...BODY_SLOTS]; // Keep allSlots for saving all assigned images
                     const paths = {};
                     for (const slot of allSlots) {
                         if (referenceImages[slot.key]) { // Only save if an image is assigned
@@ -139,7 +139,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                     if (!validationResult) {
                         // Run validation
                         const paths = {};
-                        for (const slot of [...headSlots, ...BODY_SLOTS]) {
+                        for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
                             paths[slot.key] = referenceImages[slot.key].path;
                         }
                         const validation = await analyzeReferences(paths, gender);
@@ -168,7 +168,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
         setError(null);
         try {
             const paths = {};
-            for (const slot of [...headSlots, ...BODY_SLOTS]) {
+            for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
                 paths[slot.key] = referenceImages[slot.key].path;
             }
             const validation = await analyzeReferences(paths, gender);
@@ -250,7 +250,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                         <div>
                             <h3 className="text-sm font-medium text-zinc-300 mb-3">Head References</h3>
                             <div className="grid grid-cols-3 gap-3">
-                                {headSlots.filter(s => s.required).map(slot => (
+                                {HEAD_SLOTS.filter(s => s.required).map(slot => (
                                     <ReferenceSlot
                                         key={slot.key}
                                         slot={slot}
@@ -264,7 +264,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                             <div className="mt-4">
                                 <h4 className="text-xs font-medium text-zinc-500 mb-2">Optional (Improves accuracy)</h4>
                                 <div className="grid grid-cols-4 gap-2">
-                                    {headSlots.filter(s => s.optional).map(slot => (
+                                    {HEAD_SLOTS.filter(s => s.optional).map(slot => (
                                         <ReferenceSlot
                                             key={slot.key}
                                             slot={slot}
