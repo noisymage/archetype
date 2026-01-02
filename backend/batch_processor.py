@@ -352,8 +352,8 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                         if isinstance(metrics_2d, dict) and 'ratios' in metrics_2d:
                             reference_ratios.append(metrics_2d['ratios'])
         
-        if not reference_data and master_embedding is None:
-            master_embedding = get_master_embedding(db, character_id)
+        # Get master embedding for centroid matching
+        master_embedding = get_master_embedding(db, character_id)
         
         # Initialize models
         manager = ModelManager()
