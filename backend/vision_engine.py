@@ -1026,7 +1026,10 @@ def validate_references(images: dict[str, str], gender: str = "neutral") -> Vali
     # Validate required images
     required_head = {'head_front', 'head_45l', 'head_45r'}
     required_body = {'body_front', 'body_side', 'body_posterior'}
-    optional_head = {'head_90l', 'head_90r', 'head_up', 'head_down'}
+    optional_head = {
+        'head_90l', 'head_90r', 'head_up', 'head_down',
+        'head_up_l', 'head_up_r', 'head_down_l', 'head_down_r'
+    }
     
     provided = set(images.keys())
     missing_head = required_head - provided

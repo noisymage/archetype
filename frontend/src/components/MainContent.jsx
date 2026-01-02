@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Filter, Grid3X3, LayoutList, Image as ImageIcon, Play, X, Loader2, FolderOpen, PlayCircle, Pause, Check, ChevronDown, Pencil } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ImageCard } from './ImageCard';
@@ -52,6 +52,23 @@ export function MainContent() {
             }
         }
     };
+
+    // Map references to simplified { view_type: path } format for the modal
+    const referencesMap = useMemo(() => {
+        if (!selectedCharacter?.references) return {};
+        const map = {};
+        // If it's an array (standard from SQLAlchemy relationship)
+        if (Array.isArray(selectedCharacter.references)) {
+            selectedCharacter.references.forEach(ref => {
+                map[ref.view_type] = ref.path;
+            });
+        }
+        // If it's already an object (unlikely but safe)
+        else if (typeof selectedCharacter.references === 'object') {
+            return selectedCharacter.references;
+        }
+        return map;
+    }, [selectedCharacter]);
 
     return (
         <>
@@ -259,8 +276,10 @@ export function MainContent() {
                     onClose={() => setSelectedImage(null)}
                     metrics={{
                         keypoints: selectedImage.keypoints,
-                        face_bbox: selectedImage.face_bbox
+                        face_bbox: selectedImage.face_bbox,
+                        shot_type: selectedImage.shot_type
                     }}
+                    references={referencesMap}
                     onUpdate={(updatedImage) => {
                         setSelectedImage(updatedImage);
                         // Refresh grid

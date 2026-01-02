@@ -1,28 +1,10 @@
 import { useState, useRef } from 'react';
-import { X, FolderOpen, User, ChevronRight, ChevronLeft, Check, Upload, Loader2, AlertTriangle, Search } from 'lucide-react';
+import { X, FolderOpen, User, ChevronRight, ChevronLeft, Check, Upload, Loader2, AlertTriangle, Search, Trash2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 import { useProject } from '../context/ProjectContext';
 import * as api from '../lib/api';
-
-/**
- * Reference image slot configurations
- */
-const HEAD_SLOTS = [
-    { key: 'head_front', label: 'Front', icon: '⚫', description: 'Face camera', required: true },
-    { key: 'head_45l', label: '45° Left', icon: '←', description: "Viewer's left", required: true },
-    { key: 'head_45r', label: '45° Right', icon: '→', description: "Viewer's right", required: true },
-    { key: 'head_90l', label: '90° Left Profile', icon: '⮜', description: 'Full left side', required: false, optional: true },
-    { key: 'head_90r', label: '90° Right Profile', icon: '⮞', description: 'Full right side', required: false, optional: true },
-    { key: 'head_up', label: 'Looking Up', icon: '⮝', description: 'Pitch +30°', required: false, optional: true },
-    { key: 'head_down', label: 'Looking Down', icon: '⮟', description: 'Pitch -30°', required: false, optional: true },
-];
-
-const BODY_SLOTS = [
-    { key: 'body_front', label: 'A-Pose Front', icon: '╋' },
-    { key: 'body_side', label: 'Side Profile', icon: '│' },
-    { key: 'body_posterior', label: 'Posterior', icon: '◎', description: 'Back view' }
-];
+import { HEAD_SLOTS, BODY_SLOTS } from '../lib/constants';
 
 const STEPS = ['Project', 'Character', 'References', 'Dataset', 'Validate'];
 
@@ -66,8 +48,9 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
         setError(null);
         try {
             const result = await api.listImages(refFolderPath.trim());
-            setAvailableImages(result.images || []);
-            if (result.images?.length === 0) {
+            const images = Array.isArray(result) ? result : (result.images || []);
+            setAvailableImages(images);
+            if (images.length === 0) {
                 setError('No images found in this folder');
             }
         } catch (err) {
@@ -111,13 +94,13 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                     break;
 
                 case 2: // References step
-                    const requiredSlots = [...HEAD_SLOTS.filter(s => s.required), ...BODY_SLOTS];
+                    const requiredSlots = [...HEAD_SLOTS.filter(s => s.required), ...BODY_SLOTS.filter(s => s.required)];
                     const filledRequired = requiredSlots.filter(s => referenceImages[s.key]);
-                    if (filledRequired.length < 6) {
-                        throw new Error(`Please assign all 6 required reference images (${filledRequired.length}/6 filled)`);
+                    if (filledRequired.length < requiredSlots.length) {
+                        throw new Error(`Please assign all ${requiredSlots.length} required reference images (${filledRequired.length}/${requiredSlots.length} filled)`);
                     }
                     // Save reference paths
-                    const allSlots = [...HEAD_SLOTS, ...BODY_SLOTS]; // Keep allSlots for saving all assigned images
+                    const allSlots = [...HEAD_SLOTS, ...BODY_SLOTS];
                     const paths = {};
                     for (const slot of allSlots) {
                         if (referenceImages[slot.key]) { // Only save if an image is assigned
@@ -140,7 +123,9 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                         // Run validation
                         const paths = {};
                         for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
-                            paths[slot.key] = referenceImages[slot.key].path;
+                            if (referenceImages[slot.key]) {
+                                paths[slot.key] = referenceImages[slot.key].path;
+                            }
                         }
                         const validation = await analyzeReferences(paths, gender);
                         setValidationResult(validation);
@@ -169,7 +154,9 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
         try {
             const paths = {};
             for (const slot of [...HEAD_SLOTS, ...BODY_SLOTS]) {
-                paths[slot.key] = referenceImages[slot.key].path;
+                if (referenceImages[slot.key]) {
+                    paths[slot.key] = referenceImages[slot.key].path;
+                }
             }
             const validation = await analyzeReferences(paths, gender);
             setValidationResult(validation);
@@ -183,52 +170,98 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
     const renderSlotButton = (slot) => {
         const assigned = referenceImages[slot.key];
         const isTarget = selectedImage && !assigned;
+        const hasImage = assigned;
+        const isActiveTarget = selectedImage;
 
         return (
-            <button
-                key={slot.key}
+            <div
                 onClick={() => handleAssignToSlot(slot.key)}
-                disabled={!selectedImage && !assigned}
                 className={cn(
-                    "flex flex-col items-center p-2 rounded-lg border-2 transition-all",
-                    assigned
-                        ? "border-green-500/50 bg-green-500/10"
-                        : isTarget
-                            ? "border-cyan-500 bg-cyan-500/20 animate-pulse cursor-pointer"
-                            : "border-white/10 bg-white/5",
-                    isTarget && "hover:border-cyan-400"
+                    "relative border rounded-lg p-2 cursor-pointer transition-all overflow-hidden group h-full flex flex-col",
+                    isActiveTarget ? "hover:border-cyan-400 ring-1 ring-cyan-500/30" : "hover:border-white/20",
+                    // Target state (pulse if selected)
+                    isActiveTarget && !hasImage ? "border-cyan-500/50 bg-cyan-500/10 animate-pulse" : "border-white/10 bg-zinc-900",
+                    // Assigned state
+                    hasImage ? "border-green-500/30 bg-green-500/5" : "",
+                    // Optional empty state
+                    slot.optional && !hasImage && !isActiveTarget && "opacity-60 hover:opacity-100"
                 )}
             >
-                <div className="w-16 h-16 rounded overflow-hidden bg-zinc-800 flex items-center justify-center">
-                    {assigned ? (
-                        <img
-                            src={api.getThumbnailUrl(assigned.path, 64)}
-                            alt={slot.label}
-                            className="w-full h-full object-cover"
-                        />
-                    ) : (
-                        <span className="text-xl text-zinc-600">{slot.icon}</span>
+                <div className="flex items-center justify-between mb-1.5 min-h-[20px]">
+                    <div className="flex items-center gap-1.5 overflow-hidden">
+                        <span className="text-xs shrink-0">{slot.icon}</span>
+                        <span className={cn("text-[9px] font-medium truncate", hasImage ? "text-white" : "text-zinc-500")}>
+                            {slot.label}
+                        </span>
+                    </div>
+                    {hasImage && slot.optional && (
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setReferenceImagesState(prev => {
+                                    const next = { ...prev };
+                                    delete next[slot.key];
+                                    return next;
+                                });
+                            }}
+                            className="p-1 hover:bg-black/50 rounded text-zinc-500 hover:text-red-400 transition-colors"
+                            title="Clear slot"
+                        >
+                            <Trash2 className="w-3 h-3" />
+                        </button>
                     )}
                 </div>
-                <span className="mt-1 text-[10px] text-zinc-400 font-medium">{slot.label}</span>
-                {assigned && (
-                    <button
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            setReferenceImagesState(prev => {
-                                const next = { ...prev };
-                                delete next[slot.key];
-                                return next;
-                            });
-                        }}
-                        className="mt-1 text-[9px] text-red-400 hover:text-red-300"
-                    >
-                        Clear
-                    </button>
-                )}
-            </button>
+
+                <div className="flex-1 min-h-[70px] w-full rounded-md overflow-hidden bg-black/40 border border-white/5 relative flex items-center justify-center">
+                    {assigned ? (
+                        <div className="relative w-full h-full">
+                            <img
+                                src={api.getThumbnailUrl(assigned.path, 128)}
+                                alt={slot.label}
+                                className="w-full h-full object-contain"
+                            />
+                            <div className="absolute inset-x-0 bottom-0 bg-black/70 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <p className="text-[8px] text-zinc-300 truncate font-mono text-center">
+                                    {assigned.path.split('/').pop()}
+                                </p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="text-zinc-700 text-[8px] text-center px-1">
+                            {isActiveTarget ? (
+                                <span className="text-cyan-500">Click to Assign</span>
+                            ) : (
+                                "Empty"
+                            )}
+                        </div>
+                    )}
+                </div>
+            </div>
         );
     };
+
+    const renderHeadGrid = () => {
+        const gridMap = [
+            [null, 'head_up_l', 'head_up', 'head_up_r', null],
+            ['head_90l', 'head_45l', 'head_front', 'head_45r', 'head_90r'],
+            [null, 'head_down_l', 'head_down', 'head_down_r', null]
+        ];
+
+        return (
+            <div className="grid grid-cols-5 gap-2 w-full max-w-xl mx-auto">
+                {gridMap.flat().map((slotKey, idx) => {
+                    const slot = HEAD_SLOTS.find(s => s.key === slotKey);
+                    if (!slot) return <div key={idx} className="aspect-[3/4]" />; // Spacer
+
+                    return (
+                        <div key={slot.key} className="aspect-[3/4]">
+                            {renderSlotButton(slot)}
+                        </div>
+                    );
+                })}
+            </div>
+        );
+    }
 
     const renderStep = () => {
         switch (step) {
@@ -245,36 +278,6 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                                 className="w-full px-4 py-3 bg-zinc-900 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50"
                                 autoFocus
                             />
-                        </div>
-                        {/* Head References */}
-                        <div>
-                            <h3 className="text-sm font-medium text-zinc-300 mb-3">Head References</h3>
-                            <div className="grid grid-cols-3 gap-3">
-                                {HEAD_SLOTS.filter(s => s.required).map(slot => (
-                                    <ReferenceSlot
-                                        key={slot.key}
-                                        slot={slot}
-                                        selectedImages={selectedImages}
-                                        onSelect={() => handleSelectReference(slot.key)}
-                                    />
-                                ))}
-                            </div>
-
-                            {/* Optional head references */}
-                            <div className="mt-4">
-                                <h4 className="text-xs font-medium text-zinc-500 mb-2">Optional (Improves accuracy)</h4>
-                                <div className="grid grid-cols-4 gap-2">
-                                    {HEAD_SLOTS.filter(s => s.optional).map(slot => (
-                                        <ReferenceSlot
-                                            key={slot.key}
-                                            slot={slot}
-                                            selectedImages={selectedImages}
-                                            onSelect={() => handleSelectReference(slot.key)}
-                                            optional={true}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
                         </div>
                         <div>
                             <label className="block text-sm font-medium text-zinc-300 mb-2">LoRA Preset</label>
@@ -336,17 +339,17 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
 
             case 2: // References - New picker UI
                 return (
-                    <div className="space-y-4">
+                    <div className="space-y-6">
                         {/* Folder Scanner */}
-                        <div>
-                            <label className="block text-sm font-medium text-zinc-300 mb-2">Reference Images Folder</label>
+                        <div className="bg-zinc-900 border border-white/5 rounded-lg p-3">
+                            <label className="block text-xs font-medium text-zinc-500 uppercase tracking-wider mb-2">Source Folder</label>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
                                     value={refFolderPath}
                                     onChange={(e) => setRefFolderPath(e.target.value)}
                                     placeholder="/path/to/reference/images"
-                                    className="flex-1 px-3 py-2 bg-zinc-900 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 font-mono text-sm"
+                                    className="flex-1 px-3 py-2 bg-zinc-950 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 font-mono text-sm"
                                 />
                                 <Button
                                     variant="secondary"
@@ -367,11 +370,12 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                         {/* Available Images */}
                         {availableImages.length > 0 && (
                             <div>
-                                <label className="block text-xs font-medium text-zinc-500 mb-2">
-                                    Select an image, then click a slot to assign ({availableImages.length} found)
+                                <label className="block text-xs font-medium text-zinc-400 mb-2 flex justify-between">
+                                    <span>Select an image, then click a slot to assign</span>
+                                    <span className="text-zinc-600">{availableImages.length} found</span>
                                 </label>
-                                <div className="h-32 overflow-x-auto overflow-y-hidden">
-                                    <div className="flex gap-2 pb-2">
+                                <div className="bg-zinc-900 rounded-lg border border-white/5 p-3 h-36 overflow-y-hidden overflow-x-auto">
+                                    <div className="flex gap-2 h-full">
                                         {availableImages.map((imgPath, i) => {
                                             const isSelected = selectedImage === imgPath;
                                             const isAssigned = Object.values(referenceImages).some(r => r.path === imgPath);
@@ -380,57 +384,62 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                                                     key={i}
                                                     onClick={() => setSelectedImage(isSelected ? null : imgPath)}
                                                     className={cn(
-                                                        "flex-shrink-0 w-24 h-24 rounded-lg overflow-hidden border-2 transition-all",
+                                                        "flex-shrink-0 aspect-square h-full rounded-md overflow-hidden border-2 transition-all relative group",
                                                         isSelected
-                                                            ? "border-cyan-500 ring-2 ring-cyan-500/50"
+                                                            ? "border-cyan-500 ring-2 ring-cyan-500/30 z-10"
                                                             : isAssigned
                                                                 ? "border-green-500/50 opacity-50"
                                                                 : "border-white/10 hover:border-white/30"
                                                     )}
                                                 >
                                                     <img
-                                                        src={api.getThumbnailUrl(imgPath, 96)}
+                                                        src={api.getThumbnailUrl(imgPath, 128)}
                                                         alt={`Image ${i + 1}`}
                                                         className="w-full h-full object-cover"
                                                     />
+                                                    {isSelected && (
+                                                        <div className="absolute inset-0 bg-cyan-500/20 flex items-center justify-center">
+                                                            <Check className="w-6 h-6 text-cyan-400 drop-shadow-md" />
+                                                        </div>
+                                                    )}
+                                                    {isAssigned && !isSelected && (
+                                                        <div className="absolute inset-0 bg-green-500/20 flex items-center justify-center">
+                                                            <Check className="w-4 h-4 text-green-400" />
+                                                        </div>
+                                                    )}
                                                 </button>
                                             );
                                         })}
                                     </div>
                                 </div>
-                                {selectedImage && (
-                                    <p className="text-xs text-cyan-400 mt-1">
-                                        ✓ Image selected. Click a slot below to assign it.
-                                    </p>
-                                )}
                             </div>
                         )}
 
-                        {/* Slot Assignment */}
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-6">
+                            {/* Head References Grid */}
                             <div>
-                                <h4 className="text-xs font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                                    <User className="w-3 h-3" />
+                                <h3 className="text-sm font-medium text-zinc-300 mb-3 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-cyan-500" />
                                     Head References
-                                </h4>
-                                <div className="flex gap-2">
-                                    {HEAD_SLOTS.map(renderSlotButton)}
-                                </div>
+                                </h3>
+                                {renderHeadGrid()}
                             </div>
+
+                            {/* Body References Grid */}
                             <div>
-                                <h4 className="text-xs font-medium text-zinc-400 mb-2 flex items-center gap-2">
-                                    <span>🧍</span>
+                                <h3 className="text-sm font-medium text-zinc-300 mb-3 flex items-center gap-2">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-fuchsia-500" />
                                     Body References
-                                </h4>
-                                <div className="flex gap-2">
-                                    {BODY_SLOTS.map(renderSlotButton)}
+                                </h3>
+                                <div className="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+                                    {BODY_SLOTS.map(slot => (
+                                        <div key={slot.key} className="aspect-[3/4]">
+                                            {renderSlotButton(slot)}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
-
-                        <p className="text-[10px] text-zinc-600 text-center">
-                            {Object.keys(referenceImages).length}/6 slots assigned
-                        </p>
                     </div>
                 );
 
@@ -438,54 +447,34 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                 return (
                     <div className="space-y-6">
                         <div>
-                            <label className="block text-sm font-medium text-zinc-300 mb-2">Dataset Folder Path</label>
+                            <label className="block text-sm font-medium text-zinc-300 mb-2">Dataset Images Folder</label>
                             <div className="flex gap-2">
                                 <input
                                     type="text"
                                     value={folderPath}
                                     onChange={(e) => setFolderPath(e.target.value)}
-                                    placeholder="/path/to/dataset/images"
-                                    className="flex-1 px-4 py-3 bg-zinc-900 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 font-mono text-sm"
+                                    placeholder="/path/to/dataset"
+                                    className="flex-1 px-4 py-3 bg-zinc-900 border border-white/10 rounded-lg text-white placeholder-zinc-500 focus:outline-none focus:border-cyan-500/50 font-mono"
                                 />
-                                <Button
-                                    variant="secondary"
-                                    className="gap-2"
-                                    onClick={async () => {
-                                        if (!folderPath.trim()) return;
-                                        setIsLoading(true);
-                                        setError(null);
-                                        try {
-                                            const result = await scanFolder(folderPath.trim(), createdCharacter.id);
-                                            setScanResult(result);
-                                        } catch (err) {
-                                            setError(err.message);
-                                        } finally {
-                                            setIsLoading(false);
-                                        }
-                                    }}
-                                    disabled={isLoading || !folderPath.trim()}
-                                >
-                                    {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-                                    Scan
-                                </Button>
                             </div>
-                            <p className="text-xs text-zinc-500 mt-2">
-                                Enter the absolute path to the folder containing training images.
+                            <p className="mt-2 text-xs text-zinc-500">
+                                Folder containing the images you want to validate against your references.
                             </p>
                         </div>
 
                         {scanResult && (
-                            <div className="p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
-                                <div className="flex items-center gap-2 text-green-400 mb-2">
-                                    <Check className="w-4 h-4" />
-                                    <span className="font-medium">Folder Scanned</span>
+                            <div className="bg-zinc-900 rounded-lg p-4 border border-white/5 space-y-3">
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-zinc-400">Total Images Found</span>
+                                    <span className="text-lg font-mono text-white">{scanResult.total_found}</span>
                                 </div>
-                                <div className="text-sm text-zinc-300 space-y-1">
-                                    <p>Found: <span className="text-white font-mono">{scanResult.total_found}</span> images</p>
-                                    <p>New entries: <span className="text-white font-mono">{scanResult.new_entries}</span></p>
-                                    {scanResult.already_exists > 0 && (
-                                        <p className="text-zinc-500">({scanResult.already_exists} already imported)</p>
-                                    )}
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-zinc-400">New Entries</span>
+                                    <span className="text-lg font-mono text-green-400">+{scanResult.new_entries}</span>
+                                </div>
+                                <div className="flex items-center justify-between">
+                                    <span className="text-sm text-zinc-400">Already in Project</span>
+                                    <span className="text-lg font-mono text-zinc-500">{scanResult.already_exists}</span>
                                 </div>
                             </div>
                         )}
@@ -494,170 +483,137 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
 
             case 4: // Validate
                 return (
-                    <div className="space-y-6">
-                        <div className="text-center">
-                            <h4 className="text-lg font-medium text-white mb-2">Reference Validation</h4>
+                    <div className="space-y-6 h-full flex flex-col">
+                        <div className="text-center space-y-2">
+                            <h3 className="text-lg font-medium text-white">Setup Complete</h3>
                             <p className="text-sm text-zinc-400">
-                                Analyze reference images for identity consistency and body proportions.
+                                Your project and character data is ready. Run a final validation check on your references before processing the dataset.
                             </p>
                         </div>
 
-                        {!validationResult && !isLoading && (
-                            <div className="flex justify-center">
-                                <Button variant="primary" onClick={handleRunValidation} className="gap-2">
-                                    <Check className="w-4 h-4" />
-                                    Run Validation
-                                </Button>
-                            </div>
-                        )}
-
-                        {isLoading && (
-                            <div className="flex flex-col items-center gap-3 py-8">
-                                <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
-                                <p className="text-sm text-zinc-400">Analyzing references...</p>
-                            </div>
-                        )}
-
-                        {validationResult && (
-                            <div className={cn(
-                                "p-4 rounded-lg border",
-                                validationResult.success
-                                    ? "bg-green-500/10 border-green-500/30"
-                                    : "bg-yellow-500/10 border-yellow-500/30"
-                            )}>
-                                <div className="flex items-center gap-2 mb-3">
-                                    {validationResult.success ? (
-                                        <Check className="w-5 h-5 text-green-400" />
-                                    ) : (
-                                        <AlertTriangle className="w-5 h-5 text-yellow-400" />
-                                    )}
-                                    <span className={cn(
-                                        "font-medium",
-                                        validationResult.success ? "text-green-400" : "text-yellow-400"
-                                    )}>
-                                        {validationResult.success ? 'Validation Passed' : 'Validation Warnings'}
-                                    </span>
-                                    {validationResult.degraded_mode && (
-                                        <span className="text-xs px-2 py-0.5 bg-yellow-500/20 text-yellow-400 rounded">
-                                            Degraded Mode
-                                        </span>
-                                    )}
-                                </div>
-
-                                {validationResult.warnings?.length > 0 && (
-                                    <div className="space-y-2">
-                                        {validationResult.warnings.map((warning, i) => (
-                                            <div key={i} className={cn(
-                                                "text-sm px-3 py-2 rounded",
-                                                warning.severity === 'error'
-                                                    ? "bg-red-500/10 text-red-400"
-                                                    : "bg-yellow-500/10 text-yellow-400"
-                                            )}>
-                                                <span className="font-mono text-xs opacity-50">[{warning.code}]</span>{' '}
-                                                {warning.message}
-                                            </div>
-                                        ))}
+                        <div className="flex-1 bg-zinc-900 rounded-lg border border-white/5 p-6 overflow-y-auto">
+                            {!validationResult ? (
+                                <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
+                                    <div className="w-12 h-12 rounded-full bg-zinc-800 flex items-center justify-center">
+                                        <User className="w-6 h-6 text-zinc-500" />
                                     </div>
-                                )}
-                            </div>
-                        )}
+                                    <p className="text-sm text-zinc-500 max-w-xs">
+                                        Validate that your reference images cover all required angles and have consistent identity.
+                                    </p>
+                                    <Button onClick={handleRunValidation} variant="primary">
+                                        Run Reference Validation
+                                    </Button>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    <div className="flex items-center gap-3">
+                                        {validationResult.success ? (
+                                            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                                                <Check className="w-5 h-5 text-green-500" />
+                                            </div>
+                                        ) : (
+                                            <div className="w-8 h-8 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                                                <AlertTriangle className="w-5 h-5 text-yellow-500" />
+                                            </div>
+                                        )}
+                                        <div>
+                                            <h4 className={cn("font-medium", validationResult.success ? "text-green-400" : "text-yellow-400")}>
+                                                {validationResult.success ? "References Validated" : "Validation Issues"}
+                                            </h4>
+                                            <p className="text-xs text-zinc-500">
+                                                {validationResult.success ? "All consistency checks passed." : "Some issues were detected but you can proceed."}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {validationResult.warnings.length > 0 && (
+                                        <div className="space-y-2">
+                                            {validationResult.warnings.map((w, i) => (
+                                                <div key={i} className="text-xs bg-black/30 p-3 rounded border border-white/5 text-zinc-300">
+                                                    <span className={cn("font-bold mr-2 uppercase", w.severity === 'error' ? "text-red-400" : "text-yellow-400")}>
+                                                        {w.severity}
+                                                    </span>
+                                                    {w.message}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    <div className="pt-4 flex justify-center">
+                                        <Button onClick={handleRunValidation} variant="secondary" size="sm">
+                                            Re-run Validation
+                                        </Button>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 );
-
-            default:
-                return null;
         }
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-            {/* Backdrop */}
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
-
-            {/* Modal */}
-            <div className="relative w-full max-w-2xl bg-zinc-950 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+            <div className="bg-zinc-950 rounded-xl border border-white/10 w-full max-w-2xl overflow-hidden flex flex-col shadow-2xl max-h-[90vh]">
                 {/* Header */}
-                <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-                    <h2 className="text-lg font-semibold text-white">
-                        {initialProject ? `Add Character to ${initialProject.name}` : 'Create New Project'}
-                    </h2>
+                <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 bg-zinc-900/50">
+                    <div>
+                        <h2 className="text-xl font-bold text-white tracking-tight">Create New Project</h2>
+                        <div className="flex items-center gap-2 mt-2">
+                            {STEPS.map((s, i) => (
+                                <div key={s} className="flex items-center">
+                                    <div className={cn(
+                                        "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full transition-colors",
+                                        i === step ? "bg-cyan-500/20 text-cyan-400" :
+                                            i < step ? "bg-green-500/20 text-green-400" : "bg-zinc-800 text-zinc-600"
+                                    )}>
+                                        {i + 1}. {s}
+                                    </div>
+                                    {i < STEPS.length - 1 && (
+                                        <div className="w-4 h-[1px] bg-zinc-800 mx-1" />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                     <button
                         onClick={onClose}
-                        className="p-2 rounded-lg hover:bg-white/5 text-zinc-400 hover:text-white transition-colors"
+                        className="text-zinc-500 hover:text-white transition-colors"
                     >
                         <X className="w-5 h-5" />
                     </button>
                 </div>
 
-                {/* Step Indicator */}
-                <div className="px-6 py-4 border-b border-white/5">
-                    <div className="flex items-center justify-between">
-                        {STEPS.map((name, i) => (
-                            <div key={i} className="flex items-center">
-                                <div className={cn(
-                                    "w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all",
-                                    i < step ? "bg-cyan-500 text-black" :
-                                        i === step ? "bg-cyan-500/20 text-cyan-400 ring-2 ring-cyan-500" :
-                                            "bg-zinc-800 text-zinc-500"
-                                )}>
-                                    {i < step ? <Check className="w-4 h-4" /> : i + 1}
-                                </div>
-                                <span className={cn(
-                                    "ml-2 text-sm hidden sm:block",
-                                    i === step ? "text-white" : "text-zinc-500"
-                                )}>
-                                    {name}
-                                </span>
-                                {i < STEPS.length - 1 && (
-                                    <ChevronRight className="w-4 h-4 text-zinc-600 mx-3" />
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
                 {/* Content */}
-                <div className="px-6 py-8 min-h-[300px]">
-                    {renderStep()}
-
+                <div className="p-6 overflow-y-auto flex-1 bg-zinc-950">
                     {error && (
-                        <div className="mt-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm">
-                            {error}
+                        <div className="mb-6 bg-red-500/10 border border-red-500/50 rounded-lg p-4 flex items-start gap-3">
+                            <AlertTriangle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                            <p className="text-sm text-red-200">{error}</p>
                         </div>
                     )}
+
+                    {renderStep()}
                 </div>
 
                 {/* Footer */}
-                <div className="px-6 py-4 border-t border-white/10 flex items-center justify-between">
+                <div className="p-6 border-t border-white/5 bg-zinc-900 shrink-0 flex justify-between">
                     <Button
                         variant="secondary"
                         onClick={handleBack}
-                        disabled={step === 0 || isLoading}
-                        className="gap-2"
+                        disabled={step === (initialProject ? 1 : 0) || isLoading}
                     >
-                        <ChevronLeft className="w-4 h-4" />
+                        <ChevronLeft className="w-4 h-4 mr-1" />
                         Back
                     </Button>
-
                     <Button
                         variant="primary"
                         onClick={handleNext}
                         disabled={isLoading}
-                        className="gap-2"
                     >
-                        {isLoading ? (
-                            <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : step === STEPS.length - 1 ? (
-                            <>
-                                <Check className="w-4 h-4" />
-                                Complete
-                            </>
-                        ) : (
-                            <>
-                                Next
-                                <ChevronRight className="w-4 h-4" />
-                            </>
-                        )}
+                        {isLoading && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        {step === STEPS.length - 1 ? 'Finish' : 'Next'}
+                        {!isLoading && step < STEPS.length - 1 && <ChevronRight className="w-4 h-4 ml-1" />}
                     </Button>
                 </div>
             </div>
