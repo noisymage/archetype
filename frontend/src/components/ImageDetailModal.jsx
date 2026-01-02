@@ -23,19 +23,51 @@ export function ImageDetailModal({ image, metrics, onClose, onUpdate, references
     const imgRef = useRef(null);
     const refImgRef = useRef(null);
 
-    // Auto-select reference based on shot_type
+    // Auto-select reference based on closest match or shot_type
     useEffect(() => {
-        if (metrics?.shot_type && references && !selectedRefKey) {
-            // Try to match exact shot type first
-            if (references[metrics.shot_type]) {
-                setSelectedRefKey(metrics.shot_type);
-            }
-            // If it's a head shot but no exact match, try head_front or similar?
-            else if (metrics.shot_type.startsWith('head_') && references.head_front) {
-                // optional: fallback
+        if (!references || selectedRefKey) return;
+
+        // 1. First priority: Use the actual closest reference calculated by backend
+        if (image.closest_face_ref) {
+            // Reverse lookup: find key where path matches closest_face_ref
+            const matchedEntry = Object.entries(references).find(([_, path]) => {
+                // simple normalization to handle potential path differences
+                return path.endsWith(image.closest_face_ref.split('/').pop());
+            });
+
+            if (matchedEntry) {
+                console.log('Using closest face ref:', matchedEntry[0]);
+                setSelectedRefKey(matchedEntry[0]);
+                return;
             }
         }
-    }, [metrics, references]);
+
+        // 2. Second priority: Smart mapping based on shot_type
+        if (metrics?.shot_type) {
+            const shotType = metrics.shot_type.toLowerCase();
+            let targetRef = null;
+
+            // Precise mapping
+            if (shotType === 'close-up') targetRef = 'head_front';
+            else if (shotType === 'medium') targetRef = 'body_front';
+            else if (shotType === 'full-body') targetRef = 'body_front';
+
+            // Fallback: Check for exact match (e.g. if shot_type matches slot key)
+            if (!targetRef && references[shotType]) targetRef = shotType;
+
+            if (targetRef && references[targetRef]) {
+                setSelectedRefKey(targetRef);
+                return;
+            }
+        }
+
+        // 3. Last resort: default to body_front or head_front if available
+        if (references['body_front']) {
+            setSelectedRefKey('body_front');
+        } else if (references['head_front']) {
+            setSelectedRefKey('head_front');
+        }
+    }, [metrics, references, image]);
 
     if (!image) return null;
 

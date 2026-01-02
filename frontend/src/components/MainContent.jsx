@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Filter, Grid3X3, LayoutList, Image as ImageIcon, Play, X, Loader2, FolderOpen, PlayCircle, Pause, Check, ChevronDown, Pencil } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { ImageCard } from './ImageCard';
@@ -8,6 +8,7 @@ import { useProject } from '../context/ProjectContext';
 import { ImageDetailModal } from './ImageDetailModal';
 import EditReferencesModal from './EditReferencesModal';
 import { ScanFolderModal } from './ScanFolderModal';
+import * as api from '../lib/api';
 
 /**
  * Main content area with responsive image grid
@@ -28,6 +29,20 @@ export function MainContent() {
     const [reprocessMode, setReprocessMode] = useState(false);
     const [editReferencesOpen, setEditReferencesOpen] = useState(false);
     const [scanModalOpen, setScanModalOpen] = useState(false);
+
+    // Local state for references (fetched separately)
+    const [characterReferences, setCharacterReferences] = useState([]);
+
+    // Fetch references when character changes
+    useEffect(() => {
+        if (selectedCharacter) {
+            api.getCharacterReferences(selectedCharacter.id)
+                .then(refs => setCharacterReferences(refs))
+                .catch(err => console.error("Failed to load references:", err));
+        } else {
+            setCharacterReferences([]);
+        }
+    }, [selectedCharacter?.id]);
 
     // Filter images by status
     const filteredImages = statusFilter === 'all'
@@ -55,20 +70,14 @@ export function MainContent() {
 
     // Map references to simplified { view_type: path } format for the modal
     const referencesMap = useMemo(() => {
-        if (!selectedCharacter?.references) return {};
         const map = {};
-        // If it's an array (standard from SQLAlchemy relationship)
-        if (Array.isArray(selectedCharacter.references)) {
-            selectedCharacter.references.forEach(ref => {
+        if (Array.isArray(characterReferences)) {
+            characterReferences.forEach(ref => {
                 map[ref.view_type] = ref.path;
             });
         }
-        // If it's already an object (unlikely but safe)
-        else if (typeof selectedCharacter.references === 'object') {
-            return selectedCharacter.references;
-        }
         return map;
-    }, [selectedCharacter]);
+    }, [characterReferences]);
 
     return (
         <>
@@ -294,12 +303,12 @@ export function MainContent() {
                     character={selectedCharacter}
                     open={editReferencesOpen}
                     onClose={() => setEditReferencesOpen(false)}
-                    onSave={() => {
-                        // Refresh character data
-                        if (selectedCharacter) {
-                            // The context will auto-refresh on next render
-                            setEditReferencesOpen(false);
-                        }
+                    onSave={async (newPaths) => {
+                        await setReferenceImages(selectedCharacter.id, newPaths);
+                        // Refresh local references after save
+                        const updatedRefs = await api.getCharacterReferences(selectedCharacter.id);
+                        setCharacterReferences(updatedRefs);
+                        setEditReferencesOpen(false);
                     }}
                 />
             )}
