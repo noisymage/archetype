@@ -65,10 +65,10 @@ export async function deleteCharacter(characterId) {
 
 // === Reference Images ===
 
-export async function setReferenceImages(characterId, images) {
+export async function setReferenceImages(characterId, images, sourcePath = null) {
     return apiFetch(`/api/characters/${characterId}/references`, {
         method: 'POST',
-        body: JSON.stringify({ images })
+        body: JSON.stringify({ images, source_path: sourcePath })
     });
 }
 
@@ -118,11 +118,11 @@ export async function getCharacterReferences(characterId) {
     return res.json();
 }
 
-export async function setCharacterReferences(characterId, imagePaths) {
+export async function setCharacterReferences(characterId, imagePaths, sourcePath = null) {
     const res = await fetch(`${API_BASE}/api/characters/${characterId}/references`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ images: imagePaths })
+        body: JSON.stringify({ images: imagePaths, source_path: sourcePath })
     });
     if (!res.ok) throw new Error('Failed to set references');
     return res.json();

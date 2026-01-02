@@ -97,7 +97,7 @@ function ReferenceSlotEdit({ slot, currentImage, selectedImage, onSelect, option
  * Modal for editing character reference images
  */
 export default function EditReferencesModal({ character, open, onClose, onSave }) {
-    const [refFolderPath, setRefFolderPath] = useState('');
+    const [refFolderPath, setRefFolderPath] = useState(character?.reference_images_path || '');
     const [availableImages, setAvailableImages] = useState([]);
     const [currentRefs, setCurrentRefs] = useState({});
     const [selectedRefs, setSelectedRefs] = useState({});
@@ -112,6 +112,9 @@ export default function EditReferencesModal({ character, open, onClose, onSave }
     useEffect(() => {
         if (open && character) {
             loadCurrentReferences();
+            if (character.reference_images_path) {
+                setRefFolderPath(character.reference_images_path);
+            }
         }
     }, [open, character]);
 
@@ -210,7 +213,7 @@ export default function EditReferencesModal({ character, open, onClose, onSave }
                 }
             }
 
-            await api.setCharacterReferences(character.id, paths);
+            await api.setCharacterReferences(character.id, paths, refFolderPath);
             onSave?.();
             onClose();
         } catch (err) {

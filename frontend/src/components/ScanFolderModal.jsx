@@ -16,18 +16,23 @@ export function ScanFolderModal({ open, onClose, character }) {
     const [error, setError] = useState(null);
 
     // Auto-fill from existing images if available
+    // Auto-fill from existing path or images
     useEffect(() => {
-        if (open && character?.datasetImages?.length > 0) {
-            // Get directory of the first image
-            const firstImg = character.datasetImages[0];
-            if (firstImg.original_path) {
-                const dir = firstImg.original_path.substring(0, firstImg.original_path.lastIndexOf('/'));
-                setFolderPath(dir);
+        if (open) {
+            if (character?.dataset_images_path) {
+                setFolderPath(character.dataset_images_path);
+            } else if (character?.datasetImages?.length > 0) {
+                // Get directory of the first image
+                const firstImg = character.datasetImages[0];
+                if (firstImg.original_path) {
+                    const dir = firstImg.original_path.substring(0, firstImg.original_path.lastIndexOf('/'));
+                    setFolderPath(dir);
+                }
+            } else {
+                setFolderPath('');
+                setScanResult(null);
+                setError(null);
             }
-        } else {
-            setFolderPath('');
-            setScanResult(null);
-            setError(null);
         }
     }, [open, character]);
 

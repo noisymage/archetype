@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from database import (
-    init_db, get_db, Project, Character, ReferenceImage, DatasetImage, 
+    init_db, get_db, migrate_db, Project, Character, ReferenceImage, DatasetImage, 
     ImageMetrics, ProcessingJob, JobStatus, ImageStatus, LoraPresetType, Gender
 )
 from fastapi import UploadFile, File
@@ -107,6 +107,8 @@ class CharacterResponse(BaseModel):
     gender: Gender
     reference_count: int = 0
     image_count: int = 0
+    reference_images_path: Optional[str] = None
+    dataset_images_path: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -143,6 +145,7 @@ class ReferenceImageCreate(BaseModel):
         ...,
         description="Mapping of view type to absolute image path"
     )
+    source_path: Optional[str] = None
 
 
 class DatasetImageResponse(BaseModel):
@@ -206,6 +209,7 @@ class JobStatusResponse(BaseModel):
 async def lifespan(app: FastAPI):
     """Application lifespan handler - initialize database on startup."""
     init_db()
+    migrate_db()  # Run migrations
     # Ensure models directory exists
     models_dir = Path(__file__).parent / "models"
     models_dir.mkdir(exist_ok=True)
@@ -264,6 +268,17 @@ def validate_image_path(path: str) -> tuple[bool, str]:
         return False, f"Unsupported format. Supported: {SUPPORTED_IMAGE_FORMATS}"
     
     return True, ""
+
+
+def _convert_numpy(obj):
+    """Recursively convert numpy objects to python built-ins."""
+    if hasattr(obj, 'tolist'):
+        return obj.tolist()
+    if isinstance(obj, dict):
+        return {k: _convert_numpy(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_convert_numpy(v) for v in obj]
+    return obj
 
 
 # === Processing Endpoints ===
@@ -399,7 +414,7 @@ async def analyze_reference(request: ReferenceAnalysisRequest):
                 for w in result.warnings
             ],
             master_embedding=result.master_embedding.tolist() if result.master_embedding is not None else None,
-            body_metrics=result.body_metrics,
+            body_metrics=_convert_numpy(result.body_metrics),
             error=result.error
         )
         
@@ -655,7 +670,9 @@ async def list_characters(project_id: int, db: Session = Depends(get_db)):
             name=c.name,
             gender=c.gender.value if c.gender else "neutral",
             reference_count=len(c.reference_images),
-            image_count=len(c.dataset_images)
+            image_count=len(c.dataset_images),
+            reference_images_path=c.reference_images_path,
+            dataset_images_path=c.dataset_images_path
         )
         for c in project.characters
     ]
@@ -692,7 +709,9 @@ async def create_character(
         name=character.name,
         gender=character.gender.value,
         reference_count=0,
-        image_count=0
+        image_count=0,
+        reference_images_path=None,
+        dataset_images_path=None
     )
 
 
@@ -709,7 +728,9 @@ async def get_character(character_id: int, db: Session = Depends(get_db)):
         name=character.name,
         gender=character.gender.value if character.gender else "neutral",
         reference_count=len(character.reference_images),
-        image_count=len(character.dataset_images)
+        image_count=len(character.dataset_images),
+        reference_images_path=character.reference_images_path,
+        dataset_images_path=character.dataset_images_path
     )
 
 
@@ -743,6 +764,11 @@ async def set_reference_images(
         is_valid, error = validate_image_path(path)
         if not is_valid:
             raise HTTPException(status_code=400, detail=f"Invalid path for {view_type}: {error}")
+    
+    # Save reference path if provided
+    if request.source_path:
+        character.reference_images_path = request.source_path
+        db.add(character)
     
     # Run analysis to get embeddings and metrics
     from vision_engine import validate_references
@@ -874,6 +900,11 @@ async def scan_folder(request: FolderScanRequest, db: Session = Depends(get_db))
         raise HTTPException(status_code=400, detail=str(e))
     
     new_count = create_dataset_entries(db, request.character_id, images)
+    
+    # Update character dataset path
+    character.dataset_images_path = request.folder_path
+    db.add(character)
+    db.commit()
     
     return FolderScanResponse(
         folder_path=request.folder_path,

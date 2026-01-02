@@ -124,7 +124,7 @@ export function CreateProjectWizard({ isOpen, onClose, initialProject = null }) 
                             paths[slot.key] = referenceImages[slot.key].path;
                         }
                     }
-                    await setReferenceImages(createdCharacter.id, paths);
+                    await setReferenceImages(createdCharacter.id, paths, refFolderPath);
                     break;
 
                 case 3: // Dataset step

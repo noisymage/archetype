@@ -233,9 +233,9 @@ export function ProjectProvider({ children }) {
 
     // === Reference Images ===
 
-    const setReferenceImages = useCallback(async (characterId, images) => {
+    const setReferenceImages = useCallback(async (characterId, images, sourcePath = null) => {
         try {
-            await api.setReferenceImages(characterId, images);
+            await api.setReferenceImages(characterId, images, sourcePath);
             toast.success('Reference images saved');
         } catch (error) {
             toast.error(`Failed to save references: ${error.message}`);

@@ -78,6 +78,10 @@ class Character(Base):
     dataset_images = relationship("DatasetImage", back_populates="character", cascade="all, delete-orphan")
     processing_jobs = relationship("ProcessingJob", back_populates="character", cascade="all, delete-orphan")
 
+    # New fields for path persistence
+    reference_images_path = Column(String(1024), nullable=True)
+    dataset_images_path = Column(String(1024), nullable=True)
+
     @property
     def reference_count(self):
         return len(self.reference_images)
@@ -85,6 +89,21 @@ class Character(Base):
     @property
     def image_count(self):
         return len(self.dataset_images)
+
+def migrate_db():
+    """Simple migration to add new columns if they don't exist."""
+    from sqlalchemy import inspect, text
+    inspector = inspect(engine)
+    columns = [c['name'] for c in inspector.get_columns('characters')]
+    
+    with engine.connect() as conn:
+        if 'reference_images_path' not in columns:
+            conn.execute(text("ALTER TABLE characters ADD COLUMN reference_images_path VARCHAR(1024)"))
+            print("Added reference_images_path column")
+        
+        if 'dataset_images_path' not in columns:
+            conn.execute(text("ALTER TABLE characters ADD COLUMN dataset_images_path VARCHAR(1024)"))
+            print("Added dataset_images_path column")
 
 
 class ReferenceImage(Base):
