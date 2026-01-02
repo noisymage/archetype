@@ -58,9 +58,8 @@ def is_supported_image(path: str) -> bool:
 class FaceResult:
     """Result from face analysis."""
     detected: bool = False
-    embedding: Optional[np.ndarray] = None  # Original (non-aligned) embedding
-    aligned_embedding: Optional[np.ndarray] = None  # Rotation-aligned embedding (if different)
-    bbox: Optional[list[float]] = None  # [x, y, w, h]
+    embedding: Optional[np.ndarray] = None
+    bbox: Optional[list[float]] = None  # [x1, y1, x2, y2]
     landmarks: Optional[np.ndarray] = None
     confidence: float = 0.0
     pose: Optional[dict] = None  # {"yaw": float, "pitch": float, "roll": float}
@@ -176,13 +175,19 @@ class ModelManager:
             # Create models directory if needed
             INSIGHTFACE_DIR.mkdir(parents=True, exist_ok=True)
             
-            # Initialize FaceAnalysis
+            # Initialize FaceAnalysis with optimized settings
             self._face_app = FaceAnalysis(
                 name="buffalo_l",
                 root=str(INSIGHTFACE_DIR),
                 providers=self._get_onnx_providers()
             )
-            self._face_app.prepare(ctx_id=0 if self.device == "cuda" else -1)
+            # Use larger det_size for better close-up detection
+            # Lower det_thresh to catch more faces (default is often 0.5)
+            self._face_app.prepare(
+                ctx_id=0 if self.device == "cuda" else -1,
+                det_size=(640, 640),
+                det_thresh=0.3
+            )
             
             self._face_loaded = True
             logger.info("InsightFace model loaded successfully")
@@ -397,76 +402,6 @@ def estimate_head_pose(landmarks: np.ndarray, image_shape: tuple) -> Optional[di
         return None
 
 
-def calculate_face_rotation_from_keypoints(keypoints: dict) -> Optional[float]:
-    """
-    Calculate face rotation angle from YOLO-Pose keypoints.
-    
-    Uses the eye positions to determine head tilt/rotation.
-    
-    Args:
-        keypoints: Dict of keypoint name -> {x, y, confidence}
-        
-    Returns:
-        Rotation angle in degrees (positive = clockwise), or None if can't compute
-    """
-    import math
-    
-    # Need both eyes with reasonable confidence
-    left_eye = keypoints.get('left_eye')
-    right_eye = keypoints.get('right_eye')
-    
-    if not left_eye or not right_eye:
-        return None
-    
-    if left_eye.get('confidence', 0) < 0.3 or right_eye.get('confidence', 0) < 0.3:
-        return None
-    
-    # Calculate angle between eyes
-    dx = right_eye['x'] - left_eye['x']
-    dy = right_eye['y'] - left_eye['y']
-    
-    # Angle in degrees (0 = horizontal, positive = clockwise tilt)
-    angle = math.degrees(math.atan2(dy, dx))
-    
-    return angle
-
-
-def rotate_image_to_upright(img: np.ndarray, angle: float) -> np.ndarray:
-    """
-    Rotate an image to make the face upright.
-    
-    Args:
-        img: OpenCV image (BGR)
-        angle: Rotation angle in degrees (from calculate_face_rotation_from_keypoints)
-        
-    Returns:
-        Rotated image with same dimensions (padded if needed)
-    """
-    import cv2
-    
-    h, w = img.shape[:2]
-    center = (w // 2, h // 2)
-    
-    # Rotation matrix (negative angle to counter the detected tilt)
-    rotation_matrix = cv2.getRotationMatrix2D(center, -angle, 1.0)
-    
-    # Calculate new bounding box size to avoid cropping
-    cos = abs(rotation_matrix[0, 0])
-    sin = abs(rotation_matrix[0, 1])
-    new_w = int((h * sin) + (w * cos))
-    new_h = int((h * cos) + (w * sin))
-    
-    # Adjust rotation matrix for the new image size
-    rotation_matrix[0, 2] += (new_w / 2) - center[0]
-    rotation_matrix[1, 2] += (new_h / 2) - center[1]
-    
-    # Perform the rotation with black padding
-    rotated = cv2.warpAffine(img, rotation_matrix, (new_w, new_h), 
-                              borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0))
-    
-    return rotated
-
-
 class FaceAnalyzer:
     """
     Face detection and embedding extraction using InsightFace.
@@ -475,21 +410,18 @@ class FaceAnalyzer:
     def __init__(self, model_manager: ModelManager):
         self._manager = model_manager
     
-    def analyze(self, image_path: str, pose_keypoints: Optional[dict] = None) -> FaceResult:
+    def analyze(self, image_path: str) -> FaceResult:
         """
-        Analyze a face in an image, extracting both original and aligned embeddings.
+        Analyze a face in an image with multi-scale detection fallback.
         
-        Extracts embeddings from both the original image and a rotation-aligned
-        version (if significant rotation is detected). This enables comparing
-        both against references and using whichever matches best.
+        If the initial detection fails, tries different detection scales
+        and image preprocessing to maximize detection success.
         
         Args:
             image_path: Absolute path to image file.
-            pose_keypoints: Optional pre-computed YOLO-Pose keypoints for rotation.
             
         Returns:
-            FaceResult with embedding (original), aligned_embedding (if rotated),
-            bbox, landmarks, or error.
+            FaceResult with embedding, bbox, landmarks, or error.
         """
         result = FaceResult()
         
@@ -516,87 +448,69 @@ class FaceAnalyzer:
                 result.error = f"Failed to read image: {image_path}"
                 return result
             
-            # Step 1: Try face detection on original image
+            faces = None
+            detection_method = "default"
+            processed_img = img
+            
+            # Try 1: Standard detection with current det_size (640x640)
             faces = self._manager._face_app.get(img)
-            original_face = None
             
-            if faces:
-                original_face = max(faces, key=lambda f: f.det_score)
-                result.detected = True
-                result.embedding = original_face.embedding
-                result.bbox = original_face.bbox.tolist()
-                result.landmarks = original_face.landmark_2d_106 if hasattr(original_face, 'landmark_2d_106') else original_face.kps
-                result.confidence = float(original_face.det_score)
-                
-                if result.landmarks is not None:
-                    result.pose = estimate_head_pose(result.landmarks, img.shape)
+            # Try 2: If no faces, try with image padding for extreme close-ups
+            # (face fills most of the frame)
+            if not faces:
+                logger.debug(f"No face with default detection, trying padding for close-up")
+                h, w = img.shape[:2]
+                # Add 50% padding around the image
+                pad_h, pad_w = h // 2, w // 2
+                padded = cv2.copyMakeBorder(
+                    img, pad_h, pad_h, pad_w, pad_w,
+                    cv2.BORDER_CONSTANT, value=(128, 128, 128)
+                )
+                faces = self._manager._face_app.get(padded)
+                if faces:
+                    detection_method = "padded"
+                    processed_img = padded
+                    # Adjust bbox coordinates to account for padding
+                    for face in faces:
+                        face.bbox[0] -= pad_w
+                        face.bbox[1] -= pad_h
+                        face.bbox[2] -= pad_w
+                        face.bbox[3] -= pad_h
             
-            # Step 2: Get YOLO-Pose keypoints for rotation calculation
-            keypoints = pose_keypoints
-            if keypoints is None and self._manager.load_pose_model():
-                try:
-                    predictions = self._manager._pose_model(image_path, verbose=False)
-                    if predictions and len(predictions) > 0:
-                        pred = predictions[0]
-                        if pred.keypoints is not None and len(pred.keypoints) > 0:
-                            if pred.boxes is not None and len(pred.boxes) > 0:
-                                boxes = pred.boxes.xyxy.cpu().numpy()
-                                areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
-                                best_idx = int(areas.argmax())
-                            else:
-                                best_idx = 0
-                            
-                            keypoints_data = pred.keypoints[best_idx]
-                            xy = keypoints_data.xy.cpu().numpy()[0]
-                            conf = keypoints_data.conf.cpu().numpy()[0] if keypoints_data.conf is not None else np.ones(17)
-                            
-                            KEYPOINT_NAMES = [
-                                'nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
-                                'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
-                                'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
-                                'left_knee', 'right_knee', 'left_ankle', 'right_ankle'
-                            ]
-                            keypoints = {}
-                            for i, name in enumerate(KEYPOINT_NAMES):
-                                keypoints[name] = {
-                                    'x': float(xy[i, 0]),
-                                    'y': float(xy[i, 1]),
-                                    'confidence': float(conf[i])
-                                }
-                except Exception as e:
-                    logger.warning(f"Failed to get pose keypoints: {e}")
+            # Try 3: Downscale for very high resolution images
+            if not faces:
+                h, w = img.shape[:2]
+                if max(h, w) > 1500:
+                    logger.debug(f"No face detected, trying downscaled image")
+                    scale = 1000 / max(h, w)
+                    small = cv2.resize(img, (int(w * scale), int(h * scale)))
+                    faces = self._manager._face_app.get(small)
+                    if faces:
+                        detection_method = "downscaled"
+                        processed_img = small
+                        # Adjust bbox coordinates
+                        for face in faces:
+                            face.bbox = face.bbox / scale
             
-            # Step 3: If rotation detected, extract aligned embedding too
-            if keypoints:
-                rotation_angle = calculate_face_rotation_from_keypoints(keypoints)
-                
-                if rotation_angle is not None and abs(rotation_angle) > 10:  # Lower threshold to 10°
-                    logger.debug(f"Face rotation detected: {rotation_angle:.1f}°, extracting aligned embedding")
-                    
-                    # Rotate image to upright
-                    rotated_img = rotate_image_to_upright(img, rotation_angle)
-                    
-                    # Detect face in rotated image
-                    rotated_faces = self._manager._face_app.get(rotated_img)
-                    
-                    if rotated_faces:
-                        aligned_face = max(rotated_faces, key=lambda f: f.det_score)
-                        result.aligned_embedding = aligned_face.embedding
-                        logger.debug(f"Aligned embedding extracted successfully")
-                        
-                        # If original detection failed but aligned worked, use aligned as primary
-                        if not result.detected:
-                            result.detected = True
-                            result.embedding = aligned_face.embedding
-                            result.bbox = aligned_face.bbox.tolist()
-                            result.landmarks = aligned_face.landmark_2d_106 if hasattr(aligned_face, 'landmark_2d_106') else aligned_face.kps
-                            result.confidence = float(aligned_face.det_score)
-                            if result.landmarks is not None:
-                                result.pose = estimate_head_pose(result.landmarks, rotated_img.shape)
-            
-            if not result.detected:
+            if not faces:
                 result.error = "No face detected in image"
                 return result
+            
+            if detection_method != "default":
+                logger.info(f"Face detected using {detection_method} method")
+            
+            # Use the most confident face
+            face = max(faces, key=lambda f: f.det_score)
+            
+            result.detected = True
+            result.embedding = face.embedding
+            result.bbox = face.bbox.tolist()
+            result.landmarks = face.landmark_2d_106 if hasattr(face, 'landmark_2d_106') else face.kps
+            result.confidence = float(face.det_score)
+            
+            # Calculate head pose from landmarks
+            if result.landmarks is not None:
+                result.pose = estimate_head_pose(result.landmarks, processed_img.shape)
             
             return result
             

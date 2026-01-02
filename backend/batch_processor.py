@@ -250,46 +250,21 @@ async def process_single_dataset_image(
     elif face_result.detected:
         shot_type = "close-up"
     
-    # Compute face similarity (using both original and aligned embeddings if available)
+    # Compute face similarity
     face_similarity = None
     closest_face_ref_id = None
     
     if face_result.detected and face_result.embedding is not None:
-        # Compute similarity for original embedding
-        original_similarity = None
-        original_ref_id = None
-        
         if face_result.pose and reference_data:
-            original_similarity, original_ref_id = compute_pose_aware_similarity(
+            # Use pose-aware similarity
+            face_similarity, closest_face_ref_id = compute_pose_aware_similarity(
                 face_result.embedding,
                 face_result.pose,
                 reference_data
             )
         elif master_embedding is not None:
-            original_similarity = compute_similarity(master_embedding, face_result.embedding)
-        
-        # Compute similarity for aligned embedding (if available)
-        aligned_similarity = None
-        aligned_ref_id = None
-        
-        if face_result.aligned_embedding is not None:
-            if face_result.pose and reference_data:
-                aligned_similarity, aligned_ref_id = compute_pose_aware_similarity(
-                    face_result.aligned_embedding,
-                    face_result.pose,
-                    reference_data
-                )
-            elif master_embedding is not None:
-                aligned_similarity = compute_similarity(master_embedding, face_result.aligned_embedding)
-        
-        # Use whichever embedding gives the best score
-        if aligned_similarity is not None and (original_similarity is None or aligned_similarity > original_similarity):
-            face_similarity = aligned_similarity
-            closest_face_ref_id = aligned_ref_id
-            logger.debug(f"Using aligned embedding (score: {aligned_similarity:.3f} > original: {original_similarity:.3f if original_similarity else 'N/A'})")
-        else:
-            face_similarity = original_similarity
-            closest_face_ref_id = original_ref_id
+            # Fallback to simple comparison
+            face_similarity = compute_similarity(master_embedding, face_result.embedding)
     
     # Body analysis
     body_consistency = None
