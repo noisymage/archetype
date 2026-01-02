@@ -396,6 +396,76 @@ def estimate_head_pose(landmarks: np.ndarray, image_shape: tuple) -> Optional[di
         return None
 
 
+def calculate_face_rotation_from_keypoints(keypoints: dict) -> Optional[float]:
+    """
+    Calculate face rotation angle from YOLO-Pose keypoints.
+    
+    Uses the eye positions to determine head tilt/rotation.
+    
+    Args:
+        keypoints: Dict of keypoint name -> {x, y, confidence}
+        
+    Returns:
+        Rotation angle in degrees (positive = clockwise), or None if can't compute
+    """
+    import math
+    
+    # Need both eyes with reasonable confidence
+    left_eye = keypoints.get('left_eye')
+    right_eye = keypoints.get('right_eye')
+    
+    if not left_eye or not right_eye:
+        return None
+    
+    if left_eye.get('confidence', 0) < 0.3 or right_eye.get('confidence', 0) < 0.3:
+        return None
+    
+    # Calculate angle between eyes
+    dx = right_eye['x'] - left_eye['x']
+    dy = right_eye['y'] - left_eye['y']
+    
+    # Angle in degrees (0 = horizontal, positive = clockwise tilt)
+    angle = math.degrees(math.atan2(dy, dx))
+    
+    return angle
+
+
+def rotate_image_to_upright(img: np.ndarray, angle: float) -> np.ndarray:
+    """
+    Rotate an image to make the face upright.
+    
+    Args:
+        img: OpenCV image (BGR)
+        angle: Rotation angle in degrees (from calculate_face_rotation_from_keypoints)
+        
+    Returns:
+        Rotated image with same dimensions (padded if needed)
+    """
+    import cv2
+    
+    h, w = img.shape[:2]
+    center = (w // 2, h // 2)
+    
+    # Rotation matrix (negative angle to counter the detected tilt)
+    rotation_matrix = cv2.getRotationMatrix2D(center, -angle, 1.0)
+    
+    # Calculate new bounding box size to avoid cropping
+    cos = abs(rotation_matrix[0, 0])
+    sin = abs(rotation_matrix[0, 1])
+    new_w = int((h * sin) + (w * cos))
+    new_h = int((h * cos) + (w * sin))
+    
+    # Adjust rotation matrix for the new image size
+    rotation_matrix[0, 2] += (new_w / 2) - center[0]
+    rotation_matrix[1, 2] += (new_h / 2) - center[1]
+    
+    # Perform the rotation with black padding
+    rotated = cv2.warpAffine(img, rotation_matrix, (new_w, new_h), 
+                              borderMode=cv2.BORDER_CONSTANT, borderValue=(0, 0, 0))
+    
+    return rotated
+
+
 class FaceAnalyzer:
     """
     Face detection and embedding extraction using InsightFace.
@@ -404,12 +474,16 @@ class FaceAnalyzer:
     def __init__(self, model_manager: ModelManager):
         self._manager = model_manager
     
-    def analyze(self, image_path: str) -> FaceResult:
+    def analyze(self, image_path: str, pose_keypoints: Optional[dict] = None) -> FaceResult:
         """
         Analyze a face in an image.
         
+        If initial detection fails and pose_keypoints are available (or can be
+        obtained), attempts rotation-based alignment and retries detection.
+        
         Args:
             image_path: Absolute path to image file.
+            pose_keypoints: Optional pre-computed YOLO-Pose keypoints for rotation.
             
         Returns:
             FaceResult with embedding, bbox, landmarks, or error.
@@ -441,6 +515,65 @@ class FaceAnalyzer:
             
             # Run face detection
             faces = self._manager._face_app.get(img)
+            
+            # If no face detected, try rotation-based alignment
+            if not faces:
+                logger.debug(f"No face detected in {image_path}, attempting rotation alignment")
+                
+                # Get keypoints if not provided
+                keypoints = pose_keypoints
+                if keypoints is None:
+                    # Try to get keypoints via YOLO-Pose
+                    if self._manager.load_pose_model():
+                        try:
+                            predictions = self._manager._pose_model(image_path, verbose=False)
+                            if predictions and len(predictions) > 0:
+                                pred = predictions[0]
+                                if pred.keypoints is not None and len(pred.keypoints) > 0:
+                                    # Extract keypoints for largest person
+                                    if pred.boxes is not None and len(pred.boxes) > 0:
+                                        boxes = pred.boxes.xyxy.cpu().numpy()
+                                        areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
+                                        best_idx = int(areas.argmax())
+                                    else:
+                                        best_idx = 0
+                                    
+                                    keypoints_data = pred.keypoints[best_idx]
+                                    xy = keypoints_data.xy.cpu().numpy()[0]
+                                    conf = keypoints_data.conf.cpu().numpy()[0] if keypoints_data.conf is not None else np.ones(17)
+                                    
+                                    KEYPOINT_NAMES = [
+                                        'nose', 'left_eye', 'right_eye', 'left_ear', 'right_ear',
+                                        'left_shoulder', 'right_shoulder', 'left_elbow', 'right_elbow',
+                                        'left_wrist', 'right_wrist', 'left_hip', 'right_hip',
+                                        'left_knee', 'right_knee', 'left_ankle', 'right_ankle'
+                                    ]
+                                    keypoints = {}
+                                    for i, name in enumerate(KEYPOINT_NAMES):
+                                        keypoints[name] = {
+                                            'x': float(xy[i, 0]),
+                                            'y': float(xy[i, 1]),
+                                            'confidence': float(conf[i])
+                                        }
+                        except Exception as e:
+                            logger.warning(f"Failed to get pose keypoints for rotation: {e}")
+                
+                # Calculate rotation if we have keypoints
+                if keypoints:
+                    rotation_angle = calculate_face_rotation_from_keypoints(keypoints)
+                    
+                    if rotation_angle is not None and abs(rotation_angle) > 15:  # Only rotate if >15 degrees off
+                        logger.info(f"Rotating image by {-rotation_angle:.1f}° to align face")
+                        
+                        # Rotate image
+                        rotated_img = rotate_image_to_upright(img, rotation_angle)
+                        
+                        # Retry face detection on rotated image
+                        faces = self._manager._face_app.get(rotated_img)
+                        
+                        if faces:
+                            logger.info(f"Face detected after rotation alignment!")
+                            img = rotated_img  # Use rotated image for landmark extraction
             
             if not faces:
                 result.error = "No face detected in image"

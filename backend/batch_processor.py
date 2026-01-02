@@ -128,76 +128,61 @@ def compute_pose_aware_similarity(
     dataset_embedding: np.ndarray,
     dataset_pose: dict,
     reference_data: list[tuple[np.ndarray, dict, int]],  # (embedding, pose, ref_id)
-    pose_threshold: float = 30.0  # degrees
+    pose_weight_sigma: float = 15.0  # Controls pose distance decay rate
 ) -> tuple[float, Optional[int]]:
     """
     Compute face similarity with pose-aware weighting.
     
-    Compares dataset image against references with similar head poses,
-    weighting by inverse pose distance.
+    Compares dataset image against ALL references, using pose distance
+    only for weighting (not filtering). Returns the best individual match.
+    
+    For LoRA training datasets, we want to know "does this face match ANY
+    reference angle?" rather than only comparing against similar poses.
     
     Args:
         dataset_embedding: Face embedding of dataset image
         dataset_pose: Head pose of dataset image
         reference_data: List of (embedding, pose, ref_id) tuples from references
-        pose_threshold: Max pose distance to consider (degrees)
+        pose_weight_sigma: Controls exponential decay rate for pose weighting
     
     Returns:
-        Tuple of (Weighted similarity score, Best match reference ID)
+        Tuple of (Best similarity score, Best match reference ID)
     """
     import math
     
-    weighted_similarities = []
-    total_weight = 0.0
+    if not reference_data:
+        return (0.0, None)
     
     best_score = -1.0
     best_ref_id = None
+    best_weighted_score = -1.0
+    best_weighted_ref_id = None
     
     for ref_embedding, ref_pose, ref_id in reference_data:
-        # Calculate pose distance
-        pose_dist = compute_pose_distance(dataset_pose, ref_pose)
-        
-        # Skip references too far in pose space
-        if pose_dist > pose_threshold:
-            continue
-        
-        # Calculate embedding similarity
+        # Calculate raw embedding similarity
         similarity = compute_similarity(dataset_embedding, ref_embedding)
         
-        # Track best individual match
+        # Track absolute best match (used for final return)
         if similarity > best_score:
             best_score = similarity
             best_ref_id = ref_id
         
         # PRIORITY: If we found a near-perfect match (>95%), use it directly
-        # This prevents dilution from averaging with lower-scoring references
         if similarity >= 0.95:
             return (similarity, ref_id)
         
-        # Weight by inverse pose distance (exponential decay)
-        # weight = exp(-distance / sigma)
-        sigma = 15.0  # Controls decay rate
-        weight = math.exp(-pose_dist / sigma)
+        # Calculate pose-weighted score (for reference, could be used for logging)
+        pose_dist = compute_pose_distance(dataset_pose, ref_pose)
+        weight = math.exp(-pose_dist / pose_weight_sigma)
+        weighted_score = similarity * weight
         
-        weighted_similarities.append(similarity * weight)
-        total_weight += weight
+        if weighted_score > best_weighted_score:
+            best_weighted_score = weighted_score
+            best_weighted_ref_id = ref_id
     
-    if total_weight == 0:
-        # No close references found - fall back to best match across all
-        best_score = -1.0
-        best_ref_id = None
-        
-        for ref_emb, ref_pose, ref_id in reference_data:
-            sim = compute_similarity(dataset_embedding, ref_emb)
-            if sim > best_score:
-                best_score = sim
-                best_ref_id = ref_id
-                
-        return (best_score, best_ref_id) if best_score >= 0 else (0.0, None)
-    
-    # Use best individual match instead of weighted average
-    # This fixes the issue where perfect matches were being diluted
-    return best_score, best_ref_id
+    # Return the best raw similarity score (not weighted)
+    # This ensures rotated faces still get high scores if they match any reference
+    return (best_score, best_ref_id) if best_score >= 0 else (0.0, None)
 
 
 async def process_single_dataset_image(
