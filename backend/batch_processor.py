@@ -14,7 +14,8 @@ from sqlalchemy.orm import Session
 
 from database import (
     SessionLocal, DatasetImage, ImageMetrics, ReferenceImage, 
-    ProcessingJob, JobStatus, ImageStatus, Character
+    ProcessingJob, JobStatus, ImageStatus, Character,
+    ImageDescription, Caption, CaptionModelType
 )
 
 logger = logging.getLogger(__name__)
@@ -104,6 +105,119 @@ def compute_similarity(embedding1: np.ndarray, embedding2: np.ndarray) -> float:
 # NOTE: Removed pose-aware similarity computation - now using centroid matching
 
 
+async def enrich_image_with_llm(
+    db: Session,
+    dataset_image: DatasetImage,
+    character_name: str,
+    reference_paths: list[str],
+    embedding_scores: dict
+) -> bool:
+    """
+    Enrich an image with LLM-generated description and captions.
+    
+    Args:
+        db: Database session
+        dataset_image: Image to enrich
+        character_name: Name of the character
+        reference_paths: Paths to reference images
+        embedding_scores: Dict with face_similarity, shot_type, etc.
+    
+    Returns:
+        True if enrichment succeeded, False otherwise
+    """
+    from llm_engine import get_llm_provider, load_prompts, load_settings
+    from datetime import datetime
+    
+    settings = load_settings()
+    if not settings.get('processing', {}).get('enable_enrichment', True):
+        logger.info("LLM enrichment disabled in settings")
+        return False
+    
+    try:
+        provider = get_llm_provider()
+        prompts = load_prompts()
+        caption_formats = settings.get('processing', {}).get('caption_formats', ['SDXL', 'Flux'])
+        
+        # Check if provider is available
+        if not await provider.check_available():
+            logger.warning(f"LLM provider not available, skipping enrichment")
+            return False
+        
+        logger.info(f"Enriching {Path(dataset_image.original_path).name} with {provider.__class__.__name__}...")
+        
+        result = await provider.enrich_image(
+            image_path=dataset_image.original_path,
+            reference_images=reference_paths,
+            character_name=character_name,
+            embedding_scores=embedding_scores,
+            prompts=prompts,
+            caption_formats=caption_formats
+        )
+        
+        if result.error:
+            logger.warning(f"Enrichment error: {result.error}")
+            return False
+        
+        # Store description
+        description = db.query(ImageDescription).filter(
+            ImageDescription.image_id == dataset_image.id
+        ).first()
+        
+        if not description:
+            description = ImageDescription(image_id=dataset_image.id)
+            db.add(description)
+        
+        description.shot_type = result.shot_type
+        description.pose_description = result.pose_description
+        description.expression = result.expression
+        description.clothing_description = result.clothing_description
+        description.lighting_description = result.lighting_description
+        description.background_description = result.background_description
+        description.full_description = result.full_description
+        description.quality_notes = result.quality_notes
+        description.llm_provider = result.provider
+        description.llm_model = result.model
+        description.generated_at = result.generated_at or datetime.now()
+        
+        # Store captions
+        for format_name, caption_text in result.captions.items():
+            # Find or create caption
+            try:
+                model_type = CaptionModelType(format_name)
+            except ValueError:
+                # Try mapping common names
+                format_map = {
+                    'Qwen-Image': CaptionModelType.QWEN_IMAGE,
+                    'Z-Image': CaptionModelType.Z_IMAGE,
+                }
+                model_type = format_map.get(format_name)
+                if not model_type:
+                    logger.warning(f"Unknown caption format: {format_name}")
+                    continue
+            
+            caption = db.query(Caption).filter(
+                Caption.image_id == dataset_image.id,
+                Caption.model_type == model_type
+            ).first()
+            
+            if not caption:
+                caption = Caption(
+                    image_id=dataset_image.id,
+                    model_type=model_type,
+                    text_content=caption_text
+                )
+                db.add(caption)
+            else:
+                caption.text_content = caption_text
+        
+        db.flush()
+        logger.info(f"Enrichment complete for {Path(dataset_image.original_path).name}")
+        return True
+        
+    except Exception as e:
+        logger.exception(f"Enrichment failed: {e}")
+        return False
+
 
 async def process_single_dataset_image(
     db: Session,
@@ -112,7 +226,9 @@ async def process_single_dataset_image(
     models: dict,
     master_embedding: Optional[np.ndarray] = None,
     reference_betas: Optional[list[np.ndarray]] = None,
-    reference_ratios: Optional[list[dict]] = None
+    reference_ratios: Optional[list[dict]] = None,
+    character_name: str = "",
+    reference_paths: Optional[list[str]] = None
 ) -> dict:
     """
     Process a single dataset image and update its metrics.
@@ -123,6 +239,8 @@ async def process_single_dataset_image(
         reference_data: List of (embedding, pose, ref_id) tuples
         models: Dictionary containing initialized analyzer instances
         master_embedding: Fallback embedding for non-pose-aware matching
+        character_name: Name of the character for LLM enrichment
+        reference_paths: Paths to reference images for LLM context
         
     Returns:
         Dictionary with processing results/metrics
@@ -257,11 +375,27 @@ async def process_single_dataset_image(
             dataset_image.status = ImageStatus.ANALYZED
     else:
         dataset_image.status = ImageStatus.ANALYZED
+    
+    # LLM Enrichment phase (after ML metrics)
+    enriched = False
+    if reference_paths:
+        enriched = await enrich_image_with_llm(
+            db=db,
+            dataset_image=dataset_image,
+            character_name=character_name,
+            reference_paths=reference_paths,
+            embedding_scores={
+                "face_similarity": face_similarity,
+                "shot_type": shot_type,
+                "body_consistency": body_consistency
+            }
+        )
         
     return {
         "face_similarity": face_similarity,
         "body_consistency": body_consistency,
-        "shot_type": shot_type
+        "shot_type": shot_type,
+        "enriched": enriched
     }
 
 
@@ -321,6 +455,9 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
         # Body reference metrics for consistency comparison
         reference_betas = []
         reference_ratios = []
+        
+        # Collect reference image paths for LLM enrichment
+        reference_paths = [ref.path for ref in references if ref.path]
         
         for ref in references:
             # Load face embedding if available (head references)
@@ -390,7 +527,9 @@ async def process_batch(character_id: int, job_id: str, reprocess_all: bool = Fa
                     models,
                     master_embedding,
                     reference_betas,
-                    reference_ratios
+                    reference_ratios,
+                    character_name=character.name,
+                    reference_paths=reference_paths
                 )
                 
                 # Update job count

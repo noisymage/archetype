@@ -21,3 +21,6 @@ frontend/dist/
 # Environment
 .env
 .env.local
+
+# Settings (contains API keys)
+backend/settings.json

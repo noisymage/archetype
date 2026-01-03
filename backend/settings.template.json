@@ -1,0 +1,22 @@
+{
+    "llm": {
+        "provider": "ollama",
+        "ollama": {
+            "base_url": "http://localhost:11434",
+            "model": "qwen3-vl:8b"
+        },
+        "gemini": {
+            "api_key": "YOUR_API_KEY_HERE",
+            "model": "gemini-3-flash-preview"
+        }
+    },
+    "processing": {
+        "enable_enrichment": true,
+        "caption_formats": [
+            "SDXL",
+            "Flux",
+            "Qwen-Image",
+            "Z-Image"
+        ]
+    }
+}

@@ -34,7 +34,8 @@ class ImageStatus(enum.Enum):
 class CaptionModelType(enum.Enum):
     SDXL = "SDXL"
     FLUX = "Flux"
-    DENSE = "Dense"
+    QWEN_IMAGE = "Qwen-Image"
+    Z_IMAGE = "Z-Image"
 
 
 class Gender(enum.Enum):
@@ -139,6 +140,14 @@ def migrate_db():
             conn.commit()
     except Exception:
         pass  # Table may not exist yet
+    
+    # Create image_descriptions table if it doesn't exist
+    try:
+        if 'image_descriptions' not in inspector.get_table_names():
+            ImageDescription.__table__.create(engine)
+            print("Created image_descriptions table")
+    except Exception as e:
+        print(f"Note: image_descriptions table handling: {e}")
 
 
 
@@ -174,6 +183,7 @@ class DatasetImage(Base):
     character = relationship("Character", back_populates="dataset_images")
     metrics = relationship("ImageMetrics", back_populates="image", uselist=False, cascade="all, delete-orphan")
     captions = relationship("Caption", back_populates="image", cascade="all, delete-orphan")
+    description = relationship("ImageDescription", back_populates="image", uselist=False, cascade="all, delete-orphan")
 
 
 class ImageMetrics(Base):
@@ -206,6 +216,35 @@ class Caption(Base):
     text_content = Column(Text, nullable=False)
 
     image = relationship("DatasetImage", back_populates="captions")
+
+
+class ImageDescription(Base):
+    """Rich textual description of a dataset image from vision LLM."""
+    __tablename__ = "image_descriptions"
+
+    id = Column(Integer, primary_key=True, index=True)
+    image_id = Column(Integer, ForeignKey("dataset_images.id"), nullable=False, unique=True)
+    
+    # Structured metadata
+    shot_type = Column(String(50))              # close-up, medium, full-body
+    pose_description = Column(Text)             # e.g., "standing with arms crossed"
+    expression = Column(String(100))            # e.g., "confident smile"
+    clothing_description = Column(Text)         # e.g., "blue dress with white patterns"
+    lighting_description = Column(String(255))  # e.g., "dramatic side lighting"
+    background_description = Column(Text)       # e.g., "urban street at night"
+    
+    # Full analysis
+    full_description = Column(Text)             # Detailed paragraph description
+    
+    # LLM assessment
+    quality_notes = Column(Text)                # Any issues the LLM flagged
+    
+    # Generation metadata
+    llm_provider = Column(String(50))           # "gemini", "ollama"
+    llm_model = Column(String(100))             # "gemini-2.0-flash", "llava:13b"
+    generated_at = Column(DateTime)
+    
+    image = relationship("DatasetImage", back_populates="description")
 
 
 class ProcessingJob(Base):

@@ -1,0 +1,53 @@
+# LLM Prompts Configuration
+# Edit these prompts to customize the enrichment and caption generation
+
+enrichment:
+  system: |
+    You are an expert image analyst specializing in character consistency for AI image generation training.
+    You will be shown reference images of a character named "{character_name}" followed by a target image to analyze.
+    Your task is to provide detailed, structured analysis of the target image.
+
+  analysis: |
+    Analyze this target image of {character_name} and provide a structured analysis.
+    
+    Additional context from ML analysis:
+    - Face similarity score: {face_similarity}
+    - Detected shot type: {shot_type}
+    
+    Respond with a JSON object containing:
+    {{
+      "shot_type": "close-up" | "medium" | "full-body",
+      "pose_description": "Brief description of the pose/action",
+      "expression": "Facial expression description",
+      "clothing_description": "What the character is wearing",
+      "lighting_description": "Lighting style and direction",
+      "background_description": "Background/setting description",
+      "full_description": "A detailed paragraph describing the entire image",
+      "quality_notes": "Any issues (blur, cropping, artifacts) or null if none"
+    }}
+
+captions:
+  SDXL: |
+    Generate a training caption for SDXL in this format:
+    [character name], [action/pose], [clothing], [expression], [setting], [lighting style], [shot type]
+    
+    Keep it concise, use commas to separate tags. Example:
+    "Hanna, standing with arms crossed, blue sundress, confident smile, urban street, golden hour lighting, medium shot"
+
+  Flux: |
+    Generate a natural language caption for Flux model training.
+    Write a flowing, descriptive sentence that captures the scene.
+    Include the character name, their appearance, pose, setting, and mood.
+    
+    Example:
+    "Hanna stands confidently on a sunlit city street, her blue sundress swaying gently in the breeze as she smiles warmly at the camera."
+
+  Qwen-Image: |
+    Generate a caption for Qwen-Image model training.
+    Use natural language with detailed visual descriptions.
+    Focus on observable details rather than interpretations.
+
+  Z-Image: |
+    Generate a caption for Z-Image model training.
+    Use a structured format with clear descriptors.
+    Include character, pose, clothing, setting, and technical details.

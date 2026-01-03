@@ -4,6 +4,7 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 import { useProject } from '../context/ProjectContext';
 import { CreateProjectWizard } from './CreateProjectWizard';
+import { SettingsModal } from './SettingsModal';
 
 /**
  * Left sidebar for project/character navigation
@@ -19,8 +20,8 @@ export function Sidebar({ currentView, onViewChange }) {
 
     const [expandedProjects, setExpandedProjects] = useState([]);
     const [showWizard, setShowWizard] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
     const [deletingId, setDeletingId] = useState(null);
-
     const [projectForWizard, setProjectForWizard] = useState(null);
 
     const toggleProject = (projectId) => {
@@ -75,7 +76,11 @@ export function Sidebar({ currentView, onViewChange }) {
                         <h1 className="text-lg font-semibold bg-gradient-to-r from-cyan-400 to-fuchsia-500 bg-clip-text text-transparent tracking-tight">
                             Archetype
                         </h1>
-                        <button className="p-1.5 rounded-lg hover:bg-white/5 transition-colors text-zinc-400 hover:text-white">
+                        <button
+                            onClick={() => setShowSettings(true)}
+                            className="p-1.5 rounded-lg hover:bg-white/5 transition-colors text-zinc-400 hover:text-white"
+                            title="Settings"
+                        >
                             <Settings className="w-4 h-4" />
                         </button>
                     </div>
@@ -236,7 +241,6 @@ export function Sidebar({ currentView, onViewChange }) {
                 </div>
             </aside>
 
-            {/* Create Project Wizard - Conditionally rendered to ensure fresh state */}
             {showWizard && (
                 <CreateProjectWizard
                     isOpen={true}
@@ -244,6 +248,12 @@ export function Sidebar({ currentView, onViewChange }) {
                     initialProject={projectForWizard}
                 />
             )}
+
+            {/* Settings Modal */}
+            <SettingsModal
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+            />
         </>
     );
 }

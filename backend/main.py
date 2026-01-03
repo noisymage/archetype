@@ -397,6 +397,84 @@ async def health_check():
     return {"status": "ok"}
 
 
+# === Settings & LLM Endpoints ===
+
+@app.get("/api/settings")
+async def get_settings():
+    """Get current application settings (excludes API keys for security)."""
+    from llm_engine import load_settings
+    settings = load_settings()
+    
+    # Remove sensitive data for frontend
+    safe_settings = {
+        "llm": {
+            "provider": settings.get("llm", {}).get("provider", "ollama"),
+            "ollama": {
+                "base_url": settings.get("llm", {}).get("ollama", {}).get("base_url", "http://localhost:11434"),
+                "model": settings.get("llm", {}).get("ollama", {}).get("model", "llava:13b")
+            },
+            "gemini": {
+                "configured": bool(settings.get("llm", {}).get("gemini", {}).get("api_key")),
+                "model": settings.get("llm", {}).get("gemini", {}).get("model", "gemini-2.0-flash-exp")
+            }
+        },
+        "processing": settings.get("processing", {})
+    }
+    return safe_settings
+
+
+class SettingsUpdate(BaseModel):
+    """Request to update settings."""
+    llm_provider: Optional[str] = None
+    ollama_base_url: Optional[str] = None
+    ollama_model: Optional[str] = None
+    gemini_api_key: Optional[str] = None
+    gemini_model: Optional[str] = None
+    enable_enrichment: Optional[bool] = None
+    caption_formats: Optional[List[str]] = None
+
+
+@app.post("/api/settings")
+async def update_settings(request: SettingsUpdate):
+    """Update application settings."""
+    from llm_engine import load_settings, save_settings
+    
+    settings = load_settings()
+    
+    # Update LLM settings
+    if request.llm_provider is not None:
+        settings.setdefault("llm", {})["provider"] = request.llm_provider
+    
+    if request.ollama_base_url is not None:
+        settings.setdefault("llm", {}).setdefault("ollama", {})["base_url"] = request.ollama_base_url
+    
+    if request.ollama_model is not None:
+        settings.setdefault("llm", {}).setdefault("ollama", {})["model"] = request.ollama_model
+    
+    if request.gemini_api_key is not None:
+        settings.setdefault("llm", {}).setdefault("gemini", {})["api_key"] = request.gemini_api_key
+    
+    if request.gemini_model is not None:
+        settings.setdefault("llm", {}).setdefault("gemini", {})["model"] = request.gemini_model
+    
+    # Update processing settings
+    if request.enable_enrichment is not None:
+        settings.setdefault("processing", {})["enable_enrichment"] = request.enable_enrichment
+    
+    if request.caption_formats is not None:
+        settings.setdefault("processing", {})["caption_formats"] = request.caption_formats
+    
+    save_settings(settings)
+    return {"status": "ok", "message": "Settings updated"}
+
+
+@app.get("/api/llm/status")
+async def get_llm_status():
+    """Get status of all LLM providers."""
+    from llm_engine import check_llm_status
+    return await check_llm_status()
+
+
 @app.get("/")
 async def root():
     """Root endpoint."""
