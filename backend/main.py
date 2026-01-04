@@ -18,7 +18,7 @@ from sqlalchemy.orm import Session
 
 from database import (
     init_db, get_db, migrate_db, Project, Character, ReferenceImage, DatasetImage, 
-    ImageMetrics, ProcessingJob, JobStatus, ImageStatus, LoraPresetType, Gender
+    ImageMetrics, ProcessingJob, JobStatus, ImageStatus, LoraPresetType, Gender, Caption, CaptionModelType
 )
 from fastapi import UploadFile, File
 import shutil
@@ -342,6 +342,13 @@ async def reprocess_image(image_id: int, db: Session = Depends(get_db)):
     if not reference_data and master_embedding is None:
         master_embedding = get_master_embedding(db, character_id)
 
+    # Collect reference paths for LLM enrichment
+    reference_paths = [ref.path for ref in references if ref.path]
+    
+    # Get character name for enrichment
+    character = image.character
+    character_name = character.name if character else ""
+
     # Init models
     manager = ModelManager()
     models = {
@@ -358,7 +365,9 @@ async def reprocess_image(image_id: int, db: Session = Depends(get_db)):
             models,
             master_embedding,
             reference_betas,
-            reference_ratios
+            reference_ratios,
+            character_name=character_name,
+            reference_paths=reference_paths
         )
         db.commit()
         db.refresh(image)
@@ -1168,3 +1177,58 @@ async def serve_thumbnail(
         filename=f"thumb_{resolved.stem}.jpg"
     )
 
+
+# === Caption CRUD Endpoints ===
+
+class CaptionResponse(BaseModel):
+    """Caption data response."""
+    id: int
+    image_id: int
+    model_type: str
+    text_content: str
+    
+    class Config:
+        from_attributes = True
+
+
+class CaptionUpdateRequest(BaseModel):
+    """Request to update a caption."""
+    text_content: str
+
+
+@app.get("/api/images/{image_id}/captions", response_model=List[CaptionResponse])
+async def get_image_captions(image_id: int, db: Session = Depends(get_db)):
+    """Get all captions for an image."""
+    image = db.query(DatasetImage).filter(DatasetImage.id == image_id).first()
+    if not image:
+        raise HTTPException(status_code=404, detail="Image not found")
+    
+    captions = db.query(Caption).filter(Caption.image_id == image_id).all()
+    return [
+        CaptionResponse(
+            id=c.id,
+            image_id=c.image_id,
+            model_type=c.model_type.value,
+            text_content=c.text_content or ""
+        )
+        for c in captions
+    ]
+
+
+@app.put("/api/captions/{caption_id}", response_model=CaptionResponse)
+async def update_caption(caption_id: int, request: CaptionUpdateRequest, db: Session = Depends(get_db)):
+    """Update a caption's text content."""
+    caption = db.query(Caption).filter(Caption.id == caption_id).first()
+    if not caption:
+        raise HTTPException(status_code=404, detail="Caption not found")
+    
+    caption.text_content = request.text_content
+    db.commit()
+    db.refresh(caption)
+    
+    return CaptionResponse(
+        id=caption.id,
+        image_id=caption.image_id,
+        model_type=caption.model_type.value,
+        text_content=caption.text_content or ""
+    )

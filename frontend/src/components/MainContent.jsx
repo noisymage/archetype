@@ -8,6 +8,7 @@ import { useProject } from '../context/ProjectContext';
 import { ImageDetailModal } from './ImageDetailModal';
 import EditReferencesModal from './EditReferencesModal';
 import { ScanFolderModal } from './ScanFolderModal';
+import { ShotTypeDistribution } from './ShotTypeDistribution';
 import * as api from '../lib/api';
 
 /**
@@ -261,8 +262,24 @@ export function MainContent() {
                     </div>
                 )}
 
-                {/* Edit References Button */}
-                {selectedCharacter && !activeJob && (
+                {/* Shot Type Distribution + Edit References */}
+                {selectedCharacter && !activeJob && datasetImages.length > 0 && (
+                    <div className="px-6 py-3 border-b border-white/5 bg-zinc-900/50 flex items-center justify-between">
+                        <ShotTypeDistribution images={datasetImages} />
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            className="gap-2"
+                            onClick={() => setEditReferencesOpen(true)}
+                        >
+                            <Pencil className="w-3.5 h-3.5" />
+                            Edit References
+                        </Button>
+                    </div>
+                )}
+
+                {/* Edit References Button (when no images) */}
+                {selectedCharacter && !activeJob && datasetImages.length === 0 && (
                     <div className="px-6 py-3 border-b border-white/5 bg-zinc-900/50 flex justify-end">
                         <Button
                             variant="secondary"

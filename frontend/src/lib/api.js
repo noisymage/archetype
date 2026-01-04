@@ -212,3 +212,16 @@ export async function checkHealth() {
         return false;
     }
 }
+
+// === Captions ===
+
+export async function getImageCaptions(imageId) {
+    return apiFetch(`/api/images/${imageId}/captions`);
+}
+
+export async function updateCaption(captionId, textContent) {
+    return apiFetch(`/api/captions/${captionId}`, {
+        method: 'PUT',
+        body: JSON.stringify({ text_content: textContent })
+    });
+}

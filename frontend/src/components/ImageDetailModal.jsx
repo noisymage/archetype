@@ -4,6 +4,7 @@ import { cn } from '../lib/utils';
 import { Button } from './ui/Button';
 import { getFullImageUrl, reprocessImage, getThumbnailUrl } from '../lib/api';
 import { HEAD_SLOTS, BODY_SLOTS } from '../lib/constants';
+import { CaptionsPanel } from './CaptionsPanel';
 
 /**
  * Image Detail Modal - Full-screen view with overlay toggles and comparison mode
@@ -550,6 +551,12 @@ export function ImageDetailModal({ image, metrics, onClose, onUpdate, references
                             <RefreshCw className={cn("w-4 h-4", isReprocessing && "animate-spin")} />
                             {isReprocessing ? "Reprocessing..." : "Reprocess Image"}
                         </Button>
+                    </div>
+
+                    {/* Captions Section */}
+                    <div className="border-t border-white/10 pt-6 mt-6">
+                        <h4 className="text-sm font-medium text-zinc-300 mb-4">Captions</h4>
+                        <CaptionsPanel imageId={image.id} />
                     </div>
                 </div>
             </div>
