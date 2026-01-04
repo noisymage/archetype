@@ -215,8 +215,6 @@ async def lifespan(app: FastAPI):
     models_dir = Path(__file__).parent / "models"
     models_dir.mkdir(exist_ok=True)
     (models_dir / "insightface").mkdir(exist_ok=True)
-    (models_dir / "smplx" / "body_models").mkdir(parents=True, exist_ok=True)
-    (models_dir / "smplx" / "pretrained").mkdir(parents=True, exist_ok=True)
     yield
 
 

@@ -1,8 +1,8 @@
 """
 Vision Engine for Character Consistency Validator.
 
-Provides face analysis (InsightFace), pose estimation (YOLO11-Pose),
-and body shape analysis (SMPLer-X) with graceful degradation.
+Provides face analysis (InsightFace) and pose estimation (YOLO11-Pose)
+with graceful degradation.
 """
 import logging
 import os
@@ -17,27 +17,9 @@ import cv2
 import torch
 from torchvision import transforms
 
-# --- SMPLest-X Path Setup ---
-BASE_DIR = Path(__file__).parent.parent 
-# We need to target the submodule root explicitly for its internal imports (e.g. 'import common.utils')
-# SMPL-X functionality removed - was non-deterministic and unsuitable for consistency matching
-# See optimization_based_smpl_fitting.md for future deterministic implementation
-SMPLEST_X_AVAILABLE = False
-
 
 # Configure logging
 logger = logging.getLogger(__name__)
-
-try:
-    # Try importing essential SMPLest-X modules
-    # We do this after path injection
-    # SMPLest-X is no longer used directly, so these imports are removed.
-    pass
-except ImportError as e:
-    logger.warning(f"SMPLest-X imports failed (expected as it's disabled): {e}")
-    # We allow it to fail here, ModelManager will report it later
-    pass
-
 
 # Supported image formats
 SUPPORTED_FORMATS = {'.png', '.jpg', '.jpeg'}
@@ -45,8 +27,6 @@ SUPPORTED_FORMATS = {'.png', '.jpg', '.jpeg'}
 # Model paths
 MODELS_DIR = Path(__file__).parent / "models"
 INSIGHTFACE_DIR = MODELS_DIR / "insightface"
-SMPLX_BODY_MODELS_DIR = MODELS_DIR / "smplx" / "body_models"
-SMPLX_PRETRAINED_DIR = MODELS_DIR / "smplx" / "pretrained"
 
 
 def is_supported_image(path: str) -> bool:
@@ -134,13 +114,11 @@ class ModelManager:
         self._face_app = None
         self._pose_model = None
         self._adaface_model = None
-        # SMPLest-X removed
         
         # State tracking
         self._face_loaded = False
         self._pose_loaded = False
         self._adaface_loaded = False
-        self._smplx_loaded = False # Still track if an attempt was made
         
         # Device detection
         import torch
@@ -156,12 +134,6 @@ class ModelManager:
     def device(self) -> str:
         """Current compute device."""
         return self._device
-    
-    @property
-    def smplx_available(self) -> bool:
-        """Whether SMPLer-X is available (not degraded)."""
-        # SMPL-X is no longer available directly
-        return False
     
     def load_face_model(self) -> bool:
         """
@@ -276,20 +248,6 @@ class ModelManager:
             logger.error(f"Failed to initialize YOLO-Pose: {e}")
             return False
 
-    
-            self._smplx_wrapper = None
-        self._smplx_loaded = False
-        self._smplx_available = False
-        self._current_gender = None
-        
-        # Clear CUDA cache if available
-        try:
-            import torch
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-        except ImportError:
-            pass
-    
     def unload_all(self):
         """
         Unload all models to free VRAM.
@@ -309,9 +267,6 @@ class ModelManager:
             del self._pose_model
             self._pose_model = None
         self._pose_loaded = False
-        
-        # Unload mesh model
-        self._unload_mesh_model()
         
         # Clear CUDA cache
         try:
@@ -719,79 +674,6 @@ class BodyAnalyzer:
         }
         
         return result
-    
-    def _analyze_with_smplx(self, image_path: str, bbox: Optional[list] = None, 
-                             reference_betas: Optional[list[np.ndarray]] = None) -> Optional[dict]:
-        """
-        Full 3D analysis using SMPLest-X.
-        
-        Args:
-            image_path: Path to image
-            bbox: Optional [x1, y1, x2, y2] bounding box to skip detection
-            
-        Returns:
-            Dict with 3D metrics or None if failed.
-        """
-        wrapper = self._manager._smplx_wrapper
-        
-        if not wrapper or not wrapper.initialized:
-            return None
-            
-        try:
-            import cv2
-            
-            # Load image
-            img = cv2.imread(image_path)
-            if img is None:
-                return None
-                
-            # Use provided bbox or detect new one
-            final_bbox = None
-            
-            if bbox:
-                final_bbox = bbox
-            else:
-                # Fallback to internal detection
-                if not self._manager._pose_loaded:
-                    self._manager.load_pose_model()
-                
-                pose_res = self._manager._pose_model(image_path, verbose=False)[0]
-                if pose_res.boxes and len(pose_res.boxes) > 0:
-                     # Best person
-                    boxes = pose_res.boxes.xyxy.cpu().numpy()
-                    areas = (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
-                    best_idx = int(areas.argmax())
-                    final_bbox = boxes[best_idx].tolist()
-            
-            if not final_bbox:
-                return {"error": "No person detected for 3D Analysis"}
-
-            # Run SMPLest-X inference
-            inference_out = wrapper.run_inference(img, final_bbox)
-            
-            if inference_out:
-                # Calculate 3D-based ratios from mesh if available
-                ratios = {}
-                
-                # DISABLED: Beta-based consistency is unreliable due to model non-determinism
-                # Same image produces different betas each run, making it unsuitable for identity matching
-                # TODO: Replace with optimization-based SMPL fitting for deterministic results
-                # See: optimization_based_smpl_fitting.md for implementation guide
-                consistency_score = None
-                
-                return {
-                    "success": True,
-                    "betas": inference_out.get('betas'),
-                    "volume": inference_out.get('volume_proxy'),
-                    "ratios": ratios,
-                    "consistency_score": consistency_score
-                }
-            
-            return None
-            
-        except Exception as e:
-            logger.exception(f"SMPLest-X analysis error: {e}")
-            return None
     
     def _analyze_with_keypoints(self, keypoints: dict, 
                                   reference_ratios: Optional[list[dict]] = None) -> Optional[dict]:

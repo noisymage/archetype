@@ -20,8 +20,6 @@ gdown>=4.7.0
 # Pose Estimation (YOLO-Pose)
 ultralytics>=8.0.0
 
-# SMPLer-X Body Model (deprecated - kept for reference)
-# smplx>=0.1.28
 trimesh>=4.0.0
 
 # LLM Integration
